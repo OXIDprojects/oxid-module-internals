@@ -20,3 +20,7 @@ Functionality:
 Compatibility:
 
  * Requires OXID eShop CE|PE 4.9 & EE 5.2
+
+
+see also
+https://github.com/vanilla-thunder/vt-devutils
