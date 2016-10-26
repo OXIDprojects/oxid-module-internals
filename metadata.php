@@ -9,11 +9,11 @@ $sMetadataVersion = '1.0';
 
 $aModule = array(
     'id'           => 'oxid-module-internals',
-    'title'        => 'Module Internals',
+    'title'        => 'Module Internals (Kiwi Edition)',
     'description'  => 'Internal OXID eShop module system information and troubleshooting tools (CE|PE 4.9 & EE 5.2).',
     'thumbnail'    => 'ac_module_internals.png',
-    'version'      => '0.3.1',
-    'author'       => 'Alfonsas Cirtautas',
+    'version'      => '0.3.2',
+    'author'       => 'Alfonsas Cirtautas/Keywan Ghadami',
     'url'          => 'https://github.com/acirtautas/oxid-module-internals',
     'email'        => '',
     'extend'       => array(),
