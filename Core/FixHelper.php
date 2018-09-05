@@ -375,7 +375,7 @@ class FixHelper
         foreach ($aInstalledModules as $shopClassName => $mModuleClassNames) {
             if (is_array($mModuleClassNames)) {
                 foreach ($mModuleClassNames as $sKey => $sModuleClassName) {
-                    if ($this->getModule()->checkMetaDataVersion('2.0')) {
+                    if ($this->getModule()->checkMetaDataVersion('2.0') || $this->getModule()->checkMetaDataVersion('2.1')) {
                         $moduleNameSpace = $this->getModule()->getModuleNameSpace($sModulePath);
                         if (strpos($sModuleClassName, $moduleNameSpace) !== false) {
                             unset($aInstalledModules[ $shopClassName ][ $sKey ]);

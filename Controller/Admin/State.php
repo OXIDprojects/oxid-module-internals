@@ -117,7 +117,7 @@ class State extends AdminController
         }
 
         // valid  for  metadata version 1.1 and 2.0
-        if ($this->getModule()->checkMetadataVersion('1.1') || $this->getModule()->checkMetadataVersion('2.0')) {
+        if ($this->getModule()->checkMetadataVersion('1.1') || $this->getModule()->checkMetadataVersion('2.0') || $this->getModule()->checkMetadataVersion('2.1')) {
             $this->addTplParam('aEvents', $this->getModule()->checkModuleEvents());
             $this->addTplParam('aVersions', $this->getModule()->checkModuleVersions());
         }
@@ -125,7 +125,7 @@ class State extends AdminController
         /**
          * @todo check if files is set - should'nt be
          */
-        if ($this->getModule()->checkMetadataVersion('2.0'))
+        if ($this->getModule()->checkMetadataVersion('2.0') || $this->getModule()->checkMetadataVersion('2.1'))
             $this->addTplParam('aControllers', $this->getModule()->checkModuleController());
 
 

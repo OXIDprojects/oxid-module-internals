@@ -27,12 +27,12 @@ $aModule = [
     'url'         => 'https://github.com/OXIDprojects/oxid-module-internals',
     'email'       => '',
     'extend'      => [
-        \OxidEsales\Eshop\Core\Module\Module::class => \OxidCommunity\ModuleInternals\Core\InternalModule::class,
+        \OxidEsales\Eshop\Core\Module\Module::class => \OxidCommunity\ModuleInternals\Core\Module::class,
     ],
     'controllers' => [
         'module_internals_metadata' => \OxidCommunity\ModuleInternals\Controller\Admin\Metadata::class,
         'module_internals_state'    => \OxidCommunity\ModuleInternals\Controller\Admin\State::class,
-        'module_internals_utils'    => \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+        'module_internals_utils'    => \OxidCommunity\ModuleInternals\Controller\Admin\Utils::class,
     ],
     'templates'   => [
         'metadata.tpl' => 'oxcom/moduleinternals/views/admin/tpl/metadata.tpl',

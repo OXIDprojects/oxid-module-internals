@@ -22,6 +22,23 @@ use OxidCommunity\ModuleInternals\Core\FixHelper as FixHelper;
  */
 class StateControllerTest extends UnitTestCase
 {
+
+    /**
+     *
+     */
+    public function testGetModuleDataProviderHelper()
+    {
+        $stateController = $this->getMock(State::class, ['getModule']);
+        $stateController
+            ->expects($this->any())
+            ->method('getModule')
+            ->will($this->returnValue(oxNew(Module::class)));
+
+        $moduleDataProviderHelper = $stateController->getModuleDataProviderHelper();
+
+        $this->assertInstanceOf(DataHelper::class, $moduleDataProviderHelper, 'class not as expected');
+    }
+
     /**
      *
      */
