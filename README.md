@@ -32,7 +32,7 @@ composer require oxid-community/moduleinternals
 ![OXID_moduleinternals](screenshot.png)
 
 # Changelog
-* 2018-11-21  1.3.0 Show blocks, case sensitive file exist checks, support legacy class names
+* 2018-11-21  1.3.0 Show blocks, case sensitive file exist checks, support legacy class names, warn when extending edition namespace, highlight modules with issues.   
 * 2018-11-21  1.2.2 fix fixing extensions
 * 2018-11-14  1.2.1 migration support from 1.0.1
 * 2018-11-14  1.2.0 support metadata v2.1
