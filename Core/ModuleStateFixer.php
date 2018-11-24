@@ -328,15 +328,14 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function setModuleControllers($moduleControllers, $moduleId, $module)
     {
-        $classProviderStorage = $this->getClassProviderStorage();
-        $dbMap = $classProviderStorage->get();
+        $controllersForThatModuleInDb = $this->getModuleControllerEntries($moduleId);
 
-        $controllersForThatModuleInDb = isset($dbMap[$moduleId]) ? $dbMap[$moduleId] : [];
+        $duplicatedKeys = array_intersect_key($moduleControllers, $controllersForThatModuleInDb);
+        $diff = array_diff_assoc($moduleControllers,$duplicatedKeys);
+        if ($diff) {
+            $this->output->writeLn("$moduleId fixing module controllers (in md):"  . var_export($moduleControllers, true));
+            $this->output->writeLn("$moduleId fixing module controllers (in db):"  . var_export($controllersForThatModuleInDb, true));
 
-        $duplicatedKeys = array_intersect_key(array_change_key_case($moduleControllers, CASE_LOWER), $controllersForThatModuleInDb);
-
-        if (array_diff_assoc($moduleControllers,$duplicatedKeys)) {
-            $this->output->writeLn("$moduleId fix module ModuleControllers");
             $this->deleteModuleControllers($moduleId);
             $this->resetModuleCache($module);
             $this->validateModuleMetadataControllersOnActivation($moduleControllers);
@@ -349,6 +348,14 @@ class ModuleStateFixer extends ModuleInstaller
 
     }
 
+    public function getModuleControllerEntries($moduleId){
+        $classProviderStorage = $this->getClassProviderStorage();
+        $dbMap = $classProviderStorage->get();
+        //for some unknown reasons the core uses lowercase module id to reference controllers
+        $moduleIdLc = strtolower($moduleId);
+        $controllersForThatModuleInDb = isset($dbMap[$moduleIdLc]) ? $dbMap[$moduleIdLc] : [];
+        return $controllersForThatModuleInDb;
+    }
 
     /**
      * Reset module cache

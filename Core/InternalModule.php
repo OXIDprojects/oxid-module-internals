@@ -14,6 +14,7 @@ namespace OxidCommunity\ModuleInternals\Core;
 use \OxidEsales\Eshop\Core\DatabaseProvider as DatabaseProvider;
 use \OxidEsales\Eshop\Core\Registry as Registry;
 use \OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
+use OxidEsales\Eshop\Core\Request;
 
 /**
  * Class InternalModule: chain extends OxidEsales\Eshop\Core\Module\Module
@@ -190,11 +191,14 @@ class InternalModule extends InternalModule_parent
             return $this->checked;
         }
         $title = parent::getTitle();
-        $this->checkState();
-        if (! $this->stateFine) {
-            $title .= ' <strong style="color: #900">Issue found!</strong>';
+        $cl = Registry::getRequest()->getRequestParameter('cl');
+        if ($cl == 'module_list') {
+            $this->checkState();
+            if (!$this->stateFine) {
+                $title .= ' <strong style="color: #900">Issue found!</strong>';
+            }
+            $this->checked = $title;
         }
-        $this->checked = $title;
         return $title;
     }
 
@@ -489,8 +493,9 @@ class InternalModule extends InternalModule_parent
      */
     public function checkModuleController()
     {
-        $aMetadataFiles = $this->getInfo('controllers');
-        $aDatabaseFiles = $this->getModuleEntries(ModuleList::MODULE_KEY_CONTROLLERS);
+        $aMetadataFiles = $this->getControllers();
+        $oModuleStateFixer = Registry::get(ModuleStateFixer::class);
+        $aDatabaseFiles =  $oModuleStateFixer->getModuleControllerEntries($this->getId());
 
         return $this->checkModuleFileConsistency($aMetadataFiles, $aDatabaseFiles);
     }
