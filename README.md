@@ -20,6 +20,7 @@ Original module (for Oxid eShop 5.x/4.x) by [Alfonsas Cirtautas](https://github.
    * Registered templates
    * Version
    * Events
+ * Console command to fix modules  
 
 ## Installation
 
