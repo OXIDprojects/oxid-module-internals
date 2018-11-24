@@ -33,6 +33,7 @@ composer require oxid-community/moduleinternals
 ![OXID_moduleinternals](screenshot.png)
 
 # Changelog
+* 2018-11-23  1.4.1 add compatibbility code for oxrun 
 * 2018-11-22  1.4.0 improve performance, added module:fix console command, fixed module controller check 
 * 2018-11-21  1.3.0 Show blocks, case sensitive file exist checks, support legacy class names, warn when extending edition namespace, highlight modules with issues.   
 * 2018-11-21  1.2.2 fix fixing extensions
