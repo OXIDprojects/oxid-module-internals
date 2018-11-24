@@ -174,4 +174,18 @@ class ModuleFixCommand extends Command
 
         return $this->_aAvailableModuleIds;
     }
+    
+    /**
+     * important method for oxrun to bootstrap oxid
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        $app = $this->getApplication();
+        if (method_exists($app,'bootstrapOxid') ) {
+                return $app->bootstrapOxid(true);
+        }
+        return true;
+    }
+
 }
