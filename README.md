@@ -41,3 +41,7 @@ composer require oxid-community/moduleinternals
 * 2018-09-13  1.1.0 add external module healthy status page
 * 2017-12-15	1.0.1	namespace, docblocks
 * 2017-12-09	1.0.0	module release
+
+
+# Related Projects
+https://github.com/OXIDprojects/oxid-console
