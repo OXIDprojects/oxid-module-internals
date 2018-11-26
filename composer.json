@@ -21,6 +21,7 @@
   "extra": {
     "oxideshop": {
       "target-directory": "oxcom/moduleinternals",
+      "comment-console-commands": "warning the following line is deprecated and will be removed",
       "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"]
     }
   },
