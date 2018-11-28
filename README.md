@@ -33,6 +33,7 @@ composer require oxid-community/moduleinternals
 ![OXID_moduleinternals](screenshot.png)
 
 ## Changelog
+* 2018-11-23  1.5.0 do not scan deactivated modules
 * 2018-11-23  1.4.3 fix error (modullist not shown, if oxid console is not installed)
 * 2018-11-23  1.4.2 ** WARNING KNOWN BUG see 1.4.3 **
                     fix compatibility with console applications by supporting new command registration via services.yml
