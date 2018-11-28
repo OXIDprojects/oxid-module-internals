@@ -10,7 +10,6 @@ use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Exception\ModuleValidationException;
-use OxidProfessionalServices\OxidConsole\Core\Module\ModuleExtensionCleanerDebug;
 use Symfony\Component\Console\Output\OutputInterface;
 use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
 /**
