@@ -650,8 +650,11 @@ class InternalModule extends InternalModule_parent
     {
         $oModule = $this;
         $aModule = array();
-        $aModule['oxid'] = $oModule->getId();
+        $aModule['oxid'] = $sId = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
+        if ($this->_isInDisabledList($sId)) {
+                return $aModule;
+        }
 
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
