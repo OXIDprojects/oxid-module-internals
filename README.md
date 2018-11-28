@@ -33,8 +33,9 @@ composer require oxid-community/moduleinternals
 ![OXID_moduleinternals](screenshot.png)
 
 ## Changelog
-
-* 2018-11-23  1.4.2 fix compatibility with console applications by supporting new command registration via services.yml
+* 2018-11-23  1.4.3 fix error (modullist not shown, if oxid console is not installed)
+* 2018-11-23  1.4.2 ** WARNING KNOWN BUG see 1.4.3 **
+                    fix compatibility with console applications by supporting new command registration via services.yml
 * 2018-11-23  1.4.1 add compatibility code for oxrun 
 * 2018-11-22  1.4.0 improve performance, added module:fix console command, fixed module controller check 
 * 2018-11-21  1.3.0 Show blocks, case sensitive file exist checks, support legacy class names, warn when extending edition namespace, highlight modules with issues.   
