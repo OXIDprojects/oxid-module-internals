@@ -272,7 +272,8 @@ class ModuleStateFixer extends ModuleInstaller
 
         if (version_compare($metaDataVersion, '2.0', '>=')) {
             try {
-                $this->setModuleControllers($module->getControllers(), $moduleId, $module);
+                $moduleControllers = $module->isActive() ? $module->getControllers() : [];
+                $this->setModuleControllers($moduleControllers, $moduleId, $module);
             } catch (ModuleValidationException $exception) {
                 print "[ERROR]: duplicate controllers:" . $exception->getMessage() ."\n";
             }
@@ -330,18 +331,20 @@ class ModuleStateFixer extends ModuleInstaller
         $controllersForThatModuleInDb = $this->getModuleControllerEntries($moduleId);
 
         $duplicatedKeys = array_intersect_key($moduleControllers, $controllersForThatModuleInDb);
-        $diff = array_diff_assoc($moduleControllers,$duplicatedKeys);
+        $diff = array_diff_assoc($moduleControllers, $duplicatedKeys);
         if ($diff) {
             $this->output->writeLn("$moduleId fixing module controllers (in md):"  . var_export($moduleControllers, true));
             $this->output->writeLn("$moduleId fixing module controllers (in db):"  . var_export($controllersForThatModuleInDb, true));
 
             $this->deleteModuleControllers($moduleId);
             $this->resetModuleCache($module);
-            $this->validateModuleMetadataControllersOnActivation($moduleControllers);
+            if ($moduleControllers) {
+                $this->validateModuleMetadataControllersOnActivation($moduleControllers);
 
-            $classProviderStorage = $this->getClassProviderStorage();
+                $classProviderStorage = $this->getClassProviderStorage();
 
-            $classProviderStorage->add($moduleId, $moduleControllers);
+                $classProviderStorage->add($moduleId, $moduleControllers);
+            }
             $this->needCacheClear = true;
         }
 
