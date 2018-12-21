@@ -2,7 +2,7 @@ language: php
 
 dist: xenial
 php:
-  - "7.2"
+  - "7.1"
 
 env: TRAVIS_ERROR_LEVEL=22519
 
