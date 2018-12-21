@@ -15,5 +15,7 @@ sed -i -e "s@run_tests_for_shop: true@run_tests_for_shop: false@g" test_config.y
 
 #Module Registrieren
 composer clear-cache
+composer config repo.packagist false
+composer config minimum-stability dev
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
 composer require "oxid-community/moduleinternals:*"
