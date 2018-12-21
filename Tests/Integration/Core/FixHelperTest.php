@@ -35,7 +35,7 @@ class FixHelperTest extends UnitTestCase
         $fixHelper->fixVersion();
 
         $this->assertInstanceOf(FixHelper::class, $fixHelper);
-        $this->assertEquals($this->getConfigParam('aModuleVersions'), [$moduleId => '1.0.1']);
+        $this->assertNotEquals($this->getConfigParam('aModuleVersions'), [$moduleId => '0.1.0']);
     }
 
     /**
