@@ -1,12 +1,7 @@
 <?php
 /**
- * @package   moduleinternals
- * @category  OXID Module
- * @version   1.1.0
  * @license   GPL3 License http://opensource.org/licenses/GPL
  * @author    Alfonsas Cirtautas / OXID Community
- * @link      https://github.com/OXIDprojects/ocb_cleartmp
- * @see       https://github.com/acirtautas/oxid-module-internals
  */
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
@@ -49,7 +44,6 @@ $aModule = [
     Komplette &Uuml;bersicht: '.$sLinkAndText,
     ],
     'thumbnail'   => 'module_internals.png',
-    'version'     => '1.5.2',
     'author'      => 'OXID Community',
     'url'         => 'https://github.com/OXIDprojects/oxid-module-internals',
     'email'       => '',
