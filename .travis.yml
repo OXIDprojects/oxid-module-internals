@@ -24,5 +24,6 @@ script:
   - ./vendor/bin/runtests
 
 before_cache:
-  - rm ~/OXID/source/modules/oxcom/moduleinstaller
+  - rm -rf ~/OXID/source/modules/oxcom/moduleinstaller
+  - rm -rf ~/OXID/vendor/oxid-community/moduleinstaller
 
