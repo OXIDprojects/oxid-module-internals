@@ -295,7 +295,8 @@ class InternalModule extends InternalModule_parent
                          * we don't need to check for filesystem directory - we only use namespaces in version 2.0
                          */
                         if ($this->isMetadataVersionGreaterEqual('2.0')) {
-                            if (!isset($aResult[ $sClassName ][ $sModuleName ]) && strpos($sModuleName, $moduleNameSpace) === 0) {
+                            if ($moduleNameSpace && !isset($aResult[$sClassName][$sModuleName]) && strpos($sModuleName,
+                                    $moduleNameSpace) === 0) {
                                 $this->stateFine = false;
                                 $aResult[ $sClassName ][ $sModuleName ] = self::DB_HAS_WRONG_DATA;
                             }
