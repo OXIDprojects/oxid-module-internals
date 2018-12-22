@@ -5,7 +5,9 @@ php:
   - "7.1"
 
 env: TRAVIS_ERROR_LEVEL=22519
-
+cache:
+  directories:
+  - $HOME/OXID
 services: mysql
 
 before_install:
