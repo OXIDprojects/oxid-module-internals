@@ -2,7 +2,6 @@
 /**
  * @package   moduleinternals
  * @category  OXID Module
- * @version   1.0.1
  * @license   GPL3 License http://opensource.org/licenses/GPL
  * @author    Alfonsas Cirtautas / OXID Community
  * @link      https://github.com/OXIDprojects/ocb_cleartmp
@@ -24,6 +23,21 @@ class InternalModule extends InternalModule_parent
 {
     protected $stateFine = true;
     protected $checked = false;
+
+    const METADATA_NOT_IN_DB = 0;
+    const OK = 1;
+    const DB_HAS_WRONG_DATA = -1;
+    const MODULE_FILE_NOT_FOUND = -2;
+    const SHOP_FILE_NOT_FOUND = -3;
+
+    protected function getAutoloader(){
+        if (Registry::instanceExists('autoloader')){
+            return Registry::get('autoloader');
+        }
+        $composerClassLoader = include VENDOR_PATH . 'autoload.php';
+        Registry::set('autoloader', $composerClassLoader);
+        return $composerClassLoader;
+    }
 
     /**
      * Get template blocks defined in database.
@@ -144,7 +158,7 @@ class InternalModule extends InternalModule_parent
     public function checkPhpFileExists($sModulesDir = null, $sClassName, $sExtention = '.php')
     {
         if ($this->isMetadataVersionGreaterEqual('2.0')) {
-            $composerClassLoader = include VENDOR_PATH . 'autoload.php';
+            $composerClassLoader = $this->getAutoloader();
 
             return $composerClassLoader->findFile($sClassName);
         } else {
@@ -170,16 +184,16 @@ class InternalModule extends InternalModule_parent
         $aResult = [];
         // Check version..
         if ($sMetadataVersion) {
-            $aResult[ $sMetadataVersion ] = 0;
+            $aResult[ $sMetadataVersion ] = self::METADATA_NOT_IN_DB;
         }
 
         // Check for versions match injected.
         if ($sDatabaseVersion) {
             if (!isset($aResult[ $sDatabaseVersion ])) {
-                $aResult[ $sDatabaseVersion ] = -1;
+                $aResult[ $sDatabaseVersion ] = self::DB_HAS_WRONG_DATA;
                 $this->stateFine = false;
             } else {
-                $aResult[ $sDatabaseVersion ] = 1;
+                $aResult[ $sDatabaseVersion ] = self::OK;
             }
         }
 
@@ -284,12 +298,12 @@ class InternalModule extends InternalModule_parent
                             if ($moduleNameSpace && !isset($aResult[$sClassName][$sModuleName]) && strpos($sModuleName,
                                     $moduleNameSpace) === 0) {
                                 $this->stateFine = false;
-                                $aResult[$sClassName][$sModuleName] = -1;
+                                $aResult[ $sClassName ][ $sModuleName ] = self::DB_HAS_WRONG_DATA;
                             }
                         } else {
                             if (!isset($aResult[ $sClassName ][ $sModuleName ]) && strpos($sModuleName, $sModulePath . '/') === 0) {
                                 $this->stateFine = false;
-                                $aResult[ $sClassName ][ $sModuleName ] = -1;
+                                $aResult[ $sClassName ][ $sModuleName ] = self::DB_HAS_WRONG_DATA;
                             }
                         }
                     }
@@ -319,7 +333,7 @@ class InternalModule extends InternalModule_parent
         // Check if all blocks are injected.
         if (is_array($aMetadataBlocks)) {
             foreach ($aMetadataBlocks as $aBlock) {
-                $iState = 0;
+                $iState = self::METADATA_NOT_IN_DB;
                 if (is_array($aDatabaseBlocks)) {
                     foreach ($aDatabaseBlocks as $aDbBlock) {
                         // Is template block inserted
@@ -328,7 +342,7 @@ class InternalModule extends InternalModule_parent
                             ($aBlock['block'] == $aDbBlock['OXBLOCKNAME']) &&
                             ($aBlock['file'] == $aDbBlock['OXFILE'])
                         ) {
-                            $iState = 1;
+                            $iState = self::OK;
                         }
                     }
                 }
@@ -337,9 +351,9 @@ class InternalModule extends InternalModule_parent
                     !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . basename($aBlock['file'])) &&
                     !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . basename($aBlock['file']) . '.tpl')
                 ) {
-                    $iState = -2;
+                    $iState = self::MODULE_FILE_NOT_FOUND;
                 }
-                if ($iState != 1) {
+                if ($iState != self::OK ) {
                     $this->stateFine = false;
                 }
                 $aResult[$aBlock['template']][$aBlock['block']][$aBlock['file']]['file'] = $iState;
@@ -353,12 +367,12 @@ class InternalModule extends InternalModule_parent
                 $sBaseFile = basename($aDbBlock['OXFILE']);
 
                 if (!isset($aResult[$aDbBlock['OXTEMPLATE']][$aDbBlock['OXBLOCKNAME']][$aDbBlock['OXFILE']])) {
-                    $aResult[$aDbBlock['OXTEMPLATE']][$aDbBlock['OXBLOCKNAME']][$aDbBlock['OXFILE']]['file'] = -1;
+                    $aResult[$aDbBlock['OXTEMPLATE']][$aDbBlock['OXBLOCKNAME']][$aDbBlock['OXFILE']]['file'] = self::DB_HAS_WRONG_DATA;
                     if (!file_exists($sModulesDir . '/' . $sModulePath . '/' . $aDbBlock['OXFILE']) &&
                         !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . $sBaseFile) &&
                         !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . $sBaseFile) . '.tpl'
                     ) {
-                        $aResult[$aDbBlock['OXTEMPLATE']][$aDbBlock['OXBLOCKNAME']][$aDbBlock['OXFILE']]['file'] = -3;
+                        $aResult[$aDbBlock['OXTEMPLATE']][$aDbBlock['OXBLOCKNAME']][$aDbBlock['OXFILE']]['file'] = self::SHOP_FILE_NOT_FOUND;
                     }
                 }
             }
@@ -387,12 +401,12 @@ class InternalModule extends InternalModule_parent
                 }
 
                 if (empty($sTemplate)) {
-                    $aResult[$aBlock['template']][$aBlock['block']][$aBlock['file']]['template'] = -3;
+                    $aResult[$aBlock['template']][$aBlock['block']][$aBlock['file']]['template'] = self::SHOP_FILE_NOT_FOUND;
                     $this->stateFine = false;
                 } else {
                     $sContent = file_get_contents($sTemplate);
                     if (!preg_match('/\[{.*block.* name.*= *"' . $aBlock['block'] . '".*}\]/', $sContent)) {
-                        $aResult[$aBlock['template']][$aBlock['block']][$aBlock['file']]['block'] = -3;
+                        $aResult[$aBlock['template']][$aBlock['block']][$aBlock['file']]['block'] = self::SHOP_FILE_NOT_FOUND;
                     }
                 }
             }
@@ -417,7 +431,7 @@ class InternalModule extends InternalModule_parent
         if (is_array($aMetadataSettings)) {
             foreach ($aMetadataSettings as $aData) {
                 $sName = $aData['name'];
-                $aResult[ $sName ] = 0;
+                $aResult[ $sName ] = self::METADATA_NOT_IN_DB;
             }
         }
 
@@ -428,10 +442,10 @@ class InternalModule extends InternalModule_parent
                 $sName = $aData['OXVARNAME'];
 
                 if (!isset($aResult[ $sName ])) {
-                    $aResult[ $sName ] = -1;
+                    $aResult[ $sName ] = self::DB_HAS_WRONG_DATA;
                     $this->stateFine = false;
                 } else {
-                    $aResult[ $sName ] = 1;
+                    $aResult[ $sName ] = self::OK;
                     unset($problems[$sName]);
                 }
             }
@@ -461,9 +475,9 @@ class InternalModule extends InternalModule_parent
         // Check if all module templates are injected.
         if (is_array($aMetadataTemplates)) {
             foreach ($aMetadataTemplates as $sTemplate => $sFile) {
-                $aResult[ $sTemplate ][ $sFile ] = 0;
+                $aResult[ $sTemplate ][ $sFile ] = self::METADATA_NOT_IN_DB;
                 if (!$this->checkFileExists($sModulesDir . '/' . $sFile)) {
-                    $aResult[ $sTemplate ][ $sFile ] = -2;
+                    $aResult[ $sTemplate ][ $sFile ] = self::MODULE_FILE_NOT_FOUND;
                     $this->stateFine = false;
                 }
             }
@@ -474,12 +488,12 @@ class InternalModule extends InternalModule_parent
             foreach ($aDatabaseTemplates as $sTemplate => $sFile) {
                 if (!isset($aResult[ $sTemplate ][ $sFile ])) {
                     $this->stateFine = false;
-                    @$aResult[ $sTemplate ][ $sFile ] = -1;
+                    @$aResult[ $sTemplate ][ $sFile ] = self::DB_HAS_WRONG_DATA;
                     if (!file_exists($sModulesDir . '/' . $sFile)) {
-                        @$aResult[ $sTemplate ][ $sFile ] = -3;
+                        @$aResult[ $sTemplate ][ $sFile ] = self::SHOP_FILE_NOT_FOUND;
                     }
-                } elseif ($aResult[ $sTemplate ][ $sFile ] == 0) {
-                    @$aResult[ $sTemplate ][ $sFile ] = 1;
+                } elseif ($aResult[ $sTemplate ][ $sFile ] == self::METADATA_NOT_IN_DB) {
+                    @$aResult[ $sTemplate ][ $sFile ] = self::OK;
                 }
             }
         }
@@ -533,10 +547,10 @@ class InternalModule extends InternalModule_parent
                 $sModulesDir = Registry::getConfig()->getModulesDir();
             }
             foreach ($aMetadataFiles as $sClass => $sFile) {
-                $aResult[ $sClass ][ $sFile ] = 0;
+                $aResult[ $sClass ][ $sFile ] = self::METADATA_NOT_IN_DB;
 
                 if (!$this->checkPhpFileExists($sModulesDir, $sFile, null)) {
-                    $aResult[$sClass][$sFile] = -2;
+                    $aResult[$sClass][$sFile] = self::MODULE_FILE_NOT_FOUND;
                     $this->stateFine = false;
                 }
             }
@@ -546,24 +560,24 @@ class InternalModule extends InternalModule_parent
         if (is_array($aDatabaseFiles)) {
             foreach ($aDatabaseFiles as $sClass => $sFile) {
                 if (!isset($aResult[ $sClass ][ $sFile ])) {
-                    @$aResult[ $sClass ][ $sFile ] = -1;
+                    @$aResult[ $sClass ][ $sFile ] = self::DB_HAS_WRONG_DATA;
                     /**
                      * @todo update to $this->checkFileExists()
                      */
                     if ($this->isMetadataVersionGreaterEqual('2.0')) {
-                        $composerClassLoader = include VENDOR_PATH . 'autoload.php';
+                        $composerClassLoader = $this->getAutoloader();
                         if (!$composerClassLoader->findFile($sFile)) {
-                            @$aResult[ $sClass ][ $sFile ] = -2;
+                            @$aResult[ $sClass ][ $sFile ] = self::MODULE_FILE_NOT_FOUND;
                             $this->stateFine = false;
                         }
                     } else {
                         if (!file_exists($sModulesDir . $sFile)) {
-                            @$aResult[ $sClass ][ $sFile ] = -3;
+                            @$aResult[ $sClass ][ $sFile ] = self::SHOP_FILE_NOT_FOUND;
                             $this->stateFine = false;
                         }
                     }
-                } elseif ($aResult[ $sClass ][ $sFile ] == 0) {
-                    @$aResult[ $sClass ][ $sFile ] = 1;
+                } elseif ($aResult[ $sClass ][ $sFile ] == self::METADATA_NOT_IN_DB) {
+                    @$aResult[ $sClass ][ $sFile ] = self::OK;
                 }
             }
         }
@@ -587,7 +601,7 @@ class InternalModule extends InternalModule_parent
         if (is_array($aMetadataEvents)) {
             foreach ($aMetadataEvents as $sEvent => $mCallback) {
                 $sCallback = print_r($mCallback, 1);
-                $aResult[ $sEvent ][ $sCallback ] = 0;
+                $aResult[ $sEvent ][ $sCallback ] = self::METADATA_NOT_IN_DB;
             }
         }
 
@@ -596,10 +610,10 @@ class InternalModule extends InternalModule_parent
             foreach ($aDatabaseEvents as $sEvent => $mCallback) {
                 $sCallback = print_r($mCallback, 1);
                 if (!isset($aResult[ $sEvent ][ $sCallback ])) {
-                    $aResult[ $sEvent ][ $sCallback ] = -1;
+                    $aResult[ $sEvent ][ $sCallback ] = self::DB_HAS_WRONG_DATA;
                     $this->stateFine = false;
                 } else {
-                    $aResult[ $sEvent ][ $sCallback ] = 1;
+                    $aResult[ $sEvent ][ $sCallback ] = self::OK;
                 }
             }
         }
@@ -626,7 +640,7 @@ class InternalModule extends InternalModule_parent
 
 
         $moduleNameSpace = '';
-        $composerClassLoader = include VENDOR_PATH . 'autoload.php';
+        $composerClassLoader = $this->getAutoloader();
         $nameSpacePrefixes = $composerClassLoader->getPrefixesPsr4();
         foreach ($nameSpacePrefixes as $nameSpacePrefix => $paths) {
             foreach ($paths as $path) {
@@ -654,9 +668,8 @@ class InternalModule extends InternalModule_parent
         $aModule['oxid'] = $sId = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
         if ($this->_isInDisabledList($sId)) {
-                return $aModule;
+            return $aModule;
         }
-
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
         $aModule['aSettings'] = $oModule->checkModuleSettings();
