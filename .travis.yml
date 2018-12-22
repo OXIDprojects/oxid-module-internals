@@ -23,6 +23,6 @@ script:
   - cd ~/OXID/
   - ./vendor/bin/runtests
 
-after_script:
+before_cache:
   - rm ~/OXID/source/modules/oxcom/moduleinstaller
 
