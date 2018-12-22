@@ -22,3 +22,7 @@ before_script:
 script:
   - cd ~/OXID/
   - ./vendor/bin/runtests
+
+after_script:
+  - rm ~/OXID/source/modules/oxcom/moduleinstaller
+
