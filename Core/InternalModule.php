@@ -314,6 +314,21 @@ class InternalModule extends InternalModule_parent
         return $aResult;
     }
 
+    public function setModuleData($aModule)
+    {
+        $moduleId = $aModule['id'];
+        if (!isset($aModule['version'])) {
+            $packageService = Registry::get(OxidComposerModulesService::class);
+            $list = $packageService->getList();
+            if (isset($list[$moduleId])) {
+                $package = $list[$moduleId];
+                $version = $package->getVersion();
+                $aModule['version'] = $version;
+            }
+        }
+        parent::setModuleData($aModule);
+    }
+
     /**
      * Analyze template block information in metadata and database.
      *

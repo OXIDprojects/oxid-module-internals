@@ -24,6 +24,8 @@ script:
   - ./vendor/bin/runtests
 
 before_cache:
+  - composer remove "oxid-community/moduleinternals"
   - rm -rfv ~/OXID/source/modules/oxcom/moduleinternals
   - rm -rfv ~/OXID/vendor/oxid-community/moduleinternals
+  - rm -rfv ~/OXID/source/tmp/*
 
