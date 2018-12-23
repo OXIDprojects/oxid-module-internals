@@ -316,12 +316,12 @@ class InternalModule extends InternalModule_parent
 
     public function setModuleData($aModule)
     {
-        $id = $aModule['id'];
+        $moduleId = $aModule['id'];
         if (!isset($aModule['version'])) {
             $packageService = Registry::get(OxidComposerModulesService::class);
             $list = $packageService->getList();
-            if (isset($list[$id])) {
-                $package = $list[$id];
+            if (isset($list[$moduleId])) {
+                $package = $list[$moduleId];
                 $version = $package->getVersion();
                 $aModule['version'] = $version;
             }
