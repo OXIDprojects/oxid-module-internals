@@ -46,6 +46,18 @@ class OxidComposerModulesService
     }
 
     /**
+     * @param $moduleId
+     * @return bool|PackageInterface
+     */
+    public function getPackage($moduleId) {
+        $list = $this->getList();
+        if (!isset($list[$moduleId])) {
+            return false;
+        }
+        return $list[$moduleId];
+    }
+
+    /**
      * @param $metadataPath
      * @return string
      */

@@ -318,10 +318,9 @@ class InternalModule extends InternalModule_parent
     {
         $moduleId = $aModule['id'];
         if (!isset($aModule['version'])) {
-            $packageService = Registry::get(OxidComposerModulesService::class);
-            $list = $packageService->getList();
-            if (isset($list[$moduleId])) {
-                $package = $list[$moduleId];
+            $package = $this->getComposerPackage($moduleId);
+
+            if ($package) {
                 $version = $package->getVersion();
                 $aModule['version'] = $version;
             }
@@ -643,11 +642,21 @@ class InternalModule extends InternalModule_parent
      */
     public function getModuleNameSpace($sModulePath)
     {
-        $sModulesDir = Registry::getConfig()->getModulesDir();
-        $file = $sModulesDir . $sModulePath . '/composer.json';
-        if (file_exists($file)) {
-            $data = json_decode(file_get_contents($file), true);
-            $namesspaces = $data["autoload"]["psr-4"];
+        $package = $this->getComposerPackage();
+
+        if ($package) {
+            $autoload = $package->getAutoload();
+        } else {
+            $sModulesDir = Registry::getConfig()->getModulesDir();
+            $file = $sModulesDir . $sModulePath . '/composer.json';
+            if (file_exists($file)) {
+                $data = json_decode(file_get_contents($file), true);
+                $autoload = $data["autoload"];
+            }
+        }
+
+        if ($autoload) {
+            $namesspaces = $autoload["psr-4"];
             $prefix = array_keys($namesspaces);
             $moduleNameSpace = $prefix[0];
             return $moduleNameSpace;
@@ -736,5 +745,22 @@ class InternalModule extends InternalModule_parent
 
         }
         return $res;
+    }
+
+    /**
+     * @param $moduleId
+     * @return bool|\Composer\Package\PackageInterface
+     */
+    protected function getComposerPackage($moduleId = null)
+    {
+        if ($moduleId == null){
+            $moduleId = $this->getId();
+        }
+        /**
+         * @var $packageService OxidComposerModulesService
+         */
+        $packageService = Registry::get(OxidComposerModulesService::class);
+        $package = $packageService->getPackage($moduleId);
+        return $package;
     }
 }
