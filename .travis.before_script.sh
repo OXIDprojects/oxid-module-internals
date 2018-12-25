@@ -4,15 +4,15 @@ mkdir OXID
 cd OXID
 
 if [ ! -f selenium-server-standalone-2.47.1.jar ]; then
-  wget https://github.com/OXID-eSales/oxvm_assets/raw/master/selenium-server-standalone-2.47.1.jar
+  wget https://raw.githubusercontent.com/OXID-eSales/oxvm_assets/master/selenium-server-standalone-2.47.1.jar
 fi
 if [ ! -f firefox-mozilla-build_31.0-0ubuntu1_amd64.deb ]; then
-  wget https://github.com/OXID-eSales/oxvm_assets/raw/master/firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
+  wget https://raw.githubusercontent.com/OXID-eSales/oxvm_assets/master/firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
 fi
 
 sudo dpkg -i firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
 #sudo apt-get install -f -y
-xvfb-run --server-args="-screen 0, 1024x768x24" ../start_selenium.sh
+xvfb-run --server-args="-screen 0, 1024x768x24" ${TRAVIS_BUILD_DIR}/start_selenium.sh
 
 composer create-project oxid-esales/oxideshop-project . dev-b-6.1-ce
 sed -i -e "s@<dbHost>@127.0.0.1@g" source/config.inc.php
