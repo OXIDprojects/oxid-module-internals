@@ -18,11 +18,6 @@ before_install:
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - sh ./.travis.before_script.sh
-  - wget https://github.com/OXID-eSales/oxvm_assets/raw/master/selenium-server-standalone-2.47.1.jar
-  - wget https://github.com/OXID-eSales/oxvm_assets/raw/master/firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
-  - sudo dpkg -i firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
-  - sudo apt-get install -f -y
-  - xvfb-run --server-args="-screen 0, 1024x768x24" start_selenium.sh
   
 ignore:
   - apt-get install -y xfce4 xvfb x11vnc openjdk-7-jre-headless rng-tools 
