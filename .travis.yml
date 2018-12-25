@@ -20,7 +20,8 @@ before_script:
   - sh ./.travis.before_script.sh
   - wget https://github.com/OXID-eSales/oxvm_assets/raw/master/selenium-server-standalone-2.47.1.jar
   - wget https://github.com/OXID-eSales/oxvm_assets/raw/master/firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
-  - dpkg -i firefox-mozilla-build_31.0-0ubuntu1_amd64.deb && apt-get install -f -y
+  - sudo dpkg -i firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
+  - sudo apt-get install -f -y
   - xvfb-run --server-args="-screen 0, 1024x768x24" start_selenium.sh
   
 ignore:
