@@ -12,6 +12,7 @@ fi
 
 sudo dpkg -i firefox-mozilla-build_31.0-0ubuntu1_amd64.deb
 #sudo apt-get install -f -y
+ls -al ${TRAVIS_BUILD_DIR}/start_selenium.sh
 xvfb-run --server-args="-screen 0, 1024x768x24" ${TRAVIS_BUILD_DIR}/start_selenium.sh
 
 composer create-project oxid-esales/oxideshop-project . dev-b-6.1-ce
