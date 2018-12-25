@@ -24,9 +24,9 @@ ignore:
 
 script:
   - cd ~/OXID/
+  - ./vendor/bin/runtests-selenium
   - ./vendor/bin/runtests
-  - vendor/bin/runtests-selenium
-
+  
 before_cache:
   - composer remove "oxid-community/moduleinternals"
   - rm -rfv ~/OXID/source/modules/oxcom/moduleinternals
