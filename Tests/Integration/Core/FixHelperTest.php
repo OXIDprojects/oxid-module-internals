@@ -24,35 +24,40 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 class FixHelperTest extends UnitTestCase
 {
 
-    /**
-     *
-     */
-    public function testFixVersion()
+   public function testFixTemplate()
     {
-        $moduleId = 'moduleinternals';
-        $this->setConfigParam('aModuleVersions', [$moduleId => '0.1.0']);
-        $this->setConfigParam('aModuleExtend', ['a' => 'b']);
-
-        $fixHelper = $this->createFixHelper($moduleId);
-        $fixHelper->fix();
-
-        $this->assertInstanceOf(FixHelper::class, $fixHelper);
-        $this->assertNotEquals($this->getConfigParam('aModuleVersions'), [$moduleId => '0.1.0']);
-        $this->assertNotEquals($this->getConfigParam('aModuleExtend'), ['a' => 'b']);
+        $this->setConfigParam('aModuleTemplates', ['a' => 'b']);
+        $this->callSut();
+        $this->assertNotEquals($this->getConfigParam('aModuleTemplates'), ['a' => 'b']);
     }
 
+    public function testFixVersion()
+    {
+        $this->setConfigParam('aModuleVersions', ['moduleinternals' => '0.1.0']);
+        $this->callSut();
+
+        $this->assertNotEquals($this->getConfigParam('aModuleVersions'), ['moduleinternals' => '0.1.0']);
+    }
+
+    public function testFixExtensions()
+    {
+        $this->setConfigParam('aModuleExtensions', ['a' => ['b']]);
+        $this->callSut();
+        $this->assertNotEquals($this->getConfigParam('aModuleExtensions'), ['a' => ['b']]);
+    }
 
     /**
      * @param $moduleId
-     *
-     * @return object
+     * @return array
      */
-    protected function createFixHelper($moduleId)
+    private function callSut()
     {
+        $moduleId = 'moduleinternals';
         $module = oxNew(Module::class);
         $module->load($moduleId);
         $fixHelper = oxNew(ModuleStateFixer::class);
 
-        return $fixHelper;
+        $fixHelper->fix($module);
     }
+
 }
