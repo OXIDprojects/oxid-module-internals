@@ -12,6 +12,7 @@
 namespace OxidCommunity\ModuleInternals\Tests\Integration\core;
 
 use OxidCommunity\ModuleInternals\Core\FixHelper;
+use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Module\ModuleList;
@@ -30,26 +31,14 @@ class FixHelperTest extends UnitTestCase
     {
         $moduleId = 'moduleinternals';
         $this->setConfigParam('aModuleVersions', [$moduleId => '0.1.0']);
-        $fixHelper = $this->createFixHelper($moduleId);
+        $this->setConfigParam('aModuleExtend', ['a' => 'b']);
 
-        $fixHelper->fixVersion();
+        $fixHelper = $this->createFixHelper($moduleId);
+        $fixHelper->fix();
 
         $this->assertInstanceOf(FixHelper::class, $fixHelper);
         $this->assertNotEquals($this->getConfigParam('aModuleVersions'), [$moduleId => '0.1.0']);
-    }
-
-    /**
-     *
-     */
-    public function testFixExtend()
-    {
-        $this->markTestIncomplete('we need a test module here');
-        $moduleId = 'cleartmp';
-        $fixHelper = $this->createFixHelper($moduleId);
-
-        $fixHelper->fixExtend();
-
-        $this->assertEquals($this->getConfigParam('aModuleExtend'), ['a' => 'b']);
+        $this->assertNotEquals($this->getConfigParam('aModuleExtend'), ['a' => 'b']);
     }
 
 
@@ -62,11 +51,8 @@ class FixHelperTest extends UnitTestCase
     {
         $module = oxNew(Module::class);
         $module->load($moduleId);
-        $moduleList = oxNew(ModuleList::class);
-        $ModuleCache = oxNew(ModuleCache::class, $module);
-        $fixHelper = oxNew(FixHelper::class, $module, $moduleList, $ModuleCache);
+        $fixHelper = oxNew(ModuleStateFixer::class);
 
         return $fixHelper;
     }
-
 }
