@@ -11,6 +11,7 @@
 
 namespace OxidCommunity\ModuleInternals\Tests\Integration\Controller;
 
+use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use OxidCommunity\ModuleInternals\Controller\Admin\State;
 use OxidEsales\Eshop\Core\Module\Module as Module;
@@ -48,6 +49,6 @@ class StateControllerTest extends UnitTestCase
 
         $module = $stateController->getModuleFixHelper();
 
-        $this->assertInstanceOf(FixHelper::class, $module, 'class not as expected');
+        $this->assertInstanceOf(ModuleStateFixer::class, $module, 'class not as expected');
     }
 }

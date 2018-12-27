@@ -32,9 +32,11 @@ class FixHelperTest extends UnitTestCase
         $moduleId = 'moduleinternals';
         $this->setConfigParam('aModuleVersions', [$moduleId => '0.1.0']);
         $this->setConfigParam('aModuleExtend', ['a' => 'b']);
+        $module = oxNew(Module::class);
+        $module->load($moduleId);
+        $fixHelper = oxNew(ModuleStateFixer::class);
 
-        $fixHelper = $this->createFixHelper($moduleId);
-        $fixHelper->fix();
+        $fixHelper->fix($module);
 
         $this->assertInstanceOf(FixHelper::class, $fixHelper);
         $this->assertNotEquals($this->getConfigParam('aModuleVersions'), [$moduleId => '0.1.0']);
@@ -49,9 +51,6 @@ class FixHelperTest extends UnitTestCase
      */
     protected function createFixHelper($moduleId)
     {
-        $module = oxNew(Module::class);
-        $module->load($moduleId);
-        $fixHelper = oxNew(ModuleStateFixer::class);
 
         return $fixHelper;
     }
