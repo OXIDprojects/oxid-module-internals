@@ -34,7 +34,7 @@
         [{if $iState < 1 && $iState != -2 }][{assign var="_ok" value=0}][{/if}]
         [{/foreach}]
         [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_version')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
         [{/if}]
         <br>
     </div>
@@ -58,7 +58,7 @@
             [{/foreach}]
         </table>
         [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fixControllers')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
         [{/if}]
         <br>
     </div>
@@ -82,7 +82,7 @@
         [{/foreach}]
     </table>
     [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_extend')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
     [{/if}]
     <br>
 </div>
@@ -106,7 +106,7 @@
         [{/foreach}]
     </table>
     [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_files')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
     [{/if}]
     <br>
 </div>
@@ -146,7 +146,7 @@
         [{/foreach}]
     </table>
     [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_blocks')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
     [{/if}]
     <br>
 </div>
@@ -170,7 +170,7 @@
         [{/foreach}]
     </table>
     [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_templates')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
     [{/if}]
     <br>
 </div>
@@ -218,7 +218,7 @@
         [{/foreach}]
     </table>
     [{if !$_ok}]
-        <button class="fix" onclick="module_internals_fix('fix_events')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
+        <button class="fix" onclick="module_internals_fix('fix')">[{oxmultilang ident="AC_MI_FIXBTN"}]</button>
     [{/if}]
     <br>
 </div>

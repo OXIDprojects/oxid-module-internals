@@ -10,6 +10,7 @@ use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Exception\ModuleValidationException;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
 /**
@@ -20,6 +21,8 @@ class ModuleStateFixer extends ModuleInstaller
 
     public function __construct($cache = null, $cleaner = null){
         $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
+        $this->_debugOutput = new NullOutput();
+        $this->output = $this->_debugOutput;
         parent::__construct($cache, $cleaner);
     }
 
@@ -67,10 +70,7 @@ class ModuleStateFixer extends ModuleInstaller
         $this->module = $module;
         $this->needCacheClear = false;
         $this->restoreModuleInformation($module, $moduleId);
-        if ($this->needCacheClear){
-            $this->resetModuleCache($module);
-            $this->output->writeln("cache cleared for $moduleId");
-        }
+        $this->clearCache($module, $moduleId);
     }
 
 
@@ -257,7 +257,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     private function restoreModuleInformation($module, $moduleId)
     {
-        $this->_addExtensions($module);
+        $this->fixExtensions($module);
         $metaDataVersion = $module->getMetaDataVersion();
         $metaDataVersion = $metaDataVersion == '' ? $metaDataVersion = "1.0" : $metaDataVersion;
         if (version_compare($metaDataVersion, '2.0', '<')) {
@@ -267,7 +267,7 @@ class ModuleStateFixer extends ModuleInstaller
         $this->_addTemplateFiles($module->getInfo("templates"), $moduleId);
         $this->_addModuleSettings($module->getInfo("settings"), $moduleId);
         $this->_addModuleVersion($module->getInfo("version"), $moduleId);
-        $this->_addModuleExtensions($module->getExtensions(), $moduleId);
+
         $this->_addModuleEvents($module->getInfo("events"), $moduleId);
 
         if (version_compare($metaDataVersion, '2.0', '>=')) {
@@ -395,19 +395,8 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addExtensions(\OxidEsales\Eshop\Core\Module\Module $module)
     {
-        $aModulesDefault = $this->getConfig()->getConfigParam('aModules');
-        $aModules = $this->getModulesWithExtendedClass();
-        $aModules = $this->_removeNotUsedExtensions($aModules, $module);
-
-
-        if ($module->hasExtendClass()) {
-            $this->validateMetadataExtendSection($module);
-            $aAddModules = $module->getExtensions();
-            $aModules = $this->_mergeModuleArrays($aModules, $aAddModules);
-        }
-
-        $aModules = $this->buildModuleChains($aModules);
-        if ($aModulesDefault != $aModules) {
+        $needFix = $this->checkExtensions($module, $aModulesDefault, $aModules);
+        if ($needFix) {
             $this->needCacheClear = true;
             $onlyInAfterFix = array_diff($aModules, $aModulesDefault);
             $onlyInBeforeFix = array_diff($aModulesDefault, $aModules);
@@ -529,4 +518,104 @@ class ModuleStateFixer extends ModuleInstaller
             $this->needCacheClear = true;
         }
     }
+
+    /**
+     * @param Module $module
+     * @param $aModulesDefault
+     * @param $aModules
+     */
+    protected function checkExtensions(\OxidEsales\Eshop\Core\Module\Module $module, &$aModulesDefault, &$aModules)
+    {
+        $aModulesDefault = $this->getConfig()->getConfigParam('aModules');
+        $aModules = $this->getModulesWithExtendedClass();
+        $aModules = $this->_removeNotUsedExtensions($aModules, $module);
+
+
+        if ($module->hasExtendClass()) {
+            $this->validateMetadataExtendSection($module);
+            $aAddModules = $module->getExtensions();
+            $aModules = $this->_mergeModuleArrays($aModules, $aAddModules);
+        }
+
+        $aModules = $this->buildModuleChains($aModules);
+        return $aModulesDefault != $aModules;
+    }
+
+    /**
+     * @param $module
+     */
+    public function fixExtensions($module)
+    {
+        $this->_addExtensions($module);
+        $this->_addModuleExtensions($module->getExtensions(), $module->getId());
+    }
+
+    /**
+     * @param $module Module
+     */
+    private function clearCache($module)
+    {
+        if ($this->needCacheClear) {
+            $this->resetModuleCache($module);
+            $this->output->writeln("cache cleared for $module->getId()");
+        }
+    }
+
+
+    /**
+     * Fixes settings config
+     */
+    public function fixSettings()
+    {
+        $aModuleSettings = $this->getInfo('settings');
+        $oConfig = Registry::getConfig();
+        $sShopId = $oConfig->getShopId();
+        $oDb = DatabaseProvider::getDb();
+
+        // Cleanup !!!
+        $oDb->execute(
+            'DELETE FROM oxconfig WHERE oxmodule = ? AND oxshopid = ?',
+            [sprintf('module:%s', $this->getModuleId()), $sShopId]
+        );
+        $oDb->execute('DELETE FROM oxconfigdisplay WHERE oxcfgmodule = ?', [$this->getModuleId()]);
+
+        if (is_array($aModuleSettings)) {
+            foreach ($aModuleSettings as $aValue) {
+                $sOxId = Registry::get('oxUtilsObject')->generateUId();
+
+                $sModule = 'module:' . $this->getModuleId();
+                $sName = $aValue['name'];
+                $sType = $aValue['type'];
+                $sValue = is_null($oConfig->getConfigParam($sName)) ? $aValue['value'] : $oConfig->getConfigParam(
+                    $sName
+                );
+                $sGroup = $aValue['group'] ?? '';
+
+                $sConstraints = '';
+                if (isset($aValue['constraints'])) {
+                    $sConstraints = $aValue['constraints'];
+                } elseif (isset($aValue['constrains'])) {
+                    $sConstraints = $aValue['constrains'];
+                }
+
+                $iPosition = $aValue['position'] ?? 1;
+
+                $oConfig->setConfigParam($sName, $sValue);
+                $oConfig->saveShopConfVar($sType, $sName, $sValue, $sShopId, $sModule);
+
+                $sInsertSql = '
+                    INSERT INTO `oxconfigdisplay`
+                    (`OXID`, `OXCFGMODULE`, `OXCFGVARNAME`, `OXGROUPING`, `OXVARCONSTRAINT`, `OXPOS`)
+                    VALUES
+                    (?, ?, ?, ?, ?, ?)
+                ';
+
+                $oDb->execute($sInsertSql, [$sOxId, $sModule, $sName, $sGroup, $sConstraints, $iPosition]);
+            }
+            $this->needCacheClear = true;
+        }
+
+        $this->clearCache();
+    }
+
 }

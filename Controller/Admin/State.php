@@ -13,10 +13,12 @@ namespace OxidCommunity\ModuleInternals\Controller\Admin;
 
 use OxidCommunity\ModuleInternals\Core\FixHelper as FixHelper;
 use OxidCommunity\ModuleInternals\Core\InternalModule;
+use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\Eshop\Core\Module\ModuleCache as ModuleCache;
 use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Module\Module as Module;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Module internals tools.
@@ -38,10 +40,7 @@ class State extends AdminController
     /** @var Module */
     protected $_oModule;
 
-    /** @var DataHelper */
-    protected $_oModuleDataProviderHelper;
-
-    /** @var FixHelper */
+    /** @var ModuleStateFixer */
     protected $_oModuleFixHelper;
 
     /**
@@ -54,24 +53,21 @@ class State extends AdminController
     }
 
     /**
-     * @return FixHelper
+     * @return ModuleStateFixer
      */
     public function getModuleFixHelper()
     {
         if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = oxNew(
-                FixHelper::class,
-                $this->getModule(),
-                oxNew(ModuleList::class),
-                oxNew(ModuleCache::class, $this->getModule())
-            );
+            $this->_oModuleFixHelper = $stateFixer = new ModuleStateFixer();
+            $stateFixer->setDebugOutput(new NullOutput());
+            $stateFixer->setOutput(new NullOutput());
         }
 
         return $this->_oModuleFixHelper;
     }
 
     /**
-     * @param FixHelper $oModuleFixHelper
+     * @param ModuleStateFixer $oModuleFixHelper
      */
     public function setModuleFixHelper($oModuleFixHelper)
     {
@@ -130,51 +126,9 @@ class State extends AdminController
     /**
      * Fix module version.
      */
-    public function fix_version()
-    {
-        $this->getModuleFixHelper()->fixVersion();
+    public function fix() {
+        $this->getModuleFixHelper()->fix($this->getModule());
     }
-
-    /**
-     * Fix module extend.
-     */
-    public function fix_extend()
-    {
-        $this->getModuleFixHelper()->fixExtend();
-    }
-
-    /**
-     * Fix module files.
-     */
-    public function fix_files()
-    {
-        $this->getModuleFixHelper()->fixFiles();
-    }
-
-    /**
-     * Fix module controllers.
-     */
-    public function fixControllers()
-    {
-        $this->getModuleFixHelper()->fixControllers();
-    }
-
-    /**
-     * Fix module templates.
-     */
-    public function fix_templates()
-    {
-        $this->getModuleFixHelper()->fixTemplates();
-    }
-
-    /**
-     * Fix module blocks.
-     */
-    public function fix_blocks()
-    {
-        $this->getModuleFixHelper()->fixBlocks();
-    }
-
     /**
      * Fix module settings.
      */
@@ -183,11 +137,4 @@ class State extends AdminController
         $this->getModuleFixHelper()->fixSettings();
     }
 
-    /**
-     * Fix module events.
-     */
-    public function fix_events()
-    {
-        $this->getModuleFixHelper()->fixEvents();
-    }
 }
