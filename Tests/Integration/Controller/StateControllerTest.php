@@ -11,6 +11,8 @@
 
 namespace OxidCommunity\ModuleInternals\Tests\Integration\Controller;
 
+use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
+use OxidEsales\EshopCommunity\Core\DatabaseProvider;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use OxidCommunity\ModuleInternals\Controller\Admin\State;
 use OxidEsales\Eshop\Core\Module\Module as Module;
@@ -37,17 +39,38 @@ class StateControllerTest extends UnitTestCase
         $this->assertEquals($module->getId(), $moduleId);
     }
 
-    /**
-     *
-     */
-    public function testGetModuleFixHelper()
+    public function testBlock()
     {
         $moduleId = 'moduleinternals';
         $this->setRequestParameter('oxid', $moduleId);
+        $data = 'testid';
+        $this->setRequestParameter('data', $data);
+
+        $db = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC);
+        $db->execute(
+            "INSERT INTO `oxtplblocks` (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
+                     VALUES (?, 1, 'testtheme', 'testtemplate', 'block', 1, 'testfile', ?)",[$data,$moduleId]);
+
         $stateController = oxNew(State::class);
+        $stateController->block();
 
-        $module = $stateController->getModuleFixHelper();
+        $this->checkActive('0');
+        $stateController->block();
+        $this->checkActive('1');
 
-        $this->assertInstanceOf(FixHelper::class, $module, 'class not as expected');
+    }
+
+    /**
+     * @param \OxidEsales\Eshop\Core\Database\Adapter\DatabaseInterface $db
+     * @return mixed
+     */
+    private function checkActive($should)
+    {
+        $db = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC);
+        $active = $db->getOne(
+            "SELECT OXACTIVE FROM `oxtplblocks` WHERE `OXID` = 'testid' AND OXMODULE ='moduleinternals' AND OXSHOPID = 1");
+        $this->assertSame($should,$active);
+
+        return $active;
     }
 }
