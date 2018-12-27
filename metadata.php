@@ -59,6 +59,7 @@ $aModule = [
     'templates'   => [
         'metadata.tpl'              => 'oxcom/moduleinternals/views/admin/tpl/metadata.tpl',
         'state.tpl'                 => 'oxcom/moduleinternals/views/admin/tpl/state.tpl',
+        'items.tpl'                 => 'oxcom/moduleinternals/views/admin/tpl/items.tpl',
         'utils.tpl'                 => 'oxcom/moduleinternals/views/admin/tpl/utils.tpl',
         'checkconsistency.tpl'      => 'oxcom/moduleinternals/views/flow/tpl/checkconsistency.tpl',
     ],

@@ -13,10 +13,14 @@ namespace OxidCommunity\ModuleInternals\Controller\Admin;
 
 use OxidCommunity\ModuleInternals\Core\FixHelper as FixHelper;
 use OxidCommunity\ModuleInternals\Core\InternalModule;
+use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Module\ModuleCache as ModuleCache;
 use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Module\Module as Module;
+use OxidEsales\Eshop\Core\Registry;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Module internals tools.
@@ -38,12 +42,6 @@ class State extends AdminController
     /** @var Module */
     protected $_oModule;
 
-    /** @var DataHelper */
-    protected $_oModuleDataProviderHelper;
-
-    /** @var FixHelper */
-    protected $_oModuleFixHelper;
-
     /**
      * init current Module
      * State constructor.
@@ -53,30 +51,6 @@ class State extends AdminController
         $this->getModule();
     }
 
-    /**
-     * @return FixHelper
-     */
-    public function getModuleFixHelper()
-    {
-        if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = oxNew(
-                FixHelper::class,
-                $this->getModule(),
-                oxNew(ModuleList::class),
-                oxNew(ModuleCache::class, $this->getModule())
-            );
-        }
-
-        return $this->_oModuleFixHelper;
-    }
-
-    /**
-     * @param FixHelper $oModuleFixHelper
-     */
-    public function setModuleFixHelper($oModuleFixHelper)
-    {
-        $this->_oModuleFixHelper = $oModuleFixHelper;
-    }
 
     /**
      * Get active module object.
@@ -112,82 +86,19 @@ class State extends AdminController
             $this->addTplParam($paramName, $paramValue);
         }
 
-
-        $this->addTplParam(
-            'sState',
-            [
-                -3 => 'sfatals',
-                -2 => 'sfatalm',
-                -1 => 'serror',
-                0  => 'swarning',
-                1  => 'sok',
-            ]
-        );
-
         return $this->sTemplate;
     }
 
-    /**
-     * Fix module version.
-     */
-    public function fix_version()
-    {
-        $this->getModuleFixHelper()->fixVersion();
-    }
-
-    /**
-     * Fix module extend.
-     */
-    public function fix_extend()
-    {
-        $this->getModuleFixHelper()->fixExtend();
-    }
-
-    /**
-     * Fix module files.
-     */
-    public function fix_files()
-    {
-        $this->getModuleFixHelper()->fixFiles();
-    }
-
-    /**
-     * Fix module controllers.
-     */
-    public function fixControllers()
-    {
-        $this->getModuleFixHelper()->fixControllers();
-    }
-
-    /**
-     * Fix module templates.
-     */
-    public function fix_templates()
-    {
-        $this->getModuleFixHelper()->fixTemplates();
-    }
-
-    /**
-     * Fix module blocks.
-     */
-    public function fix_blocks()
-    {
-        $this->getModuleFixHelper()->fixBlocks();
-    }
 
     /**
      * Fix module settings.
      */
-    public function fix_settings()
+    public function block()
     {
-        $this->getModuleFixHelper()->fixSettings();
+        $request = Registry::getRequest();
+        $data = $request->getRequestParameter('data');
+        DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->execute(
+        "UPDATE oxtplblocks SET OXACTIVE = NOT OXACTIVE WHERE OXID = ?",[$data]);
     }
 
-    /**
-     * Fix module events.
-     */
-    public function fix_events()
-    {
-        $this->getModuleFixHelper()->fixEvents();
-    }
 }

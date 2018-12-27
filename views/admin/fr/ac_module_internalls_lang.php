@@ -44,8 +44,6 @@ $aLang = [
     'AC_STATE_FS' => 'Fatal S',
 
     'AC_STATE_OK_LABEL' => 'Les métadonnées correspondent aux données enregistrées dans la boutique',
-    'AC_STATE_WA_LABEL' => 'Les métadonnées manquent dans la boutique',
-    'AC_STATE_ER_LABEL' => 'Les données de la boutique n\'ont pas été trouvées dans les métadonnées',
     'AC_STATE_FM_LABEL' => 'Les Fichiers définis dans les métadonnées n\'existent pas',
     'AC_STATE_FS_LABEL' => 'Les fichiers définis dans la boutique n\'existent pas'
 ];
