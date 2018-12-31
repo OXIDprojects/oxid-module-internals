@@ -59,7 +59,7 @@ class InternalModule extends InternalModule_parent
     public function getModuleFixHelper()
     {
         if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = $stateFixer = Registry::get(ModuleStateFixer::class);
+            $this->_oModuleFixHelper = Registry::get(ModuleStateFixer::class);
         }
 
         return $this->_oModuleFixHelper;
@@ -233,7 +233,6 @@ class InternalModule extends InternalModule_parent
         $title = parent::getTitle();
         $request = Registry::getRequest();
         $cl = $request->getRequestParameter('cl');
-        $isEdit = $request->getRequestParameter('actedit');
 
         if ($cl == 'module_list') {
             $fixed = $this->getModuleFixHelper()->fix($this);
@@ -453,13 +452,13 @@ class InternalModule extends InternalModule_parent
         return $result;
     }
 
-    protected function checkFiles($files , $php, $relative = true){
+    protected function checkFiles($files , $php){
         $result = [];
         foreach ($files as $key => $file) {
             $result[$key]['data'] = $file;
             $s = self::OK;
             if (($php && !$this->checkPhpFileExists($file))
-                || ((!$php) && !$this->checkFileExists($file, $relative))) {
+                || ((!$php) && !$this->checkFileExists($file))) {
                 $s = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
             }
@@ -478,7 +477,7 @@ class InternalModule extends InternalModule_parent
         $aDatabaseEvents = $this->getModuleEntries(ModuleList::MODULE_KEY_EVENTS);
 
         $aDatabaseEvents = is_array($aDatabaseEvents) ? $aDatabaseEvents : [];
-        $aDatabaseEvents = array_map(function ($v){return print_r($v,true);}, $aDatabaseEvents);
+        $aDatabaseEvents = array_map(function ($value){return print_r($value,true);}, $aDatabaseEvents);
         $aResult = $this->toResult($aDatabaseEvents);
         foreach ($aResult as $eventName => &$data){
             $data['key_state'] = ($eventName == 'onActivate' || $eventName == 'onDeactivate') ? self::OK : self::SHOP_FILE_NOT_FOUND;
@@ -583,12 +582,11 @@ class InternalModule extends InternalModule_parent
      * @param $filePath
      * @return bool
      */
-    protected function checkFileExists($filePath, $relative = true)
+    protected function checkFileExists($filePath)
     {
-        if ($relative) {
-            $sModulesDir = Registry::getConfig()->getModulesDir();
-            $filePath = $sModulesDir . $filePath;
-        }
+        $sModulesDir = Registry::getConfig()->getModulesDir();
+        $filePath = $sModulesDir . $filePath;
+
         $dir = dirname($filePath);
         $file = basename($filePath);
         $res = true;
@@ -601,7 +599,7 @@ class InternalModule extends InternalModule_parent
         if (!in_array($file, $filelist)) {
             $res = false;
         }
-    return $res;
+        return $res;
     }
 
     /**
