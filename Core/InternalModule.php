@@ -232,9 +232,9 @@ class InternalModule extends InternalModule_parent
         }
         $title = parent::getTitle();
         $request = Registry::getRequest();
-        $cl = $request->getRequestParameter('cl');
+        $controller = $request->getRequestParameter('cl');
 
-        if ($cl == 'module_list') {
+        if ($controller == 'module_list') {
             $fixed = $this->getModuleFixHelper()->fix($this);
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
