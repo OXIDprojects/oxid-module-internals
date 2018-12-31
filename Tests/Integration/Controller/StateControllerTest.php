@@ -38,17 +38,4 @@ class StateControllerTest extends UnitTestCase
         $this->assertEquals($module->getId(), $moduleId);
     }
 
-    /**
-     *
-     */
-    public function testGetModuleFixHelper()
-    {
-        $moduleId = 'moduleinternals';
-        $this->setRequestParameter('oxid', $moduleId);
-        $stateController = oxNew(State::class);
-
-        $module = $stateController->getModuleFixHelper();
-
-        $this->assertInstanceOf(ModuleStateFixer::class, $module, 'class not as expected');
-    }
 }

@@ -43,15 +43,4 @@ class FixHelperTest extends UnitTestCase
         $this->assertNotEquals($this->getConfigParam('aModuleExtend'), ['a' => 'b']);
     }
 
-
-    /**
-     * @param $moduleId
-     *
-     * @return object
-     */
-    protected function createFixHelper($moduleId)
-    {
-
-        return $fixHelper;
-    }
 }
