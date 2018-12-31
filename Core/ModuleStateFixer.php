@@ -70,7 +70,9 @@ class ModuleStateFixer extends ModuleInstaller
         $this->module = $module;
         $this->needCacheClear = false;
         $this->restoreModuleInformation($module, $moduleId);
+        $somethingWasFixed = $this->needCacheClear;
         $this->clearCache($module, $moduleId);
+        return $somethingWasFixed;
     }
 
 
@@ -308,13 +310,12 @@ class ModuleStateFixer extends ModuleInstaller
                 $name = $setting["name"];
                 $type = $setting["type"];
 
-                $value = is_null($config->getConfigParam($name)) ? $setting["value"] : $config->getConfigParam($name);
-
-                $changed = $config->saveShopConfVar($type, $name, $value, $shopId, $module);
-                if ($changed) {
+                if (is_null($config->getConfigParam($name))){
+                    $value = $setting["value"];
+                    $config->saveShopConfVar($type, $name, $value, $shopId, $module);
                     $this->output->writeln("$moduleId: setting for '$name' fixed'");
-                    $this->needCacheClear = $this->needCacheClear || $changed;
-                }
+                    $this->needCacheClear = true;
+                } ;
             }
         }
     }
@@ -441,27 +442,6 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addTemplateBlocks($moduleBlocks, $moduleId)
     {
-        /*
-        $shopid = $this->getConfig()->getShopId();
-        $moduleBlocksInDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->getAll("SELECT `OXPOS` as `position`,`OXTHEME` as theme, `OXTEMPLATE` as template, `OXBLOCKNAME` as block, `OXFILE` as file FROM oxtplblocks WHERE oxmodule = '$moduleId' AND oxshopid = '$shopid' AND `OXACTIVE` = 1 order by `OXPOS`");
-        check and set $this->needCacheClear = true;
-        */
-
-        $this->setTemplateBlocks($moduleBlocks, $moduleId);
-    }
-
-    /**
-     * Set module templates in the database.
-     * we do not use delete and add combination because
-     * the combination of deleting and adding does unnessery writes and so it does not scale
-     * also it's more likely to get race conditions (in the moment the blocks are deleted)
-     * @todo extract oxtplblocks query to ModuleTemplateBlockRepository
-     *
-     * @param array  $moduleBlocks Module blocks array
-     * @param string $moduleId     Module id
-     */
-    protected function setTemplateBlocks($moduleBlocks, $moduleId)
-    {
         if (!is_array($moduleBlocks)) {
             $moduleBlocks = array();
         }
@@ -481,11 +461,10 @@ class ModuleStateFixer extends ModuleInstaller
             $filePath = $moduleBlock["file"];
             $theme = isset($moduleBlock['theme']) ? $moduleBlock['theme'] : '';
 
-            $sql = "INSERT INTO `oxtplblocks` (`OXID`, `OXACTIVE`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
-                     VALUES (?, 1, ?, ?, ?, ?, ?, ?, ?)
+            $sql = "INSERT INTO `oxtplblocks` (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                      ON DUPLICATE KEY UPDATE
                       `OXID` = VALUES(OXID),
-                      `OXACTIVE` = VALUES(OXACTIVE),
                       `OXSHOPID` = VALUES(OXSHOPID),
                       `OXTHEME` = VALUES(OXTHEME),
                       `OXTEMPLATE` = VALUES(OXTEMPLATE),
@@ -562,60 +541,5 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
 
-    /**
-     * Fixes settings config
-     */
-    public function fixSettings()
-    {
-        $aModuleSettings = $this->getInfo('settings');
-        $oConfig = Registry::getConfig();
-        $sShopId = $oConfig->getShopId();
-        $oDb = DatabaseProvider::getDb();
-
-        // Cleanup !!!
-        $oDb->execute(
-            'DELETE FROM oxconfig WHERE oxmodule = ? AND oxshopid = ?',
-            [sprintf('module:%s', $this->getModuleId()), $sShopId]
-        );
-        $oDb->execute('DELETE FROM oxconfigdisplay WHERE oxcfgmodule = ?', [$this->getModuleId()]);
-
-        if (is_array($aModuleSettings)) {
-            foreach ($aModuleSettings as $aValue) {
-                $sOxId = Registry::get('oxUtilsObject')->generateUId();
-
-                $sModule = 'module:' . $this->getModuleId();
-                $sName = $aValue['name'];
-                $sType = $aValue['type'];
-                $sValue = is_null($oConfig->getConfigParam($sName)) ? $aValue['value'] : $oConfig->getConfigParam(
-                    $sName
-                );
-                $sGroup = $aValue['group'] ?? '';
-
-                $sConstraints = '';
-                if (isset($aValue['constraints'])) {
-                    $sConstraints = $aValue['constraints'];
-                } elseif (isset($aValue['constrains'])) {
-                    $sConstraints = $aValue['constrains'];
-                }
-
-                $iPosition = $aValue['position'] ?? 1;
-
-                $oConfig->setConfigParam($sName, $sValue);
-                $oConfig->saveShopConfVar($sType, $sName, $sValue, $sShopId, $sModule);
-
-                $sInsertSql = '
-                    INSERT INTO `oxconfigdisplay`
-                    (`OXID`, `OXCFGMODULE`, `OXCFGVARNAME`, `OXGROUPING`, `OXVARCONSTRAINT`, `OXPOS`)
-                    VALUES
-                    (?, ?, ?, ?, ?, ?)
-                ';
-
-                $oDb->execute($sInsertSql, [$sOxId, $sModule, $sName, $sGroup, $sConstraints, $iPosition]);
-            }
-            $this->needCacheClear = true;
-        }
-
-        $this->clearCache();
-    }
 
 }

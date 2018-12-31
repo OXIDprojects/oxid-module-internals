@@ -44,8 +44,6 @@ $aLang = [
     'AC_STATE_FS' => 'Fehler S',
 
     'AC_STATE_OK_LABEL' => 'Die Metadaten entsprechen den Daten, die im Shop gespeichert sind.',
-    'AC_STATE_WA_LABEL' => 'Metadaten fehlen in den Shop-Daten',
-    'AC_STATE_ER_LABEL' => 'Shop-Daten wurden nicht in den Metadaten gefunden',
     'AC_STATE_FM_LABEL' => 'Die Dateien, die in den Metadaten definiert wurden, gibt es nicht',
     'AC_STATE_FS_LABEL' => 'Die Dateien, die in den Shop-Daten definiert wurden, gibt es nicht',
 

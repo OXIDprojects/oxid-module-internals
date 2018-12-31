@@ -15,9 +15,11 @@ use OxidCommunity\ModuleInternals\Core\FixHelper as FixHelper;
 use OxidCommunity\ModuleInternals\Core\InternalModule;
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
+use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Module\ModuleCache as ModuleCache;
 use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Module\Module as Module;
+use OxidEsales\Eshop\Core\Registry;
 use Symfony\Component\Console\Output\NullOutput;
 
 /**
@@ -40,9 +42,6 @@ class State extends AdminController
     /** @var Module */
     protected $_oModule;
 
-    /** @var ModuleStateFixer */
-    protected $_oModuleFixHelper;
-
     /**
      * init current Module
      * State constructor.
@@ -52,27 +51,6 @@ class State extends AdminController
         $this->getModule();
     }
 
-    /**
-     * @return ModuleStateFixer
-     */
-    public function getModuleFixHelper()
-    {
-        if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = $stateFixer = new ModuleStateFixer();
-            $stateFixer->setDebugOutput(new NullOutput());
-            $stateFixer->setOutput(new NullOutput());
-        }
-
-        return $this->_oModuleFixHelper;
-    }
-
-    /**
-     * @param ModuleStateFixer $oModuleFixHelper
-     */
-    public function setModuleFixHelper($oModuleFixHelper)
-    {
-        $this->_oModuleFixHelper = $oModuleFixHelper;
-    }
 
     /**
      * Get active module object.
@@ -108,33 +86,19 @@ class State extends AdminController
             $this->addTplParam($paramName, $paramValue);
         }
 
-
-        $this->addTplParam(
-            'sState',
-            [
-                -3 => 'sfatals',
-                -2 => 'sfatalm',
-                -1 => 'serror',
-                0  => 'swarning',
-                1  => 'sok',
-            ]
-        );
-
         return $this->sTemplate;
     }
 
-    /**
-     * Fix module version.
-     */
-    public function fix() {
-        $this->getModuleFixHelper()->fix($this->getModule());
-    }
+
     /**
      * Fix module settings.
      */
-    public function fix_settings()
+    public function block()
     {
-        $this->getModuleFixHelper()->fixSettings();
+        $request = Registry::getRequest();
+        $data = $request->getRequestParameter('data');
+        DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->execute(
+        "UPDATE oxtplblocks SET OXACTIVE = NOT OXACTIVE WHERE OXID = ?",[$data]);
     }
 
 }
