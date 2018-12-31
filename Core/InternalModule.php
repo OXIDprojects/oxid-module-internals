@@ -59,7 +59,7 @@ class InternalModule extends InternalModule_parent
     public function getModuleFixHelper()
     {
         if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = $stateFixer = Registry::get(ModuleStateFixer::class);
+            $this->_oModuleFixHelper = Registry::get(ModuleStateFixer::class);
         }
 
         return $this->_oModuleFixHelper;
@@ -232,10 +232,9 @@ class InternalModule extends InternalModule_parent
         }
         $title = parent::getTitle();
         $request = Registry::getRequest();
-        $cl = $request->getRequestParameter('cl');
-        $isEdit = $request->getRequestParameter('actedit');
+        $controller = $request->getRequestParameter('cl');
 
-        if ($cl == 'module_list') {
+        if ($controller == 'module_list') {
             $fixed = $this->getModuleFixHelper()->fix($this);
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
@@ -333,7 +332,8 @@ class InternalModule extends InternalModule_parent
         $aDatabaseBlocks = is_array($aDatabaseBlocks) ? $aDatabaseBlocks : [];
         $aMetadataTemplates = $this->getInfo('templates');
 
-        $sModulesDir = Registry::getConfig()->getModulesDir();
+        $config = Registry::getConfig();
+        $sModulesDir = $config->getModulesDir();
 
         // Check if all blocks are injected.
         foreach ($aDatabaseBlocks as &$aBlock) {
@@ -341,9 +341,9 @@ class InternalModule extends InternalModule_parent
 
 
             $file = $aBlock['file'];
-            if (!file_exists($sModulesDir . '/' . $sModulePath . '/' . $file) &&
-                !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . basename($file)) &&
-                !file_exists($sModulesDir . '/' . $sModulePath . '/out/blocks/' . basename($file) . '.tpl')
+            if (!$this->checkFileExists( $sModulePath . '/' . $file) &&
+                !$this->checkFileExists( $sModulePath . '/out/blocks/' . basename($file)) &&
+                !$this->checkFileExists( $sModulePath . '/out/blocks/' . basename($file) . '.tpl')
             ) {
                 $iState = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
@@ -356,19 +356,17 @@ class InternalModule extends InternalModule_parent
             // Check if template file exists and block is defined.
 
             // Get template from shop..
-            $sTemplate = Registry::getConfig()->getTemplatePath($template, false);
+            $sTemplate = $config->getTemplatePath($template, false);
 
             // Get template from shop admin ..
             if (!$sTemplate) {
-                $sTemplate = Registry::getConfig()->getTemplatePath($template, true);
+                $sTemplate = $config->getTemplatePath($template, true);
             }
 
             // Get template from module ..
             if (!$sTemplate && isset($aMetadataTemplates[$template])) {
 
-                $sModulesDir = Registry::getConfig()->getModulesDir();
-
-                if (file_exists($sModulesDir . '/' . $aMetadataTemplates[$template])) {
+                if ($this->checkFileExists($aMetadataTemplates[$template])) {
                     $sTemplate = $sModulesDir . '/' . $aMetadataTemplates[$template];
                 }
             }
@@ -454,13 +452,13 @@ class InternalModule extends InternalModule_parent
         return $result;
     }
 
-    protected function checkFiles($files , $php, $relative = true){
+    protected function checkFiles($files , $php){
         $result = [];
         foreach ($files as $key => $file) {
             $result[$key]['data'] = $file;
             $s = self::OK;
             if (($php && !$this->checkPhpFileExists($file))
-                || ((!$php) && !$this->checkFileExists($file, $relative))) {
+                || ((!$php) && !$this->checkFileExists($file))) {
                 $s = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
             }
@@ -479,7 +477,7 @@ class InternalModule extends InternalModule_parent
         $aDatabaseEvents = $this->getModuleEntries(ModuleList::MODULE_KEY_EVENTS);
 
         $aDatabaseEvents = is_array($aDatabaseEvents) ? $aDatabaseEvents : [];
-        $aDatabaseEvents = array_map(function ($v){return print_r($v,true);}, $aDatabaseEvents);
+        $aDatabaseEvents = array_map(function ($value){return print_r($value,true);}, $aDatabaseEvents);
         $aResult = $this->toResult($aDatabaseEvents);
         foreach ($aResult as $eventName => &$data){
             $data['key_state'] = ($eventName == 'onActivate' || $eventName == 'onDeactivate') ? self::OK : self::SHOP_FILE_NOT_FOUND;
@@ -579,27 +577,27 @@ class InternalModule extends InternalModule_parent
         return $aModule;
     }
 
+    protected $filelist = [];
     /**
      * @param $filePath
      * @return bool
      */
-    protected function checkFileExists($filePath, $relative = true)
+    protected function checkFileExists($filePath)
     {
-        if ($relative) {
-            $sModulesDir = Registry::getConfig()->getModulesDir();
-            $filePath = $sModulesDir . $filePath;
+        $sModulesDir = Registry::getConfig()->getModulesDir();
+        $filePath = $sModulesDir . $filePath;
+
+        $dir = dirname($filePath);
+        $file = basename($filePath);
+        $res = true;
+        //check if filename case sensitive so we will see errors
+        //also on case insensitive filesystems
+        $filelist = $this->filelist[$dir];
+        if (!isset($filelist)) {
+            $filelist = $this->filelist[$dir] = scandir($dir);
         }
-        $res = file_exists($filePath);
-        if ($res) {
-            $dir = dirname($filePath);
-            $file = basename($filePath);
-
-            //check if filename case sensitive so we will see errors
-            //also on case insensitive filesystems
-            if (!in_array($file, scandir($dir))) {
-                $res = false;
-            }
-
+        if (!in_array($file, $filelist)) {
+            $res = false;
         }
         return $res;
     }
@@ -621,60 +619,5 @@ class InternalModule extends InternalModule_parent
         return $package;
     }
 
-/*    /**
-     * Fixes settings config
-
-    public function fixSettings()
-    {
-        $aModuleSettings = $this->getInfo('settings');
-        $oConfig = Registry::getConfig();
-        $sShopId = $oConfig->getShopId();
-        $oDb = DatabaseProvider::getDb();
-
-        // Cleanup !!!
-        $oDb->execute(
-            'DELETE FROM oxconfig WHERE oxmodule = ? AND oxshopid = ?',
-            [sprintf('module:%s', $this->getModuleId()), $sShopId]
-        );
-        $oDb->execute('DELETE FROM oxconfigdisplay WHERE oxcfgmodule = ?', [$this->getModuleId()]);
-
-        if (is_array($aModuleSettings)) {
-            foreach ($aModuleSettings as $aValue) {
-                $sOxId = Registry::get('oxUtilsObject')->generateUId();
-
-                $sModule = 'module:' . $this->getModuleId();
-                $sName = $aValue['name'];
-                $sType = $aValue['type'];
-                $sValue = is_null($oConfig->getConfigParam($sName)) ? $aValue['value'] : $oConfig->getConfigParam(
-                    $sName
-                );
-                $sGroup = $aValue['group'] ?? '';
-
-                $sConstraints = '';
-                if (isset($aValue['constraints'])) {
-                    $sConstraints = $aValue['constraints'];
-                } elseif (isset($aValue['constrains'])) {
-                    $sConstraints = $aValue['constrains'];
-                }
-
-                $iPosition = $aValue['position'] ?? 1;
-
-                $oConfig->setConfigParam($sName, $sValue);
-                $oConfig->saveShopConfVar($sType, $sName, $sValue, $sShopId, $sModule);
-
-                $sInsertSql = '
-                    INSERT INTO `oxconfigdisplay`
-                    (`OXID`, `OXCFGMODULE`, `OXCFGVARNAME`, `OXGROUPING`, `OXVARCONSTRAINT`, `OXPOS`)
-                    VALUES
-                    (?, ?, ?, ?, ?, ?)
-                ';
-
-                $oDb->execute($sInsertSql, [$sOxId, $sModule, $sName, $sGroup, $sConstraints, $iPosition]);
-            }
-            $this->needCacheClear = true;
-        }
-
-        $this->clearCache();
-    }*/
 
 }
