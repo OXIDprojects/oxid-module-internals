@@ -18,6 +18,9 @@
     "composer/composer" : "^1.6",
     "oxid-esales/oxideshop-ce" : "^6.0"
   },
+  "require-dev": {
+    "codacy/coverage": "dev-master"
+  } 
   "extra": {
     "oxideshop": {
       "target-directory": "oxcom/moduleinternals",
