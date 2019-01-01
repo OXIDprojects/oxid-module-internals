@@ -24,13 +24,14 @@ before_script:
 
 script:
   - cd ~/OXID/
-  - ./vendor/bin/runtests --coverage-clover build/coverage/xml
+  - ./vendor/bin/runtests --coverage-clover coverage.xml
   
 after_script:
-  - php vendor/bin/codacycoverage clover build/coverage/xml
+  - php vendor/bin/codacycoverage clover coverage.xml
 
 before_cache:
   - composer remove "oxid-community/moduleinternals"
+  - rm -rfv ~/OXID/coverage.xml
   - rm -rfv ~/OXID/source/modules/oxcom/moduleinternals
   - rm -rfv ~/OXID/vendor/oxid-community/moduleinternals
   - rm -rfv ~/OXID/source/tmp/*
