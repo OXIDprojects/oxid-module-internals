@@ -24,7 +24,7 @@ before_script:
 
 script:
   - cd ~/OXID/
-  - ./vendor/bin/runtests --coverage-clover coverage.xml
+  - ./vendor/bin/runtests-coverage
   
 after_script:
   - php vendor/bin/codacycoverage clover coverage.xml
