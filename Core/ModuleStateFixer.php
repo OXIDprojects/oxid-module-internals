@@ -209,10 +209,10 @@ class ModuleStateFixer extends ModuleInstaller
         $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
         $old =  isset($aVersions[$sModuleId]) ? $aVersions[$sModuleId] : '';
         if (isset($sModuleVersion)) {
-            $aVersions[$sModuleId] = $sModuleVersion;
+            
             if ($old !== $sModuleVersion) {
                 $this->output->writeLn("$sModuleId fixing module version from $old to $sModuleVersion");
-                $aEvents[$sModuleId] = $sModuleVersion;
+                $aVersions[$sModuleId] = $sModuleVersion;
                 $this->_saveToConfig('aModuleVersions', $aVersions);
                 $this->needCacheClear = true;
             }
