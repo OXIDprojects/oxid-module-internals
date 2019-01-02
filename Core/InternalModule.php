@@ -14,7 +14,6 @@ use \OxidEsales\Eshop\Core\DatabaseProvider as DatabaseProvider;
 use \OxidEsales\Eshop\Core\Registry as Registry;
 use \OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Request;
-use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Class InternalModule: chain extends OxidEsales\Eshop\Core\Module\Module
