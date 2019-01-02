@@ -11,6 +11,8 @@ namespace OxidCommunity\ModuleInternals\Core;
 
 use OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner;
 use OxidEsales\Eshop\Core\Registry;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -20,10 +22,10 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 
     public function __construct()
     {
-        $this->_debugOutput= new NullOutput();
+        $this->_debugOutput= new NullLogger();
     }
 
-    public function setOutput(OutputInterface $out){
+    public function setOutput(LoggerInterface $out){
 
         $this->_debugOutput = $out;
     }
@@ -53,7 +55,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
                 foreach ($installedExtensions as &$coreClassExtension) {
                     foreach ($coreClassExtension as $i => $ext) {
                         if ($ext === $item) {
-                            $this->_debugOutput->writeln("$item will be removed");
+                            $this->_debugOutput->debug("$item will be removed");
                             unset($coreClassExtension[$i]);
                         }
                     }
@@ -67,7 +69,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
     protected function removeGarbage($aInstalledExtensions, $aarGarbage)
     {
         foreach ($aarGarbage as $moduleId => $aExt) {
-            $this->_debugOutput->writeLn("[INFO] removing garbage for module $moduleId: " . join(',', $aExt));
+            $this->_debugOutput->info("removing garbage for module $moduleId: " . join(',', $aExt));
         }
         return parent::removeGarbage($aInstalledExtensions, $aarGarbage);
     }

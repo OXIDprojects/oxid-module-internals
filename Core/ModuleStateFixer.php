@@ -10,7 +10,8 @@ use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Exception\ModuleValidationException;
-use Symfony\Component\Console\Output\NullOutput;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
 /**
@@ -21,17 +22,13 @@ class ModuleStateFixer extends ModuleInstaller
 
     public function __construct($cache = null, $cleaner = null){
         $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
-        $this->_debugOutput = new NullOutput();
-        $this->output = $this->_debugOutput;
+        $this->output = Registry::getLogger();;
         parent::__construct($cache, $cleaner);
     }
 
-
-
-    /** @var OutputInterface $_debugOutput */
-    protected $_debugOutput;
-
-    /** @var OutputInterface $_debugOutput */
+    /**
+     * @var $output LoggerInterface
+     */
     protected $output;
 
     protected $needCacheClear = false;
@@ -62,9 +59,7 @@ class ModuleStateFixer extends ModuleInstaller
             if (extension_loaded('apc') && ini_get('apc.enabled')) {
                 apc_clear_cache();
             }
-            if ($this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-                $this->output->writeln("initial cache cleared");
-            }
+            $this->output->debug("initial cache cleared");
             $this->initialCacheClearDone = true;
         }
         $this->module = $module;
@@ -74,12 +69,6 @@ class ModuleStateFixer extends ModuleInstaller
         $this->clearCache($module);
         return $somethingWasFixed;
     }
-
-
-    //public function resetModuleCache($module = null){
-    //  parent::resetCache()
-    //}
-
 
     /**
      * Add module template files to config for smarty.
@@ -95,15 +84,15 @@ class ModuleStateFixer extends ModuleInstaller
             $diff = $this->diff($old,$aModuleTemplates);
             if ($diff) {
                 $what = $old === null ? ' everything ' :  var_export($diff, true);
-                $this->output->writeLn("[INFO] $sModuleId fixing templates");
-                $this->output->writeLn("[DEBUG] $what");
+                $this->output->error("$sModuleId fixing templates");
+                $this->output->debug(" $what");
                 $aTemplates[$sModuleId] = $aModuleTemplates;
                 $this->_saveToConfig('aModuleTemplates', $aTemplates);
                 $this->needCacheClear = true;
             }
         } else {
             if ($old) {
-                $this->output->writeLn("$sModuleId unregister templates:");
+                $this->output->error("$sModuleId unregister templates:");
                 $this->_deleteTemplateFiles($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -130,15 +119,15 @@ class ModuleStateFixer extends ModuleInstaller
             $diff = $this->diff($old,$aModuleFiles);
             if ($diff) {
                 $what = $old === null ? ' everything' : var_export($diff, true);
-                $this->output->writeLn("[INFO] $sModuleId fixing files");
-                $this->output->writeLn("[DEBUG] $what");
+                $this->output->error("$sModuleId fixing files");
+                $this->output->debug(" $what");
                 $aFiles[$sModuleId] = $aModuleFiles;
                 $this->_saveToConfig('aModuleFiles', $aFiles);
                 $this->needCacheClear = true;
             }
         } else {
             if ($old) {
-                $this->output->writeLn("$sModuleId unregister files");
+                $this->output->error("$sModuleId unregister files");
                 $this->_deleteModuleFiles($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -162,14 +151,14 @@ class ModuleStateFixer extends ModuleInstaller
             if ($diff) {
                 $aEvents[$sModuleId] = $aModuleEvents;
                 $what = $old == null ? ' everything ' : var_export($diff, true);
-                $this->output->writeLn("[INFO] $sModuleId fixing module events");
-                $this->output->writeLn("[DEBUG] $what");
+                $this->output->error("$sModuleId fixing module events");
+                $this->output->debug(" $what");
                 $this->_saveToConfig('aModuleEvents', $aEvents);
                 $this->needCacheClear = true;
             }
         } else {
             if ($old) {
-                $this->output->writeLn("$sModuleId unregister events");
+                $this->output->info("$sModuleId unregister events");
                 $this->_deleteModuleEvents($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -194,14 +183,14 @@ class ModuleStateFixer extends ModuleInstaller
             if ($diff) {
                 $extensions[$moduleId] = array_values($moduleExtensions);
                 $what =  $old === null ? ' everything ' : var_export($diff, true);
-                $this->output->writeLn("[INFO] $moduleId fixing module extensions");
-                $this->output->writeLn("[DEBUG] $what");
+                $this->output->error("$moduleId fixing module extensions");
+                $this->output->debug(" $what");
 
                 $this->_saveToConfig('aModuleExtensions', $extensions);
                 $this->needCacheClear = true;
             }
         } else {
-            $this->output->writeLn("$moduleId unregister module extensions");
+            $this->output->error("$moduleId unregister module extensions");
             $this->needCacheClear = true;
             $this->_saveToConfig('aModuleExtensions', []);
         }
@@ -220,13 +209,13 @@ class ModuleStateFixer extends ModuleInstaller
         if (isset($sModuleVersion)) {
             if ($old !== $sModuleVersion) {
                 $aVersions[$sModuleId] = $sModuleVersion;
-                $this->output->writeLn("$sModuleId fixing module version from $old to $sModuleVersion");
+                $this->output->error("$sModuleId fixing module version from $old to $sModuleVersion");
                 $this->_saveToConfig('aModuleVersions', $aVersions);
                 $this->needCacheClear = true;
             }
         } else {
             if ($old) {
-                $this->output->writeLn("$sModuleId unregister module version");
+                $this->output->info("$sModuleId unregister module version");
                 $this->_deleteModuleVersions($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -312,6 +301,7 @@ class ModuleStateFixer extends ModuleInstaller
         $config = $this->getConfig();
         $shopId = $config->getShopId();
         if (is_array($moduleSettings)) {
+            $diff = false;
             foreach ($moduleSettings as $setting) {
 
                 $module = $this->getModuleConfigId($moduleId);
@@ -319,11 +309,15 @@ class ModuleStateFixer extends ModuleInstaller
                 $type = $setting["type"];
 
                 if (is_null($config->getConfigParam($name))){
+                    $diff = true;
                     $value = $setting["value"];
                     $config->saveShopConfVar($type, $name, $value, $shopId, $module);
-                    $this->output->writeln("$moduleId: setting for '$name' fixed'");
-                    $this->needCacheClear = true;
+                    $this->output->debug("$moduleId: setting for '$name' fixed'");
                 } ;
+            }
+            if ($diff) {
+                $this->output->error("$moduleId: settings fixed'");
+                $this->needCacheClear = true;
             }
         }
     }
@@ -342,9 +336,9 @@ class ModuleStateFixer extends ModuleInstaller
         $duplicatedKeys = array_intersect_key($moduleControllers, $controllersForThatModuleInDb);
         $diff = array_diff_assoc($moduleControllers, $duplicatedKeys);
         if ($diff) {
-            $this->output->writeLn("[INFO] $moduleId fixing module controllers");
-            $this->output->writeLn("[DEBUG] (in md):"  . var_export($moduleControllers, true));
-            $this->output->writeLn("[DEBUG] (in db):"  . var_export($controllersForThatModuleInDb, true));
+            $this->output->info("$moduleId fixing module controllers");
+            $this->output->debug(" (in md):"  . var_export($moduleControllers, true));
+            $this->output->debug(" (in db):"  . var_export($controllersForThatModuleInDb, true));
 
             $this->deleteModuleControllers($moduleId);
             $this->resetModuleCache($module);
@@ -382,6 +376,7 @@ class ModuleStateFixer extends ModuleInstaller
 
     /**
      * @param $o OutputInterface
+     * @deprecated
      */
     public function setDebugOutput($o)
     {
@@ -391,8 +386,9 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * @param $o OutputInterface
      */
-    public function setOutput($o)
+    public function setOutput($output)
     {
+        $o  = new ConsoleLogger($output);
         $this->output = $o;
         $this->getModuleCleaner()->setOutput($o);
     }
@@ -410,28 +406,27 @@ class ModuleStateFixer extends ModuleInstaller
             $this->needCacheClear = true;
             $onlyInAfterFix = array_diff($aModules, $aModulesDefault);
             $onlyInBeforeFix = array_diff($aModulesDefault, $aModules);
-            $this->output->writeLn("[INFO] fixing " . $module->getId());
+            $this->output->info("fixing " . $module->getId());
             foreach ($onlyInAfterFix as $core => $ext) {
                 if ($oldChain = $onlyInBeforeFix[$core]) {
                     $newExt = substr($ext, strlen($oldChain));
                     if (!$newExt) {
                         //$newExt = substr($ext, strlen($oldChain));
-                        $this->output->writeLn("[DEBUG] remove ext for $core");
-                        $this->output->writeLn("[DEBUG] old: $oldChain");
-                        $this->output->writeLn("[DEBUG] new: $ext");
-                        //$this->_debugOutput->writeLn("[ERROR] extension chain is corrupted for this module");
+                        $this->output->debug(" remove ext for $core");
+                        $this->output->debug(" old: $oldChain");
+                        $this->output->debug(" new: $ext");
                         //return;
                         continue;
                     } else {
-                        $this->output->writeLn("[DEBUG] append $core => ...$newExt");
+                        $this->output->debug(" append $core => ...$newExt");
                     }
                     unset($onlyInBeforeFix[$core]);
                 } else {
-                    $this->output->writeLn("[DEBUG] add $core => $ext");
+                    $this->output->debug(" add $core => $ext");
                 }
             }
             foreach ($onlyInBeforeFix as $core => $ext) {
-                $this->output->writeLn("[DEBUG] remove $core => $ext");
+                $this->output->debug(" remove $core => $ext");
             }
             $this->_saveToConfig('aModules', $aModules);
         }
@@ -545,10 +540,7 @@ class ModuleStateFixer extends ModuleInstaller
     {
         if ($this->needCacheClear) {
             $this->resetModuleCache($module);
-            $this->output->writeln("cache cleared for" . $module->getId());
+            $this->output->info("cache cleared for" . $module->getId());
         }
     }
-
-
-
 }
