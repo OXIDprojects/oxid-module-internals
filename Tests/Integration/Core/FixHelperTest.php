@@ -29,6 +29,7 @@ class FixHelperTest extends UnitTestCase
         $this->setConfigParam('aModuleTemplates', ['a' => 'b']);
         $this->callSut();
         $this->assertNotEquals($this->getConfigParam('aModuleTemplates'), ['a' => 'b']);
+        $this->assertLogEntry("fixing templates");
     }
 
     public function testFixVersion()
@@ -37,6 +38,7 @@ class FixHelperTest extends UnitTestCase
         $this->callSut();
 
         $this->assertNotEquals($this->getConfigParam('aModuleVersions'), ['moduleinternals' => '0.1.0']);
+        $this->assertLogEntry("fixing module version");
     }
 
     public function testFixExtensions()
@@ -44,6 +46,7 @@ class FixHelperTest extends UnitTestCase
         $this->setConfigParam('aModuleExtensions', ['a' => ['b']]);
         $this->callSut();
         $this->assertNotEquals($this->getConfigParam('aModuleExtensions'), ['a' => ['b']]);
+        $this->assertLogEntry("fixing module extensions");
     }
 
     /**
@@ -58,6 +61,13 @@ class FixHelperTest extends UnitTestCase
         $fixHelper = oxNew(ModuleStateFixer::class);
 
         $fixHelper->fix($module);
+    }
+
+    private function assertLogEntry($text)
+    {
+        $content = $this->exceptionLogHelper->getExceptionLogFileContent();
+        $this->assertContains($text, $content);
+        $this->exceptionLogHelper->clearExceptionLogFile();
     }
 
 }
