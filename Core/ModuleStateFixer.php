@@ -22,7 +22,7 @@ class ModuleStateFixer extends ModuleInstaller
 
     public function __construct($cache = null, $cleaner = null){
         $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
-        $this->output = Registry::getLogger();;
+        $this->output = $this->getLogger();
         parent::__construct($cache, $cleaner);
     }
 
@@ -543,4 +543,12 @@ class ModuleStateFixer extends ModuleInstaller
             $this->output->info("cache cleared for" . $module->getId());
         }
     }
+
+    public function getLogger(){
+        if(function_exists("\getLogger")){
+            return \getLogger();
+        }
+        return new FallbackLogger();
+    }
 }
+
