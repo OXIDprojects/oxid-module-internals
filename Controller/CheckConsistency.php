@@ -7,7 +7,7 @@ use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Module\Module as Module;
 use OxidEsales\Eshop\Core\SeoEncoder;
-use OxidCommunity\ModuleInternals\Core\InternalModule;
+use OxidEsales\Eshop\Core\Request;
 
 class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
@@ -24,7 +24,7 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
         $oConfig  = Registry::get(Config::class);
 
         $redirectUrl = $oConfig->getShopUrl();
-        $sKey = $oConfig->getRequestParameter('key');
+        $sKey = Registry::get(Request::class)('key');
 
         //todo: add Exeception / Logging
         if((bool)$oConfig->getConfigParam('blACActiveCompleteCheck') == false )
@@ -54,7 +54,6 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
         foreach($aModules as $sModId => $sTitle)
         {
             $oModule->load($sModId);
-
             $aModule = $oModule->checkState($sTitle);
 
             $aModuleChecks[$sModId] = $aModule;
@@ -78,7 +77,6 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
      */
     protected function _getActiveModules(array $aDisabledModules, array $aModulePaths)
     {
-
         $oConfig  = Registry::get(Config::class);
         $aModulePaths = array_flip($aModulePaths);
         $aActiveModules = array_diff($aModulePaths,$aDisabledModules);
@@ -116,6 +114,4 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
 
         return $aActiveModules;
     }
-
-
 }
