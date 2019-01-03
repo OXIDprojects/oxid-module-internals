@@ -79,25 +79,12 @@
 
             [{include file="items.tpl" title="AC_MI_EVENTS" items=$ModId.aEvents}]
 
-            [{if $ModId.aEvents|@count == 0
-            && $ModId.aSettings|@count == 0
-            && $ModId.aControllers|@count == 0
-            && $ModId.aTemplates|@count == 0
-            && $ModId.aBlocks|@count == 0
-            && $ModId.aFiles|@count == 0
-            && $ModId.aExtended|@count == 0
-            && $ModId.aVersions|@count == 0
-            }]
-                -
-            [{/if}]
         </div>
     [{/foreach}]
 
     <div class="actions">
         <b>[{oxmultilang ident="AC_LEGEND"}] : </b>
-        <span class="state sok">[{oxmultilang ident="AC_STATE_OK"}]</span> <i>[{oxmultilang ident="AC_STATE_OK_LABEL"}]</i>
-        <span class="state swarning">[{oxmultilang ident="AC_STATE_WA"}]</span> <i>[{oxmultilang ident="AC_STATE_WA_LABEL"}]</i>
-        <span class="state serror">[{oxmultilang ident="AC_STATE_ER"}]</span> <i>[{oxmultilang ident="AC_STATE_ER_LABEL"}]</i>
+        <span class="state sok">[{oxmultilang ident="AC_STATE_OK"}]</span> <i>[{oxmultilang ident="AC_STATE_OK"}]</i>
         <span class="state sfatalm">[{oxmultilang ident="AC_STATE_FM"}]</span> <i>[{oxmultilang ident="AC_STATE_FM_LABEL"}]</i>
         <span class="state sfatals">[{oxmultilang ident="AC_STATE_FS"}]</span> <i>[{oxmultilang ident="AC_STATE_FS_LABEL"}]</i>
     </div>

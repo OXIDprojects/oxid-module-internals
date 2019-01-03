@@ -227,23 +227,23 @@ class InternalModule extends InternalModule_parent
 
     public function getTitle() {
         if ($this->checked !== false) {
-            return $this->checked;
+            return $this->checked['title'];
         }
         $title = parent::getTitle();
         $request = Registry::getRequest();
         $controller = $request->getRequestParameter('cl');
 
-        if ($controller == 'module_list') {
+        if ($controller == 'module_list' || $controller == 'checkconsistency') {
             $fixed = $this->getModuleFixHelper()->fix($this);
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
             }
-            $this->checkState();
+            $this->checked = $this->checkState();
             if (($this->state & self::NEED_MANUAL_FIXED) == self::NEED_MANUAL_FIXED) {
                 $title .= ' <strong style="color: #009ddb">Issue found!</strong>';
             }
 
-            $this->checked = $title;
+            $this->checked['title'] = $title;
         }
         return $title;
     }
@@ -536,6 +536,9 @@ class InternalModule extends InternalModule_parent
      */
     public function checkState($sTitle = '')
     {
+        if ($this->checked !== false) {
+            return $this->checked;
+        }
         $oModule = $this;
         $aModule = array();
         $aModule['oxid'] = $sId = $oModule->getId();
