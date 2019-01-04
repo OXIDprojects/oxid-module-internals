@@ -43,6 +43,14 @@ class InternalModule extends InternalModule_parent
         return $composerClassLoader;
     }
 
+    public function load($id){
+        $this->metaDataVersion = 0;
+        $this->checked = false;
+        $this->state = self::FINE;
+        $res = parent::load($id);
+        return $res;
+    }
+
     /**
      * @param ModuleStateFixer $oModuleFixHelper
      */
