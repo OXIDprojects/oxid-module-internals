@@ -497,10 +497,10 @@ class InternalModule extends InternalModule_parent
      *
      * @return string
      */
-    public function getModuleNameSpace($sModulePath)
+    public function getModuleNameSpace()
     {
         $package = $this->getComposerPackage();
-
+        $sModulePath = $this->getModulePath();
         if ($package) {
             $autoload = $package->getAutoload();
         } else {

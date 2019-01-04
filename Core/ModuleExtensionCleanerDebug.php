@@ -41,7 +41,17 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      */
     public function cleanExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
     {
-        $installedExtensions = parent::cleanExtensions($installedExtensions, $module);
+        $moduleExtensions = $module->getExtensions();
+
+        $installedModuleExtensions = $this->filterExtensionsByModule($installedExtensions, $module);
+
+        if (count($installedModuleExtensions)) {
+            $garbage = $this->getModuleExtensionsGarbage($moduleExtensions, $installedModuleExtensions);
+
+            if (count($garbage)) {
+                $installedExtensions = $this->removeGarbage($installedExtensions, $garbage);
+            }
+        }
 
         $oModules = oxNew( \OxidEsales\EshopCommunity\Core\Module\ModuleList::class );
         //ids will include garbage in case there are files that not registered by any module
@@ -102,26 +112,35 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      * Returns extensions list by module id.
      *
      * @param array  $modules  Module array (nested format)
-     * @param string $moduleId Module id/folder name
+     * @param string $module Module id/folder name
      *
      * @return array
      */
-    protected function filterExtensionsByModuleId($modules, $moduleId)
+    protected function filterExtensionsByModule($modules, $module)
     {
-        $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
+        if ($module->isMetadataVersionGreaterEqual('2.0')) {
+            $path = $module->getModuleNameSpace();
+        } else {
 
-        $path = '';
-        if (isset($modulePaths[$moduleId])) {
-            $path = $modulePaths[$moduleId] . '/';
+            $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
+
+            $moduleId = $module->getId();
+            $path = '';
+            if (isset($modulePaths[$moduleId])) {
+                $path = $modulePaths[$moduleId] . '/';
+            }
+
+            if (!$path) {
+                $path = $moduleId . "/";
+            }
         }
-
-        // TODO: This condition should be removed. Need to check integration tests.
-        if (!$path) {
-            $path = $moduleId . "/";
-        }
-
         $filteredModules = [];
-        foreach ($modules as $class => $extend) {
+
+        if (!$path) {
+            return $filteredModules;
+        }
+
+       foreach ($modules as $class => $extend) {
             foreach ($extend as $extendPath) {
                 if (strpos($extendPath, $path) === 0) {
                     $filteredModules[$class][] = $extendPath;
