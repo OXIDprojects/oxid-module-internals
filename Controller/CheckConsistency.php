@@ -23,19 +23,19 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
     {
         $oConfig  = Registry::get(Config::class);
 
-        $redirectUrl = $oConfig->getShopUrl();
-        $sKey = Registry::get(Request::class)('key');
+        $sKey = Registry::get(Request::class)->getRequestParameter('key');
 
         //todo: add Exeception / Logging
+        $utils = Registry::getUtils();
         if((bool)$oConfig->getConfigParam('blACActiveCompleteCheck') == false )
         {
-            Registry::getUtils()->redirect($redirectUrl, false, 403);
+            $utils->handlePageNotFoundError();
         }
 
         //todo: add Exeception / Logging
         if($sKey != $oConfig->getConfigParam('sACActiveCompleteKey'))
         {
-            Registry::getUtils()->redirect($redirectUrl, false, 403);
+            $utils->handlePageNotFoundError();
         }
     }
 
@@ -59,13 +59,7 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
             $aModuleChecks[$sModId] = $aModule;
         }
         $this->_aViewData['aModules'] = $aModuleChecks;
-        $this->_aViewData['sState'] = array(
-            -3 => 'sfatals',
-            -2 => 'sfatalm',
-            -1 => 'serror',
-            0 => 'swarning',
-            1 => 'sok'
-        );
+
         return $this->sTemplate;
     }
 
