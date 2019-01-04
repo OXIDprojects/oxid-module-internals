@@ -45,5 +45,8 @@ $aLang = [
 
     'AC_STATE_OK_LABEL' => 'Les métadonnées correspondent aux données enregistrées dans la boutique',
     'AC_STATE_FM_LABEL' => 'Les Fichiers définis dans les métadonnées n\'existent pas',
-    'AC_STATE_FS_LABEL' => 'Les fichiers définis dans la boutique n\'existent pas'
+    'AC_STATE_FS_LABEL' => 'Les fichiers définis dans la boutique n\'existent pas',
+
+    'SHOP_MODULE_blACActiveCompleteCheck'     => 'Autoriser l\'accès à la page d\'aperçu',
+    'SHOP_MODULE_sACActiveCompleteKey'        => 'Clé d\'accès'
 ];

@@ -45,5 +45,8 @@ $aLang = [
 
     'AC_STATE_OK_LABEL' => 'Metadata įrašai sutampa su sisteminiais',
     'AC_STATE_FM_LABEL' => 'Neegzistuojantys failai metadata aprašę',
-    'AC_STATE_FS_LABEL' => 'Neegzistuojantys failai sistemos įrašuose'
+    'AC_STATE_FS_LABEL' => 'Neegzistuojantys failai sistemos įrašuose',
+
+    'SHOP_MODULE_blACActiveCompleteCheck'     => 'Consenti l\'accesso alla pagina di panoramica',
+    'SHOP_MODULE_sACActiveCompleteKey'        => 'Chiave di accesso'
 ];
