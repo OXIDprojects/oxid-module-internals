@@ -79,14 +79,11 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
 
         $aActiveModules = array();
         $oModule = oxNew(Module::class);
-        $oSeoEncoder = oxNew(SeoEncoder::class);
         foreach($aTmpActiveModules as $sKey => $sValue)
         {
             $oModule->load($sKey);
-            //Version einbinden
-            $aVersions = $oConfig->getConfigParam('aModuleVersions');
-            $sTitle = $oModule->getTitle().' - v'.$aVersions[$oModule->getId()];
-            $aActiveModules[$sKey] = utf8_encode($oSeoEncoder->encodeString(strip_tags($sTitle)));
+            $sTitle = $oModule->getTitle();
+            $aActiveModules[$sKey] = $sTitle;
         }
 
         $sModulesDir = $oConfig->getModulesDir();

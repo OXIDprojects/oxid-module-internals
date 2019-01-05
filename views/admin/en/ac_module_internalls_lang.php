@@ -45,5 +45,8 @@ $aLang = [
 
     'AC_STATE_OK_LABEL' => 'Metadata matches data stored in shop',
     'AC_STATE_FM_LABEL' => 'Files defined in metadata does not exist',
-    'AC_STATE_FS_LABEL' => 'Files defined in shop data does not exist'
+    'AC_STATE_FS_LABEL' => 'Files defined in shop data does not exist',
+
+    'SHOP_MODULE_blACActiveCompleteCheck'     => 'Allow access to overview page',
+    'SHOP_MODULE_sACActiveCompleteKey'        => 'Access key'
 ];
