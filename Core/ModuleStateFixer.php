@@ -52,6 +52,7 @@ class ModuleStateFixer extends ModuleInstaller
         }
 
         $moduleId = $module->getId();
+        $this->needCacheClear = false;
 
         if (!$this->initialCacheClearDone) {
             //clearing some cache to be sure that fix runs not against a stale cache
@@ -61,13 +62,20 @@ class ModuleStateFixer extends ModuleInstaller
             }
             $this->output->debug("initial cache cleared");
             $this->initialCacheClearDone = true;
+            $this->cleanUp();
         }
         $this->module = $module;
-        $this->needCacheClear = false;
         $this->restoreModuleInformation($module, $moduleId);
         $somethingWasFixed = $this->needCacheClear;
         $this->clearCache($module);
         return $somethingWasFixed;
+    }
+
+    /**
+     * After fixing all modules call this method to clean up trash that is not related to any installed module
+     */
+    public function cleanUp() {
+        $this->cleanUpControllers();
     }
 
     /**
@@ -332,11 +340,11 @@ class ModuleStateFixer extends ModuleInstaller
     protected function setModuleControllers($moduleControllers, $moduleId, $module)
     {
         $controllersForThatModuleInDb = $this->getModuleControllerEntries($moduleId);
+        $diff = $this->diff($controllersForThatModuleInDb, $moduleControllers);
 
-        $duplicatedKeys = array_intersect_key($moduleControllers, $controllersForThatModuleInDb);
-        $diff = array_diff_assoc($moduleControllers, $duplicatedKeys);
+
         if ($diff) {
-            $this->output->info("$moduleId fixing module controllers");
+            $this->output->error("$moduleId fixing module controllers");
             $this->output->debug(" (in md):"  . var_export($moduleControllers, true));
             $this->output->debug(" (in db):"  . var_export($controllersForThatModuleInDb, true));
 
@@ -355,13 +363,34 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     public function getModuleControllerEntries($moduleId){
-        $classProviderStorage = $this->getClassProviderStorage();
-        $dbMap = $classProviderStorage->get();
+        $dbMap = $this->getAllControllers();
         //for some unknown reasons the core uses lowercase module id to reference controllers
         $moduleIdLc = strtolower($moduleId);
         $controllersForThatModuleInDb = isset($dbMap[$moduleIdLc]) ? $dbMap[$moduleIdLc] : [];
         return $controllersForThatModuleInDb;
     }
+
+    /**
+     * @return mixed
+     */
+    private function getAllControllers()
+    {
+        $classProviderStorage = $this->getClassProviderStorage();
+        $dbMap = $classProviderStorage->get();
+        return $dbMap;
+    }
+
+    public function cleanUpControllers(){
+        $allFromDb = $this->getAllControllers();
+        $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
+        $cleaned = array_intersect_key($allFromDb,$aVersions);
+        if ($this->diff($allFromDb, $cleaned)) {
+            $this->needCacheClear = true;
+            $classProviderStorage = $this->getClassProviderStorage();
+            $classProviderStorage->set($cleaned);
+        }
+    }
+
 
     /**
      * Reset module cache
