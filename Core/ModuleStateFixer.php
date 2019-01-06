@@ -336,7 +336,7 @@ class ModuleStateFixer extends ModuleInstaller
 
 
         if ($diff) {
-            $this->output->info("$moduleId fixing module controllers");
+            $this->output->error("$moduleId fixing module controllers");
             $this->output->debug(" (in md):"  . var_export($moduleControllers, true));
             $this->output->debug(" (in db):"  . var_export($controllersForThatModuleInDb, true));
 
