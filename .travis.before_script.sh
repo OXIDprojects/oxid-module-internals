@@ -19,3 +19,4 @@ composer config repo.packagist false
 composer config minimum-stability dev
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
 composer require "oxid-community/moduleinternals:*"
+composer require "codacy/coverage:dev-master"
