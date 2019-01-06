@@ -91,4 +91,20 @@ class OxidComposerModulesService
         $packages = $localRepository->getPackages();
         return $packages;
     }
+
+    /**
+     * @return array[\OxidCommunity\ModuleInternals\Core\InternalModule]
+     */
+    public function getActiveModules()
+    {
+
+        $oConfig  = Registry::getConfig();
+        $sModulesDir = $oConfig->getModulesDir();
+
+        $oModuleList = oxNew(ModuleList::Class);
+        $aModules = $oModuleList->getModulesFromDir($sModulesDir);
+        $aActiveModules =  array_filter($aModules, function($module){return $module->isActive();});
+
+        return $aActiveModules;
+    }
 }

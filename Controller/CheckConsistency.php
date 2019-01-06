@@ -2,6 +2,7 @@
 
 namespace OxidCommunity\ModuleInternals\Controller;
 
+use OxidCommunity\ModuleInternals\Core\OxidComposerModulesService;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
@@ -44,18 +45,16 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
      */
     public function render()
     {
-        $oConfig  = Registry::get(Config::class);
-        $aModules = $this->_getActiveModules($oConfig->getConfigParam('aDisabledModules'),$oConfig->getConfigParam('aModulePaths'));
+        $moduleService = Registry::get(OxidComposerModulesService::class);
+        $aModules = $moduleService->getActiveModules();
         $aModuleChecks = array();
-        $oModule = oxNew(Module::class);
         /*
          * @var InternalModule $oModule
          */
-        foreach($aModules as $sModId => $sTitle)
+        foreach($aModules as $oModule)
         {
-            $oModule->load($sModId);
-            $aModule = $oModule->checkState($sTitle);
-
+            $aModule = $oModule->checkState();
+            $sModId = $oModule->getId();
             $aModuleChecks[$sModId] = $aModule;
         }
         $this->_aViewData['aModules'] = $aModuleChecks;
@@ -63,46 +62,5 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
         return $this->sTemplate;
     }
 
-    /**
-     * @param array $aDisabledModules
-     * @param array $aModulePaths
-     *
-     * @return array
-     */
-    protected function _getActiveModules(array $aDisabledModules, array $aModulePaths)
-    {
-        $oConfig  = Registry::get(Config::class);
-        $aModulePaths = array_flip($aModulePaths);
-        $aActiveModules = array_diff($aModulePaths,$aDisabledModules);
 
-        $aTmpActiveModules = array_flip($aActiveModules);
-
-        $aActiveModules = array();
-        $oModule = oxNew(Module::class);
-        foreach($aTmpActiveModules as $sKey => $sValue)
-        {
-            $oModule->load($sKey);
-            $sTitle = $oModule->getTitle();
-            $aActiveModules[$sKey] = $sTitle;
-        }
-
-        $sModulesDir = $oConfig->getModulesDir();
-
-        $oModuleList = oxNew(ModuleList::Class);
-        $aModules = $oModuleList->getModulesFromDir($sModulesDir);
-
-        $aTmpModules = $aActiveModules;
-        $aActiveModules = array();
-
-        /* Sortieren, nach der Anzeige im Admin zum einfacheren Vergleich*/
-        foreach($aModules as $oModule)
-        {
-            if(array_key_exists($oModule->getId(),$aTmpModules))
-            {
-                $aActiveModules[$oModule->getId()] = $aTmpModules[$oModule->getId()];
-            }
-        }
-
-        return $aActiveModules;
-    }
 }
