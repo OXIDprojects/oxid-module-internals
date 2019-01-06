@@ -8,39 +8,21 @@
     </head>
 
 <body>
-    <style>
-        span.state.sok {color:green;}
-        span.state.swarning {color:orange;}
-        span.state.serror {color:red;}
-        span.state.sfatalm {color:red;text-decoration:line-through;}
-        span.state.sfatals {color:red;text-decoration:underline;}
-        button.fix {position: absolute;top:0; right: 0;}
-        .actions i {margin-right:20px;display:inline_blocks;}
-        h3 {
-            font-size: 14px;
-            font-weight: bold;
-            margin: 7px 0 10px 0;
-            padding-top: 7px;
-            border-top: 1px solid #ddd;
-        }
-        .actions{border-top: 1px solid #ddd;background: #eee;}
-        .checks:nth-of-type(even){
-            background: #eee;
-        }
-    </style>
-    [{foreach from=$aModules key=ModulId item=ModId}]
-        <div class="checks">
-            <h2>[{oxmultilang ident="AC_MI_MODULE"}]: [{$ModId.title}]</h2>
+    <link rel="stylesheet" href="[{$oViewConf->getModuleUrl('moduleinternals','/out/module-internals.css')}]">
+    [{oxscript include=$oViewConf->getModuleUrl('moduleinternals','out/module-internals.js')}]
+    [{foreach from=$aModules key=Nr item=Module}]
+        <button class="accordion [{if $Module.hasIssue}]active[{/if}]">[{$Module.title}]</button>
+        <div class="checks panel">
 
-            [{include file="items.tpl" title="AC_MI_VERSION" items=$ModId.aVersions}]
+            [{include file="items.tpl" title="AC_MI_VERSION" items=$Module.aVersions}]
 
-            [{include file="items.tpl" title="AC_MI_CONTROLLER" items=$ModId.aControllers}]
+            [{include file="items.tpl" title="AC_MI_CONTROLLER" items=$Module.aControllers}]
 
-            [{include file="items.tpl" title="AC_MI_EXTEND" items=$ModId.aExtended}]
+            [{include file="items.tpl" title="AC_MI_EXTEND" items=$Module.aExtended}]
 
-            [{include file="items.tpl" title="AC_MI_FILES" items=$ModId.aFiles}]
+            [{include file="items.tpl" title="AC_MI_FILES" items=$Module.aFiles}]
 
-            [{if $ModId.aBlocks|@count > 0}]
+            [{if $Module.aBlocks|@count > 0}]
                 <div style="position: relative;">
                     <h3>[{oxmultilang ident="AC_MI_BLOCKS"}]</h3>
                     <table class="box">
@@ -73,11 +55,11 @@
                 </div>
             [{/if}]
 
-            [{include file="items.tpl" title="AC_MI_TEMPLATES" items=$ModId.aTemplates}]
+            [{include file="items.tpl" title="AC_MI_TEMPLATES" items=$Module.aTemplates}]
 
-            [{include file="items.tpl" title="AC_MI_SETTINGS" items=$ModId.aSettings}]
+            [{include file="items.tpl" title="AC_MI_SETTINGS" items=$Module.aSettings}]
 
-            [{include file="items.tpl" title="AC_MI_EVENTS" items=$ModId.aEvents}]
+            [{include file="items.tpl" title="AC_MI_EVENTS" items=$Module.aEvents}]
 
         </div>
     [{/foreach}]
@@ -88,6 +70,6 @@
         <span class="state sfatalm">[{oxmultilang ident="AC_STATE_FM"}]</span> <i>[{oxmultilang ident="AC_STATE_FM_LABEL"}]</i>
         <span class="state sfatals">[{oxmultilang ident="AC_STATE_FS"}]</span> <i>[{oxmultilang ident="AC_STATE_FS_LABEL"}]</i>
     </div>
-
+    [{oxscript}]
 </body>
 </html>

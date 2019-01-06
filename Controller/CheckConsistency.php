@@ -58,6 +58,7 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
             $aModuleChecks[$sModId] = $aModule;
         }
         $this->_aViewData['aModules'] = $aModuleChecks;
+        $this->_aViewData['oViewConf'] = $this->getViewConfig();
 
         return $this->sTemplate;
     }
