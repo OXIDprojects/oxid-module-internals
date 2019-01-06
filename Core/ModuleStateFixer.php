@@ -332,9 +332,9 @@ class ModuleStateFixer extends ModuleInstaller
     protected function setModuleControllers($moduleControllers, $moduleId, $module)
     {
         $controllersForThatModuleInDb = $this->getModuleControllerEntries($moduleId);
+        $diff = $this->diff($controllersForThatModuleInDb, $moduleControllers);
 
-        $duplicatedKeys = array_intersect_key($moduleControllers, $controllersForThatModuleInDb);
-        $diff = array_diff_assoc($moduleControllers, $duplicatedKeys);
+
         if ($diff) {
             $this->output->info("$moduleId fixing module controllers");
             $this->output->debug(" (in md):"  . var_export($moduleControllers, true));
