@@ -51,11 +51,11 @@ class FixHelperTest extends UnitTestCase
 
     public function testFixControllers()
     {
-        print_r ($this->getConfigParam('aModuleControllers'));
-        $this->setConfigParam('aModuleControllers', ['a' => 'b']);
+        $old = $this->getConfigParam('aModuleControllers');
+        $this->setConfigParam('aModuleControllers', ['module-a' => ['mycontroller'=>'notexistingclass']]);
         $this->callSut();
-        $this->assertNotEquals($this->getConfigParam('aModuleControllers'), ['a' => 'b']);
-        //$this->assertLogEntry("fixing module controllers");
+        $this->assertEquals($this->getConfigParam('aModuleControllers'), $old);
+        $this->assertLogEntry("fixing module controllers");
     }
 
     /**
