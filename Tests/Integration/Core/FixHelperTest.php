@@ -49,6 +49,14 @@ class FixHelperTest extends UnitTestCase
         $this->assertLogEntry("fixing module extensions");
     }
 
+    public function testFixControllers()
+    {
+        $this->setConfigParam('aModuleControllers', ['a' => 'b']);
+        $this->callSut();
+        $this->assertNotEquals($this->getConfigParam('aModuleControllers'), ['a' => 'b']);
+        //$this->assertLogEntry("fixing module controllers");
+    }
+
     /**
      * @param $moduleId
      * @return array
