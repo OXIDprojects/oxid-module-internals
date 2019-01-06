@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # OXID Installieren
 cd ~/
 mkdir OXID
