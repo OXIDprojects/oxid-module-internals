@@ -56,6 +56,23 @@ h3 {
     margin-left: 5px;
 }
 
-.active:after {
+div.active:after {
     content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 10px;
+    text-align: left;
+}
+
+tr:nth-of-type(even){
+    background: #ddd;
+}
+
+.blocks td.active{
+    background: url(/out/admin/src/bg/facelift/ico_active_facelift.png) no-repeat center center;
 }
