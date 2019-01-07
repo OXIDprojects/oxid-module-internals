@@ -27,7 +27,7 @@
                     <h3>[{oxmultilang ident="AC_MI_BLOCKS"}]</h3>
                     <table class="box">
                         <tr><th>Active</th><th>Template</th><th>Blockname</th><th>File</th></tr>
-                        [{foreach from=$ModId.aBlocks item=i}]
+                        [{foreach from=$Module.aBlocks item=i}]
                             <tr>
                                 <td style="width:20px;" class="[{if $i.active}]active[{/if}]">[{$i.active}]</td>
                                 <td><span class="state [{$i.t_state}]">[{$i.template}]</span></td>
