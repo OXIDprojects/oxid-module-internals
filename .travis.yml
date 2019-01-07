@@ -25,9 +25,7 @@ before_script:
 script:
   - cd ~/OXID/
   - ./vendor/bin/runtests-coverage
-  
-after_script:
-  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml'
+  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml
 
 before_cache:
   - composer remove "oxid-community/moduleinternals"
