@@ -246,6 +246,10 @@ class InternalModule extends InternalModule_parent
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
             }
+            $id = $this->getId();
+            if ($this->_isInDisabledList($id)) {
+                return $title;
+            }
             $this->checked = $this->checkState();
             if ($this->hasIssue()) {
                 $title .= ' <strong style="color: #009ddb">Issue found!</strong>';
@@ -555,9 +559,7 @@ class InternalModule extends InternalModule_parent
         $aModule = array();
         $aModule['oxid'] = $sId = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
-        if ($this->_isInDisabledList($sId)) {
-            return $aModule;
-        }
+
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
         $aModule['aSettings'] = $oModule->checkModuleSettings();
