@@ -247,13 +247,17 @@ class InternalModule extends InternalModule_parent
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
             }
             $this->checked = $this->checkState();
-            if (($this->state & self::NEED_MANUAL_FIXED) == self::NEED_MANUAL_FIXED) {
+            if ($this->hasIssue()) {
                 $title .= ' <strong style="color: #009ddb">Issue found!</strong>';
             }
 
             $this->checked['title'] = $title;
         }
         return $title;
+    }
+
+    public function hasIssue(){
+        return ($this->state & self::NEED_MANUAL_FIXED) == self::NEED_MANUAL_FIXED;
     }
 
     /**
