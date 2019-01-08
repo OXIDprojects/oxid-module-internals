@@ -27,14 +27,23 @@ class NavigationController extends NavigationController_parent
     {
         $aMessage = parent::_doStartUpChecks();
 
+        $this->checkModules($aMessage);
+
+        return $aMessage;
+    }
+
+    /**
+     * @param $aMessage
+     */
+    public function checkModules(& $aMessage)
+    {
         $moduleService = Registry::get(OxidComposerModulesService::class);
         $aModules = $moduleService->getActiveModules();
         $stateFixer = Registry::get(ModuleStateFixer::class);
         /*
          * @var InternalModule $oModule
          */
-        foreach($aModules as $oModule)
-        {
+        foreach ($aModules as $oModule) {
             $sTitle = $oModule->getTitle();
             $oModule->checkState();
             $link = Registry::getSession()->processUrl("?&cl=module");
@@ -45,8 +54,6 @@ class NavigationController extends NavigationController_parent
                 $aMessage['warning'] .= "<p><a href=\"$link\">Module $sTitle was fixed</a></p>";
             }
         }
-
-        return $aMessage;
     }
 
 }

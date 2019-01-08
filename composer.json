@@ -18,6 +18,10 @@
     "composer/composer" : "^1.6",
     "oxid-esales/oxideshop-ce" : "^6.0"
   },
+  "require-dev":{
+    "oxid-esales/testing-library": "^5",
+    "phpunit/phpcov": "~2.0.2"
+  },
   "extra": {
     "oxideshop": {
       "target-directory": "oxcom/moduleinternals",
@@ -31,4 +35,3 @@
     }
   }
 }
-
