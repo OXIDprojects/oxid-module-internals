@@ -1,6 +1,6 @@
 <?php
 namespace OxidCommunity\ModuleInternals\Tests\Integration\Controller;
-use OxidCommunity\ModuleInternals\Controller\Admin\NavigationController;
+use OxidEsales\Eshop\Application\Controller\Admin\NavigationController;
 use OxidEsales\TestingLibrary\UnitTestCase;
 
 class NavigationControllerTest extends UnitTestCase
