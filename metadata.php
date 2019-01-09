@@ -49,6 +49,7 @@ $aModule = [
     'email'       => '',
     'extend'      => [
         \OxidEsales\Eshop\Core\Module\Module::class => \OxidCommunity\ModuleInternals\Core\InternalModule::class,
+        \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class => \OxidCommunity\ModuleInternals\Controller\Admin\NavigationController::class
     ],
     'controllers' => [
         'module_internals_metadata' => \OxidCommunity\ModuleInternals\Controller\Admin\Metadata::class,
