@@ -217,7 +217,11 @@ class ModuleStateFixer extends ModuleInstaller
         if (isset($sModuleVersion)) {
             if ($old !== $sModuleVersion) {
                 $aVersions[$sModuleId] = $sModuleVersion;
-                $this->output->error("$sModuleId fixing module version from $old to $sModuleVersion");
+                if($old == '') {
+                    $this->output->info("register module '$sModuleId' with version $sModuleVersion");
+                } else {
+                    $this->output->error("$sModuleId fixing module version from $old to $sModuleVersion");
+                }
                 $this->_saveToConfig('aModuleVersions', $aVersions);
                 $this->needCacheClear = true;
             }

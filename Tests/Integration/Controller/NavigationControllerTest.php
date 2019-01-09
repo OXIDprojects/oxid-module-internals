@@ -11,7 +11,8 @@ class NavigationControllerTest extends UnitTestCase
         $controller = oxNew(NavigationController::class);
         $messages = [];
         $controller->checkModules($messages);
-        print_r($messages);
-        $this->assertEquals($messages, []);
+        //print_r($messages);
+        //print $this->exceptionLogHelper->getExceptionLogFileContent();
+        $this->assertContains("Module OXID Community Module Internals was fixed", $messages["warning"]);
     }
 }
