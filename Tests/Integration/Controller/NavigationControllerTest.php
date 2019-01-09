@@ -14,5 +14,6 @@ class NavigationControllerTest extends UnitTestCase
         //print_r($messages);
         //print $this->exceptionLogHelper->getExceptionLogFileContent();
         $this->assertContains("Module OXID Community Module Internals was fixed", $messages["warning"]);
+        $this->exceptionLogHelper->clearExceptionLogFile();
     }
 }
