@@ -293,14 +293,31 @@ class InternalModule extends InternalModule_parent
         foreach ($aMetadataExtend as $sClassName => $sModuleName) {
             $key_state = $iState = self::OK;
 
-
             if (strpos($sClassName,'OxidEsales\\EshopCommunity\\') === 0 ||
                 strpos($sClassName,'OxidEsales\\EshopEnterprise\\') === 0 ||
                 strpos($sClassName,'OxidEsales\\EshopProfessional\\') === 0 ||
                 !class_exists($sClassName)
             ) {
-                $key_state = self::SHOP_FILE_NOT_FOUND;
-                $this->state |= self::NEED_MANUAL_FIXED;
+                if (strpos($sClassName,'oxerp') === 0) {
+                    //AS ERP module does still use a own autoloader
+                    //classes of oxerp will not be found with class_exists
+                    $erp_dir = $this->getConfig()->getModulesDir() .'erp/';
+                    if (strpos($sClassName,'oxerptype_') === 0) {
+                        $dir = $erp_dir.'objects/';
+                    } else {
+                        $dir = $erp_dir;
+                    }
+
+                    $sFullPath  = $dir.$sClassName.'.php';
+
+                    if (!file_exists($sFullPath)) {
+                        $key_state = self::SHOP_FILE_NOT_FOUND;
+                        $this->state |= self::NEED_MANUAL_FIXED;
+                    }
+                } else {
+                    $key_state = self::SHOP_FILE_NOT_FOUND;
+                    $this->state |= self::NEED_MANUAL_FIXED;
+                }
             }
 
             $aResult[ $sClassName ]['key_state'] = $key_state;
