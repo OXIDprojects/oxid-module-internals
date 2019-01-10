@@ -320,7 +320,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $name = $setting["name"];
                 $type = $setting["type"];
 
-                if (is_null($config->getConfigParam($name))){
+                if (isset($setting["value"]) && is_null($config->getConfigParam($name))){
                     $diff = true;
                     $value = $setting["value"];
                     $config->saveShopConfVar($type, $name, $value, $shopId, $module);
@@ -387,9 +387,11 @@ class ModuleStateFixer extends ModuleInstaller
     public function cleanUpControllers(){
         $allFromDb = $this->getAllControllers();
         $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
+        $aVersions = array_change_key_case($aVersions,CASE_LOWER);
         $cleaned = array_intersect_key($allFromDb,$aVersions);
         if ($this->diff($allFromDb, $cleaned)) {
             $this->needCacheClear = true;
+            $this->output->error(" cleaning up controllers");
             $classProviderStorage = $this->getClassProviderStorage();
             $classProviderStorage->set($cleaned);
         }
@@ -573,7 +575,7 @@ class ModuleStateFixer extends ModuleInstaller
     {
         if ($this->needCacheClear) {
             $this->resetModuleCache($module);
-            $this->output->info("cache cleared for" . $module->getId());
+            $this->output->info("cache cleared for " . $module->getId());
         }
     }
 
