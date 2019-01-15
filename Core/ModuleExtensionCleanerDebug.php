@@ -119,7 +119,11 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
     protected function filterExtensionsByModule($modules, $module)
     {
         if ($this->isMetadataVersionGreaterEqual($module, '2.0')) {
-            $path = $module->getModuleNameSpace();
+            if (!method_exists($module,"getModuleNameSpace")) {
+                $path = '';
+            } else {
+                $path = $module->getModuleNameSpace();
+            }
         } else {
 
             $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
