@@ -118,7 +118,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      */
     protected function filterExtensionsByModule($modules, $module)
     {
-        if ($module->isMetadataVersionGreaterEqual('2.0')) {
+        if ($this->isMetadataVersionGreaterEqual($module, '2.0')) {
             $path = $module->getModuleNameSpace();
         } else {
 
@@ -149,5 +149,10 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
         }
 
         return $filteredModules;
+    }
+
+    public function isMetadataVersionGreaterEqual($module, $sVersion)
+    {
+        return version_compare($module->getMetaDataVersion(), $sVersion) >= 0;
     }
 }
