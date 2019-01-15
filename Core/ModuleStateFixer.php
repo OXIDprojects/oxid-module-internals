@@ -585,5 +585,6 @@ class ModuleStateFixer extends ModuleInstaller
         }
         return new FallbackLogger();
     }
+
 }
 
