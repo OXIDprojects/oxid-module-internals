@@ -63,6 +63,7 @@ class InternalModule extends InternalModule_parent
     {
         if ($this->_oModuleFixHelper === null) {
             $this->_oModuleFixHelper = Registry::get(ModuleStateFixer::class);
+	    //$this->_oModuleFixHelper->disableInitialCacheClear();
         }
 
         return $this->_oModuleFixHelper;
