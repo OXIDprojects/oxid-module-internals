@@ -30,8 +30,8 @@
       "blacklist-filter": [
                 "C*/**/*",
                 "Tests/**/*",
-                ".*",
-            ],
+                ".*"
+            ]
     }
   },
   "autoload": {
