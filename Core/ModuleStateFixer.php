@@ -272,7 +272,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     private function restoreModuleInformation($module, $moduleId)
     {
-        $active = $this->isActive($sId);
+        $active = $this->isActive($moduleId);
 
         $this->fixExtensions($module);
         $metaDataVersion = $module->getMetaDataVersion();
