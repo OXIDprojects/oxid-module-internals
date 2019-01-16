@@ -26,12 +26,17 @@
     "oxideshop": {
       "target-directory": "oxcom/moduleinternals",
       "comment-console-commands": "warning the following line is deprecated and will be removed",
-      "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"]
+      "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"],
+      "blacklist-filter": [
+                "C*/**/*",
+                "Tests/**/*",
+                ".*"
+            ]
     }
   },
   "autoload": {
     "psr-4": {
-      "OxidCommunity\\ModuleInternals\\": "../../../source/modules/oxcom/moduleinternals"
+      "OxidCommunity\\ModuleInternals\\": ""
     }
   }
 }

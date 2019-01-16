@@ -26,6 +26,10 @@ class ModuleStateFixer extends ModuleInstaller
         parent::__construct($cache, $cleaner);
     }
 
+    public function disableInitialCacheClear(){
+        $this->initialCacheClearDone = true;
+    }
+
     /**
      * @var $output LoggerInterface
      */
@@ -268,27 +272,35 @@ class ModuleStateFixer extends ModuleInstaller
      */
     private function restoreModuleInformation($module, $moduleId)
     {
+        $active = $this->isActive($moduleId);
+
         $this->fixExtensions($module);
         $metaDataVersion = $module->getMetaDataVersion();
         $metaDataVersion = $metaDataVersion == '' ? $metaDataVersion = "1.0" : $metaDataVersion;
         if (version_compare($metaDataVersion, '2.0', '<')) {
-            $this->_addModuleFiles($module->getInfo("files"), $moduleId);
+            $this->_addModuleFiles($active ? $module->getInfo("files") : [], $moduleId);
         }
-        $this->_addTemplateBlocks($module->getInfo("blocks"), $moduleId);
-        $this->_addTemplateFiles($module->getInfo("templates"), $moduleId);
+        $this->_addTemplateBlocks($active ? $module->getInfo("blocks") : [], $moduleId);
+        $this->_addTemplateFiles($active ? $module->getInfo("templates"): [], $moduleId);
         $this->_addModuleSettings($module->getInfo("settings"), $moduleId);
-        $this->_addModuleVersion($module->getInfo("version"), $moduleId);
+        $this->_addModuleVersion($active ? $module->getInfo("version") : null, $moduleId);
 
-        $this->_addModuleEvents($module->getInfo("events"), $moduleId);
+        $this->_addModuleEvents($active ? $module->getInfo("events") : [], $moduleId);
 
         if (version_compare($metaDataVersion, '2.0', '>=')) {
             try {
-                $moduleControllers = $module->isActive() ? $module->getControllers() : [];
+                $moduleControllers = $active ? $module->getControllers() : [];
                 $this->setModuleControllers($moduleControllers, $moduleId, $module);
             } catch (ModuleValidationException $exception) {
                 print "[ERROR]: duplicate controllers:" . $exception->getMessage() ."\n";
             }
         }
+    }
+
+
+    protected function isActive($sId)
+    {
+        return !in_array($sId, (array) $this->getConfig()->getConfigParam('aDisabledModules'));
     }
 
     /**
@@ -585,5 +597,6 @@ class ModuleStateFixer extends ModuleInstaller
         }
         return new FallbackLogger();
     }
+
 }
 

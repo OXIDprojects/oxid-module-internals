@@ -118,8 +118,10 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      */
     protected function filterExtensionsByModule($modules, $module)
     {
-        if ($module->isMetadataVersionGreaterEqual('2.0')) {
-            $path = $module->getModuleNameSpace();
+        if ($this->isMetadataVersionGreaterEqual($module, '2.0')) {
+            $moduleHelper = Registry::get(ModuleHelper::class);
+            $moduleHelper->setModule($module);
+            $path = $moduleHelper->getModuleNameSpace();
         } else {
 
             $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
@@ -149,5 +151,10 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
         }
 
         return $filteredModules;
+    }
+
+    public function isMetadataVersionGreaterEqual($module, $sVersion)
+    {
+        return version_compare($module->getMetaDataVersion(), $sVersion) >= 0;
     }
 }

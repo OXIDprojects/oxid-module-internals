@@ -34,15 +34,6 @@ class InternalModule extends InternalModule_parent
     const MODULE_FILE_NOT_FOUND = 'sfatalm';
     const SHOP_FILE_NOT_FOUND = 'sfatals';
 
-    protected function getAutoloader(){
-        if (Registry::instanceExists('autoloader')){
-            return Registry::get('autoloader');
-        }
-        $composerClassLoader = include VENDOR_PATH . 'autoload.php';
-        Registry::set('autoloader', $composerClassLoader);
-        return $composerClassLoader;
-    }
-
     public function load($id){
         $this->metaDataVersion = 0;
         $this->checked = false;
@@ -60,13 +51,19 @@ class InternalModule extends InternalModule_parent
     }
 
 
+    public function getModuleHelper(){
+        return Registry::get(ModuleHelper::class);
+    }
+
+
     /**
      * @return ModuleStateFixer
      */
-    public function getModuleFixHelper()
+    public function getModuleStateFixer()
     {
         if ($this->_oModuleFixHelper === null) {
             $this->_oModuleFixHelper = Registry::get(ModuleStateFixer::class);
+	    //$this->_oModuleFixHelper->disableInitialCacheClear();
         }
 
         return $this->_oModuleFixHelper;
@@ -206,7 +203,7 @@ class InternalModule extends InternalModule_parent
     public function checkPhpFileExists($sClassName)
     {
         if ($this->isMetadataVersionGreaterEqual('2.0')) {
-            $composerClassLoader = $this->getAutoloader();
+            $composerClassLoader = $this->getModuleHelper()->getAutoloader();
 
             return $composerClassLoader->findFile($sClassName);
         } else {
@@ -242,7 +239,7 @@ class InternalModule extends InternalModule_parent
         $controller = $request->getRequestParameter('cl');
 
         if ($controller == 'module_list' || $controller == 'checkconsistency') {
-            $fixed = $this->getModuleFixHelper()->fix($this);
+            $fixed = $this->getModuleStateFixer()->fix($this);
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
             }
@@ -513,49 +510,6 @@ class InternalModule extends InternalModule_parent
         return $aResult;
     }
 
-    /**
-     * @param string $sModulePath
-     *
-     * @return string
-     */
-    public function getModuleNameSpace()
-    {
-        $package = $this->getComposerPackage();
-        $sModulePath = $this->getModulePath();
-        if ($package) {
-            $autoload = $package->getAutoload();
-        } else {
-            $sModulesDir = Registry::getConfig()->getModulesDir();
-            $file = $sModulesDir . $sModulePath . '/composer.json';
-            if (file_exists($file)) {
-                $data = json_decode(file_get_contents($file), true);
-                $autoload = $data["autoload"];
-            }
-        }
-
-        if ($autoload) {
-            $namesspaces = $autoload["psr-4"];
-            $prefix = array_keys($namesspaces);
-            $moduleNameSpace = $prefix[0];
-            return $moduleNameSpace;
-        }
-
-
-        $moduleNameSpace = '';
-        $composerClassLoader = $this->getAutoloader();
-        $nameSpacePrefixes = $composerClassLoader->getPrefixesPsr4();
-        foreach ($nameSpacePrefixes as $nameSpacePrefix => $paths) {
-            foreach ($paths as $path) {
-                if (strpos($path, $sModulePath) !== false) {
-                    $moduleNameSpace = $nameSpacePrefix;
-
-                    return $moduleNameSpace;
-                }
-            }
-        }
-
-        return $moduleNameSpace;
-    }
 
     /**
      * @param $oModule
