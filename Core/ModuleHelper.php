@@ -49,7 +49,7 @@ class ModuleHelper
 
 
         $moduleNameSpace = '';
-        $composerClassLoader = $module->getAutoloader();
+        $composerClassLoader = $this->getAutoloader();
         $nameSpacePrefixes = $composerClassLoader->getPrefixesPsr4();
         foreach ($nameSpacePrefixes as $nameSpacePrefix => $paths) {
             foreach ($paths as $path) {
