@@ -14,29 +14,28 @@
     "GPL-3.0"
   ],
   "require":{
-    "symfony/console" : "^2.7||^3.1||^4.0",
+    "symfony/console" : "^2.7",
     "composer/composer" : "^1.6",
     "oxid-esales/oxideshop-ce" : "^6.0"
   },
   "require-dev":{
-    "oxid-esales/testing-library": "^5",
-    "phpunit/phpcov": "~2.0.2"
+    "codeception/codeception": "^2.5",
+    "symfony/dotenv": "^4.2"
   },
   "extra": {
     "oxideshop": {
       "target-directory": "oxcom/moduleinternals",
       "comment-console-commands": "warning the following line is deprecated and will be removed",
-      "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"],
-      "blacklist-filter": [
-                "C*/**/*",
-                "Tests/**/*",
-                ".*"
-            ]
+      "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"]
     }
   },
   "autoload": {
     "psr-4": {
-      "OxidCommunity\\ModuleInternals\\": ""
+      "OxidCommunity\\ModuleInternals\\": "../../../source/modules/oxcom/moduleinternals"
     }
+  },
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin"
   }
 }
