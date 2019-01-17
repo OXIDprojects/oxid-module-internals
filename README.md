@@ -28,6 +28,26 @@ Original module (for Oxid eShop 5.x/4.x) by [Alfonsas Cirtautas](https://github.
 composer require oxid-community/moduleinternals
 ```
 
+## Run Codeception tests
+First copy .env.dist to .env and set your credentials
+
+### Run all tests
+```
+.Build/bin/codecept run
+```
+
+### Run all in a suite
+```
+.Build/bin/codecept run acceptance
+```
+
+### Params
+--steps --html -vvv
+
+Steps will show on cli
+Html repourt as file
+Verbose to see all information for debugging
+
 ## Screenshot
 
 ![OXID_moduleinternals](screenshot.png)
