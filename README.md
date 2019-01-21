@@ -33,7 +33,7 @@ composer require oxid-community/moduleinternals
 ![OXID_moduleinternals](screenshot.png)
 
 ## Changelog
-* 2019-01-10  2.0.0 Option to disable blocks,autodiscover module version number from composer,automatic module state fix (when opening admin module list) with feedback, overview page with accordion, admin homepage warnings, improved logging, improved fixing, remove state from disabled modules, support for different console versions
+* 2019-01-21  2.0.0 Option to disable blocks,autodiscover module version number from composer,automatic module state fix (when opening admin module list) with feedback, overview page with accordion, admin homepage warnings, improved logging, improved fixing, remove state from disabled modules, support for different console versions
 * 2018-12-12  1.5.2 avoid php warning if module namespace can not be found
 * 2018-11-23  1.5.1 avoid error when fixing deactive module that has controllers
 * 2018-11-23  1.5.0 do not scan deactivated modules
