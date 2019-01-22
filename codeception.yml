@@ -29,6 +29,7 @@ modules:
             password: '%DB_PASS%'
         WebDriver:
             url: '%WEBSITE_URL%'
+            host: selenium
             browser: chrome
             window_size: 1600x1000
             connection_timeout: 5
