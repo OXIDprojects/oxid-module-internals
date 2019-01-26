@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+
+  oxid6_apache:
+    image: keywanghadamioxid/php-apache-full:7.1
+    hostname: oxid.local
+    depends_on:
+      - oxid6_mysql
+    volumes:
+      - ${PWD}/OXID/:/var/www/html/:cached
+    ports:
+      - 8080:80
+    networks:
+      - proxy
+      
+  oxid6_mysql:
+    image: mysql:5.7
+    hostname: mysql
+    volumes:
+      - ${PWD}/data/mysql/:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: oxid
+      MYSQL_USER: oxid
+      MYSQL_PASSWORD: oxid
+      MYSQL_ROOT_PASSWORD: oxid
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

@@ -11,16 +11,18 @@ env:
 cache:
   directories:
   - $HOME/OXID
-services: mysql
+services: 
+ - docker
 
 before_install:
   - echo 'Europe/Berlin' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
-  - mysql -e 'CREATE DATABASE oxid;'
 
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - sh ./.travis.before_script.sh
+  - docker stack deploy --compose-file docker-compose.yml oxid
+#  - mysql -e 'CREATE DATABASE oxid;'
+#  - sh ./.travis.before_script.sh
 
 script:
   - cd ~/OXID/
@@ -29,8 +31,8 @@ script:
 #  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml --git-commit=$TRAVIS_COMMIT
 
 before_cache:
-  - composer remove "oxid-community/moduleinternals"
-  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
-  - rm -rf ~/OXID/vendor/oxid-community/moduleinternals
-  - rm -rf ~/OXID/source/tmp/*
+#  - composer remove "oxid-community/moduleinternals"
+#  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
+#  - rm -rf ~/OXID/vendor/oxid-community/moduleinternals
+#  - rm -rf ~/OXID/source/tmp/*
 
