@@ -8,7 +8,7 @@ cache:
   - $HOME/OXID
 services: 
  - docker
-before_instal
+before_install:
   - echo 'Europe/Berlin' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 before_script:
