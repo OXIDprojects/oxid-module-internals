@@ -1,8 +1,8 @@
-language: php
+language: minimal
 
 dist: xenial
-php:
-  - "7.1"
+
+
 
 env:
   - OXID=6.1
@@ -14,7 +14,7 @@ cache:
 services: 
  - docker
 
-before_install:
+before_instal
   - echo 'Europe/Berlin' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 
