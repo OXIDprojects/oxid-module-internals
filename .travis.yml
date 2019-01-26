@@ -15,7 +15,7 @@ before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - sh ./prepare.sh
 script:
-  - 
+  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:${OXID} bash ../test.sh
 before_cache:
 #  - composer remove "oxid-community/moduleinternals"
 #  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals

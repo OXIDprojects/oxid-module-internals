@@ -11,3 +11,5 @@ composer config repo.packagist false
 composer config repositories.travis path /module
 
 composer require "oxid-community/moduleinternals:*"
+
+./vendor/bin/runtests
