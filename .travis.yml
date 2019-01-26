@@ -13,16 +13,9 @@ before_install:
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - docker swarm init
-  - docker stack deploy --compose-file docker-compose.yml oxid
-  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:latest bash ../build.sh
-#  - mysql -e 'CREATE DATABASE oxid;'
-#  - sh ./build.sh
+  - sh ./prepare.sh
 script:
-  - cd ~/OXID/
-#  - ./vendor/bin/runtests-coverage
-  - ./vendor/bin/runtests
-#  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml --git-commit=$TRAVIS_COMMIT
+  - 
 before_cache:
 #  - composer remove "oxid-community/moduleinternals"
 #  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
