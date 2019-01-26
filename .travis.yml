@@ -21,7 +21,6 @@ before_install:
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - docker swarm init
-  - docker network create --driver overlay proxy
   - docker stack deploy --compose-file docker-compose.yml oxid
 #  - mysql -e 'CREATE DATABASE oxid;'
 #  - sh ./.travis.before_script.sh
