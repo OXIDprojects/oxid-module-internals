@@ -22,8 +22,9 @@ before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - docker swarm init
   - docker stack deploy --compose-file docker-compose.yml oxid
+  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:7.1 bash ../build.sh
 #  - mysql -e 'CREATE DATABASE oxid;'
-#  - sh ./.travis.before_script.sh
+#  - sh ./build.sh
 
 script:
   - cd ~/OXID/
