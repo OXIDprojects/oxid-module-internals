@@ -14,13 +14,13 @@
     "GPL-3.0"
   ],
   "require":{
-    "symfony/console" : "^2.7",
-    "composer/composer" : "^1.6",
-    "oxid-esales/oxideshop-ce" : "^6.0"
+    "symfony/console" : "^2.7||^3.1||^4.0",
+    "composer/composer" : "^1.7"
   },
   "require-dev":{
-    "codeception/codeception": "^2.5",
-    "symfony/dotenv": "^4.2"
+    "oxid-esales/oxideshop-ce" : "^6.3",
+    "oxid-esales/testing-library": "^6.0",
+    "codeception/codeception": "^2.5.2"
   },
   "extra": {
     "oxideshop": {
@@ -38,9 +38,5 @@
     "psr-4": {
       "OxidCommunity\\ModuleInternals\\": ""
     }
-  },
-  "config": {
-    "vendor-dir": ".Build/vendor",
-    "bin-dir": ".Build/bin"
   }
 }
