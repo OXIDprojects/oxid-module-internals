@@ -8,11 +8,18 @@ services:
     ports:
       - 4444:4444
 
-  oxid6_apache:
-    image: keywanghadamioxid/php-apache-full:${OXID}
+  fpm:
+    image: keywanghadamioxid/php-fpm-oxid
+    networks:
+      - proxy
+    volumes:
+      - ${PWD}/:/module
+  apache:
+    image: httpd:2.4-alpine
     hostname: oxid.local
     depends_on:
-      - oxid6_mysql
+      - mysql
+      - fpm
     volumes:
       - ${PWD}/:/module
     ports:
@@ -20,7 +27,7 @@ services:
     networks:
       - proxy
       
-  oxid6_mysql:
+  mysql:
     image: mysql:5.7
     hostname: mysql
     environment:
