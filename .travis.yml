@@ -21,6 +21,7 @@ before_install:
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - sh ./.travis.before_script.sh
+  - docker run  -d -p 4444:4444 --shm-size=2g selenium/standalone-chrome
 
 script:
   - cd ~/OXID/
