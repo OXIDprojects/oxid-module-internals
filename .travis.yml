@@ -8,9 +8,9 @@ env:
   - OXID=6.1
   - OXID=6.0
 
-cache:
-  directories:
-  - $HOME/OXID
+#cache:
+#  directories:
+#  - $HOME/OXID
 services: mysql
 
 before_install:
@@ -29,9 +29,9 @@ script:
   - ./vendor/bin/codecept run
 #  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml --git-commit=$TRAVIS_COMMIT
 
-before_cache:
-  - composer remove "oxid-community/moduleinternals"
-  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
-  - rm -rf ~/OXID/vendor/oxid-community/moduleinternals
-  - rm -rf ~/OXID/source/tmp/*
+#before_cache:
+#  - composer remove "oxid-community/moduleinternals"
+#  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
+#  - rm -rf ~/OXID/vendor/oxid-community/moduleinternals
+#  - rm -rf ~/OXID/source/tmp/*
 
