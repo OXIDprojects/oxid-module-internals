@@ -53,6 +53,7 @@ class ModuleStateFixer extends ModuleInstaller
     {
         if ($oConfig !== null) {
             $this->setConfig($oConfig);
+            Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
         }
 
         $moduleId = $module->getId();
