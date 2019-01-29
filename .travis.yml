@@ -25,7 +25,7 @@ before_script:
 script:
   - cd ~/OXID/
 #  - ./vendor/bin/runtests-coverage
-#  - ./vendor/bin/runtests
+  - ./vendor/bin/runtests
 #  - php vendor/bin/codacycoverage clover ~/OXID/source/modules/oxcom/moduleinternals/Tests/reports/clover.xml --git-commit=$TRAVIS_COMMIT
 
 before_cache:

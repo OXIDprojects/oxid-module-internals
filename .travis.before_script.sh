@@ -15,10 +15,9 @@ sed -i -e "s@partial_module_paths: null@partial_module_paths: oxcom/moduleintern
 sed -i -e "s@run_tests_for_shop: true@run_tests_for_shop: false@g" test_config.yml
 
 composer config minimum-stability dev
-composer require "codacy/coverage:dev-master"
 
 #Module Registrieren
-composer clear-cache
-composer config repo.packagist false
+#composer config repo.packagist false
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
+composer clear-cache
 composer require "oxid-community/moduleinternals:*"
