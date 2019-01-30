@@ -42,6 +42,8 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected $module = null;
 
+    protected $dryRun = false;
+
     /**
      * Fix module states task runs version, extend, files, templates, blocks,
      * settings and events information fix tasks
@@ -81,6 +83,56 @@ class ModuleStateFixer extends ModuleInstaller
      */
     public function cleanUp() {
         $this->cleanUpControllers();
+        $this->cleanUpExtensions();
+    }
+
+    /**
+     * remove extensions that are not registered by any module
+     */
+    public function cleanUpExtensions(){
+
+        //get all extions from all metadata
+        $oxModuleList = oxNew('oxModuleList');
+        $oxModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
+        $aModules = $oxModuleList->getList();
+
+        //get extensions from metadata
+        $allExtensionsFromMetadata = [];
+        foreach ($aModules as $module) {
+            $extensions = $module->getExtensions();
+            foreach ($extensions as $k => $v) {
+                $allExtensionsFromMetadata[$v] = 1;
+            }
+        }
+
+        //get all extesions from db
+        $extensionChainDb = $this->getConfig()->getConfigParam('aModules');
+        $extensionChainDb = $oxModuleList->parseModuleChains($extensionChainDb);
+
+        $trash = [];
+        //calculate trash as extensions that are only in db
+        foreach ($extensionChainDb as $oxidClass => $arrayOfExtendingClasses) {
+
+            foreach ($arrayOfExtendingClasses as $index => $extendingClass){
+                if (!isset($allExtensionsFromMetadata[$extendingClass])) {
+                    $trash[] = [$oxidClass, $extendingClass];
+                }
+            }
+        }
+
+        //remove diff
+        foreach ($trash as $item){
+            list($oxidClass, $extendingClass) = $item;
+            $this->output->error("wrong extension found $extendingClass (registered for $oxidClass)");
+            $key = array_search($extendingClass, $extensionChainDb[$oxidClass]);
+            unset($extensionChainDb[$oxidClass][$key]);
+        }
+
+        if (!$dryRun) {
+            $extensionChainDb = $this->buildModuleChains($extensionChainDb);
+            $this->_saveToConfig('aModules', $extensionChainDb);
+        }
+
     }
 
     /**
@@ -399,9 +451,10 @@ class ModuleStateFixer extends ModuleInstaller
 
     public function cleanUpControllers(){
         $allFromDb = $this->getAllControllers();
+        //? is aModuleVersions fixed already in that place
         $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
         $aVersions = array_change_key_case($aVersions,CASE_LOWER);
-        $cleaned = array_intersect_key($allFromDb,$aVersions);
+        $cleaned = array_intersect_key($allFromDb, $aVersions);
         if ($this->diff($allFromDb, $cleaned)) {
             $this->needCacheClear = true;
             $this->output->error(" cleaning up controllers");
@@ -558,9 +611,9 @@ class ModuleStateFixer extends ModuleInstaller
     protected function checkExtensions(\OxidEsales\Eshop\Core\Module\Module $module, &$aModulesDefault, &$aModules)
     {
         $aModulesDefault = $this->getConfig()->getConfigParam('aModules');
+        //in case someone deleted values from the db using a empty array avoids php warnings
+        $aModulesDefault = is_null($aModulesDefault) ? [] : $aModulesDefault;
         $aModules = $this->getModulesWithExtendedClass();
-        $aModules = $this->_removeNotUsedExtensions($aModules, $module);
-
 
         if ($module->hasExtendClass()) {
             $this->validateMetadataExtendSection($module);
@@ -600,4 +653,3 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
 }
-
