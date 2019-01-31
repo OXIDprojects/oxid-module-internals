@@ -25,6 +25,7 @@ composer require "oxid-professional-services/oxid-console:^5.3.0"
 echo "starting test test"
 php -d display_errors=stderr vendor/bin/runtests
 
+php -i
 
 php vendor/bin/oxid
 
