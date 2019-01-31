@@ -16,3 +16,14 @@ composer config minimum-stability dev
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
 composer clear-cache
 composer require "oxid-community/moduleinternals:*"
+
+#debug: is the file itself ok
+cat vendor/bin/runtests
+
+
+#debug: trying to execute tests here to find errors
+echo "starting test test"
+vendor/bin/runtests
+
+#debug checking log files
+cat log/*
