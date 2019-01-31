@@ -8,6 +8,9 @@ sed -i -e "s@<dbHost>@127.0.0.1@g; s@<dbName>@oxid@g; s@<dbUser>@root@g; s@<dbPw
 sed -i -e "s@<sShopDir>@/home/travis/OXID/source@g; s@<sCompileDir>@/home/travis/OXID/source/tmp@g" source/config.inc.php
 sed -i -e "s@partial_module_paths: null@partial_module_paths: oxcom/moduleinternals@g" test_config.yml
 sed -i -e "s@run_tests_for_shop: true@run_tests_for_shop: false@g" test_config.yml
+
+sed -i -e "s@shop_url: null@shop_url: http://127.0.0.1@g" test_config.yml
+
 cat test_config.yml
 composer config minimum-stability dev
 
@@ -23,7 +26,9 @@ cat vendor/bin/runtests
 
 #debug: trying to execute tests here to find errors
 echo "starting test test"
-vendor/bin/runtests
+php vendor/bin/runtests
 
 #debug checking log files
-cat log/*
+ls -al
+ls -al log/
+cat source/log/*
