@@ -21,15 +21,17 @@ composer clear-cache
 composer require "oxid-community/moduleinternals:*"
 composer require "oxid-professional-services/oxid-console:^5.3.0"
 
+#debug: trying to execute tests here to find errors
+echo "starting test test"
+php -d display_errors=stderr vendor/bin/runtests
+
+
 php vendor/bin/oxid
 
 #debug: is the file itself ok
-cat vendor/composer/installed.json
+#cat vendor/composer/installed.json
 
 
-#debug: trying to execute tests here to find errors
-echo "starting test test"
-php vendor/bin/runtests
 
 #debug checking log files
 ls -al
