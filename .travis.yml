@@ -8,9 +8,9 @@ env:
   - OXID=6.1
   - OXID=6.0
 
-cache:
-  directories:
-  - $HOME/OXID
+#cache:
+#  directories:
+#  - $HOME/OXID
 services: mysql
 
 before_install:
