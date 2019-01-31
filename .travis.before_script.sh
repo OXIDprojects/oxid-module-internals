@@ -19,9 +19,12 @@ composer config minimum-stability dev
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
 composer clear-cache
 composer require "oxid-community/moduleinternals:*"
+composer require "oxid-professional-services/oxid-console:^5.3.0"
+
+php vendor/bin/oxid
 
 #debug: is the file itself ok
-cat vendor/bin/runtests
+cat vendor/composer/installed.json
 
 
 #debug: trying to execute tests here to find errors
@@ -30,5 +33,5 @@ php vendor/bin/runtests
 
 #debug checking log files
 ls -al
-ls -al log/
+ls -al source/log/
 cat source/log/*
