@@ -96,12 +96,12 @@ class ModuleStateFixer extends ModuleInstaller
         $oxModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
         $aModules = $oxModuleList->getList();
 
-        //get extensions from metadata
-        $allExtensionsFromMetadata = [];
+        //get extensions from metadata file
+        $moduleClassesMf = [];
         foreach ($aModules as $module) {
             $extensions = $module->getExtensions();
-            foreach ($extensions as $k => $v) {
-                $allExtensionsFromMetadata[$v] = 1;
+            foreach ($extensions as $moduleClass) {
+                $moduleClassesMf[$moduleClass] = 1;
             }
         }
 
@@ -113,8 +113,8 @@ class ModuleStateFixer extends ModuleInstaller
         //calculate trash as extensions that are only in db
         foreach ($extensionChainDb as $oxidClass => $arrayOfExtendingClasses) {
 
-            foreach ($arrayOfExtendingClasses as $index => $extendingClass){
-                if (!isset($allExtensionsFromMetadata[$extendingClass])) {
+            foreach ($arrayOfExtendingClasses as $extendingClass){
+                if (!isset($moduleClassesMf[$extendingClass])) {
                     $trash[] = [$oxidClass, $extendingClass];
                 }
             }
@@ -128,7 +128,7 @@ class ModuleStateFixer extends ModuleInstaller
             unset($extensionChainDb[$oxidClass][$key]);
         }
 
-        if (!$dryRun) {
+        if (!$this->dryRun) {
             $extensionChainDb = $this->buildModuleChains($extensionChainDb);
             $this->_saveToConfig('aModules', $extensionChainDb);
         }
