@@ -18,20 +18,20 @@ composer config minimum-stability dev
 #composer config repo.packagist false
 composer config repositories.travis path ${TRAVIS_BUILD_DIR}
 composer clear-cache
-composer require "oxid-community/moduleinternals:*"
-composer require "oxid-professional-services/oxid-console:^5.3.0"
+composer require --prefer-source "oxid-community/moduleinternals:*"
+#composer require "oxid-professional-services/oxid-console:^5.3.0"
+composer show oxid-esales/testing-library
+
+cat vendor/composer/installed.json| grep oxid-esales/testing-library
 
 #debug: trying to execute tests here to find errors
 echo "starting test test"
-php -d display_errors=stderr vendor/bin/runtests
+php vendor/bin/runtests
 
-php -i
-
-php vendor/bin/oxid
+#php -i
+#php vendor/bin/oxid
 
 #debug: is the file itself ok
-#cat vendor/composer/installed.json
-
 
 
 #debug checking log files
