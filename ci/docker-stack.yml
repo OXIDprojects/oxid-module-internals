@@ -14,8 +14,11 @@ services:
       - frontend
     volumes:
       - ${PWD}/:/module
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
     depends_on:
       - mysql
+    user: "${UID}:${GID}"
 
   apache:
     image: httpd:2.4
@@ -26,6 +29,8 @@ services:
     volumes:
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ${PWD}:/module
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
     ports:
       - 8080:80
     networks:
