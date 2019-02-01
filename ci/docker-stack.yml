@@ -24,7 +24,7 @@ services:
       - mysql
       - fpm
     volumes:
-      - ${PWD}/:/module
+      - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ${PWD}/:/module
     ports:
       - 8080:80
