@@ -7,15 +7,15 @@ cache:
   directories:
   - $HOME/OXID
 services: 
- - docker
+  - docker
 before_install:
   - echo 'Europe/Berlin' | sudo tee /etc/timezone
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - sh ./prepare.sh
+  - sh ./ci/prepare.sh
 script:
-  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:${OXID} bash ../test.sh
+#  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:${OXID} bash ../test.sh
 before_cache:
 #  - composer remove "oxid-community/moduleinternals"
 #  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals

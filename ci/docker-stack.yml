@@ -1,31 +1,35 @@
-version: '3.7'
+version: "3"
 services:
 
   selenium:
     image: selenium/standalone-chrome
     networks:
-      - proxy
+      - frontend
     ports:
       - 4444:4444
 
   fpm:
     image: keywanghadamioxid/php-fpm-oxid
     networks:
-      - proxy
+      - frontend
     volumes:
       - ${PWD}/:/module
+    depends_on:
+      - mysql
+
   apache:
-    image: httpd:2.4-alpine
+    image: httpd:2.4
     hostname: oxid.local
     depends_on:
       - mysql
       - fpm
     volumes:
       - ${PWD}/:/module
+      - ${PWD}/:/module
     ports:
       - 8080:80
     networks:
-      - proxy
+      - frontend
       
   mysql:
     image: mysql:5.7
@@ -36,9 +40,7 @@ services:
       MYSQL_PASSWORD: oxid
       MYSQL_ROOT_PASSWORD: oxid
     networks:
-      - proxy
+      - frontend
 
 networks:
-  proxy:
-    driver: overlay
-    attachable: true
+  frontend:
