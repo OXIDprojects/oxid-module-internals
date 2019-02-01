@@ -25,7 +25,7 @@ services:
       - fpm
     volumes:
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ${PWD}/:/module
+      - ${PWD}:/module
     ports:
       - 8080:80
     networks:

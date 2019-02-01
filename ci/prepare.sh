@@ -1,5 +1,6 @@
+#!/usr/bin/env bash
 : "${OXID:=6.1}"
 echo $OXID
 docker swarm init
-docker stack deploy --compose-file docker-compose.yml oxid
-docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:$OXID bash /module/test.sh
+docker stack deploy --compose-file ci/docker-stack.yml oxid
+ci/execOnFpm.sh /module/ci/install.sh
