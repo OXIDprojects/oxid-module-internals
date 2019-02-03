@@ -24,8 +24,6 @@ services:
 
   apache:
     image: httpd:2.4
-    hostname: oxid
-    domainname: oxid.local
     depends_on:
       - mysql
       - fpm
