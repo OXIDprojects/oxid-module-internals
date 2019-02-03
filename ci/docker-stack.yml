@@ -16,6 +16,7 @@ services:
       - ${PWD}/:/module
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
+      - ${HOME}:${HOME}
     depends_on:
       - mysql
     user: "${UID}:${GID}"
@@ -29,8 +30,6 @@ services:
     volumes:
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ${PWD}:/module
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/group:/etc/group:ro
     ports:
       - 8080:80
     networks:

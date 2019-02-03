@@ -3,4 +3,5 @@
 echo $OXID
 docker swarm init
 docker stack deploy --compose-file ci/docker-stack.yml oxid
-ci/execOnFpm.sh /module/ci/install.sh
+sleep 1
+ci/execOnFpm.sh bash /module/ci/install.sh
