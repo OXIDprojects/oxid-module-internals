@@ -13,6 +13,7 @@ services:
     networks:
       - frontend
     volumes:
+      - ${PWD}/ci:/oxid
       - ${PWD}/:/module
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
@@ -23,13 +24,14 @@ services:
 
   apache:
     image: httpd:2.4
-    hostname: oxid.local
+    hostname: oxid
+    domainname: oxid.local
     depends_on:
       - mysql
       - fpm
     volumes:
+      - ${PWD}/ci:/oxid
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ${PWD}:/module
     ports:
       - 8080:80
     networks:
