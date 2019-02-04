@@ -1,3 +1,8 @@
 /.idea
 /composer.phar
 /vendor
+/ci/oxideshop/vendor
+/ci/oxideshop/composer.lock
+/ci/oxideshop/.ide-helper.php
+/ci/oxideshop/source
+

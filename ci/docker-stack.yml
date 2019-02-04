@@ -13,7 +13,7 @@ services:
     networks:
       - frontend
     volumes:
-      - ${PWD}/ci:/oxid
+      - ${PWD}/ci:/ci
       - ${PWD}/:/module
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
@@ -28,7 +28,7 @@ services:
       - mysql
       - fpm
     volumes:
-      - ${PWD}/ci:/oxid
+      - ${PWD}/ci/oxideshop:/oxideshop
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
     ports:
       - 8080:80
