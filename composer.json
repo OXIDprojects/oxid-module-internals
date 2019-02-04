@@ -30,7 +30,8 @@
       "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"],
       "blacklist-filter": [
                 "C*/**/*",
-                ".*"
+                ".*",
+                "ci/**/*"
             ]
     }
   },
