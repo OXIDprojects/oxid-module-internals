@@ -6,9 +6,16 @@
     "GPL-3.0-only"
   ],
   "minimum-stability": "stable",
+  "repositories":
+    [
+      {
+        "type": "path",
+        "url": "/module/"
+      }
+    ],
   "require": {
     "oxid-esales/oxideshop-metapackage-ce": "v6.1.2",
-    "oxid-community/moduleinternals": "*"
+    "oxid-community/moduleinternals": "*@dev"
   },
   "require-dev": {
     "oxid-esales/testing-library": "^v5.0.4",
