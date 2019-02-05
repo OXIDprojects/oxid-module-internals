@@ -23,18 +23,23 @@ services:
     user: "${UID}:${GID}"
 
   apache:
+    user: "${UID}"
     image: httpd:2.4
     depends_on:
       - mysql
       - fpm
     volumes:
       - ${PWD}/ci/oxideshop:/oxideshop
+      - ${PWD}/ci/logs:/usr/local/apache2/logs
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ${HOME}:${HOME}
     ports:
       - 8080:80
     networks:
       - frontend
-      
+
   mysql:
     image: mysql:5.7
     hostname: mysql
