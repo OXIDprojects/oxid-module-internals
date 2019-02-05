@@ -14,15 +14,18 @@
       }
     ],
   "require": {
-    "oxid-esales/oxideshop-metapackage-ce": "v6.1.2",
-    "oxid-community/moduleinternals": "*@dev"
+    "oxid-community/moduleinternals": "*@dev",
+    "oxid-esales/oxideshop-ce": "^v6.3.2",
+    "oxid-esales/oxideshop-unified-namespace-generator": "^v2.0.1",
+    "oxid-esales/oxideshop-doctrine-migration-wrapper": "^v2.1",
+    "oxid-esales/oxideshop-db-views-generator": "^v1.2",
+    "oxid-esales/oxideshop-composer-plugin": "^v2.0",
+    "oxid-esales/azure-theme": "^v1.4.2"
   },
   "require-dev": {
-    "oxid-esales/testing-library": "^v5.0.4",
+    "oxid-esales/testing-library": "^v6",
     "oxid-esales/coding-standards": "^v3.0.5",
-    "incenteev/composer-parameter-handler": "~v2.0",
-    "oxid-esales/oxideshop-ide-helper": "^v3.1.2",
-    "oxid-esales/azure-theme": "^v1.4.2"
+    "incenteev/composer-parameter-handler": "~v2.0"
   },
   "autoload-dev": {
     "psr-4": {
@@ -31,15 +34,10 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-      "@oe:ide-helper:generate"
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
     ],
     "post-update-cmd": [
-      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-      "@oe:ide-helper:generate"
-    ],
-    "oe:ide-helper:generate": [
-      "if [ -f ./vendor/bin/oe-eshop-ide_helper ]; then oe-eshop-ide_helper; fi"
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
     ]
   },
   "config": {
