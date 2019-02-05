@@ -13,7 +13,7 @@ services:
     networks:
       - frontend
     volumes:
-      - ${PWD}/ci:/ci
+      - ${PWD}/ci/:/var/www/
       - ${PWD}/:/module
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
@@ -24,12 +24,12 @@ services:
 
   apache:
     user: "${UID}"
-    image: httpd:2.4
+    image: httpd:2.4-alpine
     depends_on:
       - mysql
       - fpm
     volumes:
-      - ${PWD}/ci/oxideshop:/oxideshop
+      - ${PWD}/ci/:/var/www/
       - ${PWD}/ci/logs:/usr/local/apache2/logs
       - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - /etc/passwd:/etc/passwd:ro
