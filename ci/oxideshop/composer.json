@@ -25,7 +25,8 @@
   "require-dev": {
     "oxid-esales/testing-library": "^v6",
     "oxid-esales/coding-standards": "^v3.0.5",
-    "incenteev/composer-parameter-handler": "~v2.0"
+    "incenteev/composer-parameter-handler": "~v2.0",
+    "codeception/codeception": "^2.5.2"
   },
   "autoload-dev": {
     "psr-4": {
