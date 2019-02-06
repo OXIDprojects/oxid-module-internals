@@ -24,16 +24,14 @@ coverage:
 modules:
     config:
         Db:
-            dsn: 'mysql:host=%DB_HOST%;dbname=%DB_NAME%'
-            user: '%DB_USER%'
-            password: '%DB_PASS%'
+            dsn: 'mysql:host=mysql;dbname=oxid'
+            user: 'oxid'
+            password: 'oxid'
         WebDriver:
-            url: '%WEBSITE_URL%'
+            url: 'http://apache:8080'
             host: selenium
             browser: chrome
             window_size: 1600x1000
             connection_timeout: 5
             request_timeout: 30
-params:
-  - .env
 
