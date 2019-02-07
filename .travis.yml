@@ -13,7 +13,7 @@ before_install:
   - sudo dpkg-reconfigure --frontend noninteractive tzdata
 before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - sh ./ci/prepare.sh
+  - bash ./ci/prepare.sh
 script:
 #  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:${OXID} bash ../test.sh
 before_cache:
