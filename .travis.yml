@@ -2,10 +2,10 @@ language: minimal
 dist: xenial
 env:
   - OXID=6.1
-  - OXID=6.0
-cache:
-  directories:
-  - $HOME/OXID
+#  - OXID=6.0
+#cache:
+#  directories:
+#  - $HOME/OXID
 services:
   - docker
 before_install:
@@ -15,7 +15,7 @@ before_script:
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
   - bash ./ci/prepare.sh
 script:
-#  - docker run --network=oxid_proxy -ti keywanghadamioxid/php-apache-full:${OXID} bash ../test.sh
+  - bash ./ci/execOnFpm bash /var/www/test.sh
 before_cache:
 #  - composer remove "oxid-community/moduleinternals"
 #  - rm -rf ~/OXID/source/modules/oxcom/moduleinternals
