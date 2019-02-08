@@ -9,4 +9,5 @@ export GID="$(id -g $(whoami))"
 #docker swarm init
 #docker stack deploy --compose-file ci/docker-stack.yml oxid
 cd "$(dirname "$0")"
+docker-compose --version
 docker-compose up
