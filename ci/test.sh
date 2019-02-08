@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-cd /ci/oxideshop/source
+set -e
+set -x
+cd /ci/oxideshop/
 php vendor/bin/runtests
-cd /ci/oxideshop/source/vendor/oxid-community/moduleinternals
+cd /ci/oxideshop/vendor/oxid-community/moduleinternals
 php /ci/oxideshop/vendor/bin/codecept run
