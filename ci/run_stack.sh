@@ -10,4 +10,5 @@ export GID="$(id -g $(whoami))"
 #docker stack deploy --compose-file ci/docker-stack.yml oxid
 cd "$(dirname "$0")"
 docker-compose --version
-docker-compose up
+docker-compose up&
+export DOCKER_COMPOSE_PID=$!
