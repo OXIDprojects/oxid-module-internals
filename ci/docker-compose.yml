@@ -13,8 +13,8 @@ services:
     networks:
       - frontend
     volumes:
-      - ${PWD}/ci/:/ci
-      - ${PWD}/:/module
+      - ${PWD}/:/ci
+      - ${PWD}/..:/module
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
       - ${HOME}:${HOME}
@@ -29,9 +29,9 @@ services:
       - mysql
       - fpm
     volumes:
-      - ${PWD}/ci/:/ci
-      - ${PWD}/ci/logs:/usr/local/apache2/logs
-      - ${PWD}/ci/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - ${PWD}/:/ci
+      - ${PWD}/logs:/usr/local/apache2/logs
+      - ${PWD}/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
       - ${HOME}:${HOME}

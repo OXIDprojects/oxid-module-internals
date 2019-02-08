@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 COMPOSER_NO_INTERACTION=1
 cd /ci/oxideshop/
 rm -rf source

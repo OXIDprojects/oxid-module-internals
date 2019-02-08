@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 ./ci/run_stack.sh
 sleep 2
 #docker stack ps --no-trunc oxid
