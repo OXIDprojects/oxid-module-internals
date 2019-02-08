@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 COMPOSER_NO_INTERACTION=1
-cd /var/www/oxideshop/
+cd /ci/oxideshop/
 rm -rf source
 composer install
 touch source/.gitignore
