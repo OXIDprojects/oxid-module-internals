@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cd /var/www/source
+cd /ci/oxideshop/source
 php /vendor/bin/runtests
-cd /var/www/source/vendor/oxid-community/moduleinternals
-php /var/www/source/vendor/bin/codecept run
+cd /ci/oxideshop/source/vendor/oxid-community/moduleinternals
+php /ci/oxideshop/source/vendor/bin/codecept run
