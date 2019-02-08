@@ -6,4 +6,6 @@ export UID
 export GID="$(id -g $(whoami))"
 #docker swarm init
 #docker stack deploy --compose-file ci/docker-stack.yml oxid
+cd "$(dirname "$0")"
+cd ..
 docker-compose --file ci/docker-compose.yml
