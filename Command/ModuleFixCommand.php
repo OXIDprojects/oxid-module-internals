@@ -74,7 +74,8 @@ class ModuleFixCommand extends Command
         foreach ($aShopConfigs as $oConfig) {
             $moduleCount = count($aModuleIds);
             $verboseOutput->writeLn('[DEBUG] Working on shop id ' . $oConfig->getShopId() . " fixing $moduleCount modules");
-
+            $oModuleStateFixer->setConfig($oConfig);
+            $oModuleStateFixer->cleanUp();
             foreach ($aModuleIds as $sModuleId) {
                 $oModule->setMetaDataVersion(null);
                 if (!$oModule->load($sModuleId)) {
@@ -83,7 +84,7 @@ class ModuleFixCommand extends Command
                 }
 
                 $verboseOutput->writeLn("[DEBUG] Fixing {$sModuleId} module");
-                $oModuleStateFixer->fix($oModule, $oConfig);
+                $oModuleStateFixer->fix($oModule);
             }
 
             $verboseOutput->writeLn('');

@@ -44,6 +44,13 @@ class ModuleStateFixer extends ModuleInstaller
 
     protected $dryRun = false;
 
+
+    public function setConfig($config)
+    {
+        parent::setConfig($config);
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+    }
+
     /**
      * Fix module states task runs version, extend, files, templates, blocks,
      * settings and events information fix tasks
@@ -55,7 +62,6 @@ class ModuleStateFixer extends ModuleInstaller
     {
         if ($oConfig !== null) {
             $this->setConfig($oConfig);
-            Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
         }
 
         $moduleId = $module->getId();
@@ -69,8 +75,8 @@ class ModuleStateFixer extends ModuleInstaller
             }
             $this->output->debug("initial cache cleared");
             $this->initialCacheClearDone = true;
-            $this->cleanUp();
         }
+
         $this->module = $module;
         $this->restoreModuleInformation($module, $moduleId);
         $somethingWasFixed = $this->needCacheClear;

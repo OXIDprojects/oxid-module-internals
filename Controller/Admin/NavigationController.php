@@ -40,6 +40,7 @@ class NavigationController extends NavigationController_parent
         $moduleService = Registry::get(OxidComposerModulesService::class);
         $aModules = $moduleService->getActiveModules();
         $stateFixer = Registry::get(ModuleStateFixer::class);
+        $stateFixer->cleanUp();
         /*
          * @var InternalModule $oModule
          */
