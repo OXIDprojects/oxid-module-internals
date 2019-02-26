@@ -49,10 +49,19 @@ class FixHelperTest extends UnitTestCase
         $this->assertLogEntry("fixing module extensions");
     }
 
-    public function testFixControllers()
+    public function testCleanUpControllers()
     {
         $old = $this->getConfigParam('aModuleControllers');
         $this->setConfigParam('aModuleControllers', ['module-a' => ['mycontroller'=>'notexistingclass']]);
+        $this->callSut();
+        $this->assertEquals($this->getConfigParam('aModuleControllers'), $old);
+        $this->assertLogEntry("fixing module controllers");
+    }
+
+    public function testFixControllers()
+    {
+        $old = $this->getConfigParam('aModuleControllers');
+        $this->setConfigParam('aModuleControllers', ['moduleinternals' => []]);
         $this->callSut();
         $this->assertEquals($this->getConfigParam('aModuleControllers'), $old);
         $this->assertLogEntry("fixing module controllers");
@@ -68,7 +77,7 @@ class FixHelperTest extends UnitTestCase
         $module = oxNew(Module::class);
         $module->load($moduleId);
         $fixHelper = oxNew(ModuleStateFixer::class);
-
+        $fixHelper->cleanUp();
         $fixHelper->fix($module);
     }
 
