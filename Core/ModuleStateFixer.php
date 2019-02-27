@@ -34,6 +34,7 @@ class ModuleStateFixer extends ModuleInstaller
     protected $needCacheClear = false;
     protected $initialCacheClearDone = false;
     protected $initialDone = false;
+    protected $isRunning = false;
 
     /**
      * @var null|Module $module
@@ -57,9 +58,13 @@ class ModuleStateFixer extends ModuleInstaller
         $this->initialCacheClearDone = true;
     }
 
-    protected function init(): void
+    protected function init()
     {
         if (!$this->initDone) {
+            if ($this->isRunning) {
+                return false;
+            }
+            $this->isRunning = true;
             $this->moduleList = oxNew('oxModuleList');
             $this->moduleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
             $this->modules = $this->moduleList->getList();
@@ -75,8 +80,9 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->output->debug("initial cache cleared");
                 $this->initialCacheClearDone = true;
             }
-
+            $this->isRunning = false;
         }
+        return true;
     }
 
 
@@ -96,10 +102,10 @@ class ModuleStateFixer extends ModuleInstaller
         $moduleId = $module->getId();
         $this->needCacheClear = false;
 
-        $this->init();
-
-        $this->module = $module;
-        $this->restoreModuleInformation($module, $moduleId);
+        if ($this->init()) {
+            $this->module = $module;
+            $this->restoreModuleInformation($module, $moduleId);
+        }
         $somethingWasFixed = $this->needCacheClear;
         $this->clearCache($module);
         return $somethingWasFixed;
@@ -109,9 +115,10 @@ class ModuleStateFixer extends ModuleInstaller
      * After fixing all modules call this method to clean up trash that is not related to any installed module
      */
     public function cleanUp() {
-        $this->init();
-        $this->cleanUpControllers();
-        $this->cleanUpExtensions();
+        if ($this->init()) {
+            $this->cleanUpControllers();
+            $this->cleanUpExtensions();
+        }
     }
 
     /**
