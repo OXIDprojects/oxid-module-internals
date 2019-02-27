@@ -26,10 +26,6 @@ class ModuleStateFixer extends ModuleInstaller
         parent::__construct($cache, $cleaner);
     }
 
-    public function disableInitialCacheClear(){
-        $this->initialCacheClearDone = true;
-    }
-
     /**
      * @var $output LoggerInterface
      */
@@ -37,6 +33,9 @@ class ModuleStateFixer extends ModuleInstaller
 
     protected $needCacheClear = false;
     protected $initialCacheClearDone = false;
+    protected $initialDone = false;
+    protected $isRunning = false;
+
     /**
      * @var null|Module $module
      */
@@ -45,11 +44,47 @@ class ModuleStateFixer extends ModuleInstaller
     protected $dryRun = false;
 
 
+    protected $moduleList;
+    protected $modules;
+
+
     public function setConfig($config)
     {
         parent::setConfig($config);
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $oConfig);
+        Registry::set(\OxidEsales\Eshop\Core\Config::class, $config);
     }
+
+    public function disableInitialCacheClear(){
+        $this->initialCacheClearDone = true;
+    }
+
+    protected function init()
+    {
+        if (!$this->initDone) {
+            if ($this->isRunning) {
+                return false;
+            }
+            $this->isRunning = true;
+            $this->moduleList = Registry::get('oxModuleList');
+            $this->moduleList->getModulesFromDir(Registry::getConfig()->getModulesDir());
+            $this->modules = $this->moduleList->getList();
+            $this->initDone = true;
+
+            if (!$this->initialCacheClearDone) {
+
+                //clearing some cache to be sure that fix runs not against a stale cache
+                ModuleVariablesLocator::resetModuleVariables();
+                if (extension_loaded('apc') && ini_get('apc.enabled')) {
+                    apc_clear_cache();
+                }
+                $this->output->debug("initial cache cleared");
+                $this->initialCacheClearDone = true;
+            }
+            $this->isRunning = false;
+        }
+        return true;
+    }
+
 
     /**
      * Fix module states task runs version, extend, files, templates, blocks,
@@ -67,18 +102,10 @@ class ModuleStateFixer extends ModuleInstaller
         $moduleId = $module->getId();
         $this->needCacheClear = false;
 
-        if (!$this->initialCacheClearDone) {
-            //clearing some cache to be sure that fix runs not against a stale cache
-            ModuleVariablesLocator::resetModuleVariables();
-            if (extension_loaded('apc') && ini_get('apc.enabled')) {
-                apc_clear_cache();
-            }
-            $this->output->debug("initial cache cleared");
-            $this->initialCacheClearDone = true;
+        if ($this->init()) {
+            $this->module = $module;
+            $this->restoreModuleInformation($module, $moduleId);
         }
-
-        $this->module = $module;
-        $this->restoreModuleInformation($module, $moduleId);
         $somethingWasFixed = $this->needCacheClear;
         $this->clearCache($module);
         return $somethingWasFixed;
@@ -88,8 +115,10 @@ class ModuleStateFixer extends ModuleInstaller
      * After fixing all modules call this method to clean up trash that is not related to any installed module
      */
     public function cleanUp() {
-        $this->cleanUpControllers();
-        $this->cleanUpExtensions();
+        if ($this->init()) {
+            $this->cleanUpControllers();
+            $this->cleanUpExtensions();
+        }
     }
 
     /**
@@ -98,8 +127,7 @@ class ModuleStateFixer extends ModuleInstaller
     public function cleanUpExtensions(){
 
         //get all extions from all metadata
-        $oxModuleList = oxNew('oxModuleList');
-        $oxModuleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
+        $oxModuleList = $this->moduleList;
         $aModules = $oxModuleList->getList();
 
         //get extensions from metadata file
@@ -129,7 +157,7 @@ class ModuleStateFixer extends ModuleInstaller
         //remove diff
         foreach ($trash as $item){
             list($oxidClass, $extendingClass) = $item;
-            $this->output->error("wrong extension found $extendingClass (registered for $oxidClass)");
+            $this->output->warning("wrong extension found $extendingClass (registered for $oxidClass)");
             $key = array_search($extendingClass, $extensionChainDb[$oxidClass]);
             unset($extensionChainDb[$oxidClass][$key]);
         }
@@ -155,7 +183,7 @@ class ModuleStateFixer extends ModuleInstaller
             $diff = $this->diff($old,$aModuleTemplates);
             if ($diff) {
                 $what = $old === null ? ' everything ' :  var_export($diff, true);
-                $this->output->error("$sModuleId fixing templates");
+                $this->output->warning("$sModuleId fixing templates");
                 $this->output->debug(" $what");
                 $aTemplates[$sModuleId] = $aModuleTemplates;
                 $this->_saveToConfig('aModuleTemplates', $aTemplates);
@@ -163,7 +191,7 @@ class ModuleStateFixer extends ModuleInstaller
             }
         } else {
             if ($old) {
-                $this->output->error("$sModuleId unregister templates:");
+                $this->output->warning("$sModuleId unregister templates:");
                 $this->_deleteTemplateFiles($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -190,7 +218,7 @@ class ModuleStateFixer extends ModuleInstaller
             $diff = $this->diff($old,$aModuleFiles);
             if ($diff) {
                 $what = $old === null ? ' everything' : var_export($diff, true);
-                $this->output->error("$sModuleId fixing files");
+                $this->output->warning("$sModuleId fixing files");
                 $this->output->debug(" $what");
                 $aFiles[$sModuleId] = $aModuleFiles;
                 $this->_saveToConfig('aModuleFiles', $aFiles);
@@ -198,7 +226,7 @@ class ModuleStateFixer extends ModuleInstaller
             }
         } else {
             if ($old) {
-                $this->output->error("$sModuleId unregister files");
+                $this->output->warning("$sModuleId unregister files");
                 $this->_deleteModuleFiles($sModuleId);
                 $this->needCacheClear = true;
             }
@@ -222,7 +250,7 @@ class ModuleStateFixer extends ModuleInstaller
             if ($diff) {
                 $aEvents[$sModuleId] = $aModuleEvents;
                 $what = $old == null ? ' everything ' : var_export($diff, true);
-                $this->output->error("$sModuleId fixing module events");
+                $this->output->warning("$sModuleId fixing module events");
                 $this->output->debug(" $what");
                 $this->_saveToConfig('aModuleEvents', $aEvents);
                 $this->needCacheClear = true;
@@ -254,14 +282,14 @@ class ModuleStateFixer extends ModuleInstaller
             if ($diff) {
                 $extensions[$moduleId] = array_values($moduleExtensions);
                 $what =  $old === null ? ' everything ' : var_export($diff, true);
-                $this->output->error("$moduleId fixing module extensions");
+                $this->output->warning("$moduleId fixing module extensions");
                 $this->output->debug(" $what");
 
                 $this->_saveToConfig('aModuleExtensions', $extensions);
                 $this->needCacheClear = true;
             }
         } else {
-            $this->output->error("$moduleId unregister module extensions");
+            $this->output->warning("$moduleId unregister module extensions");
             $this->needCacheClear = true;
             $this->_saveToConfig('aModuleExtensions', []);
         }
@@ -283,7 +311,7 @@ class ModuleStateFixer extends ModuleInstaller
                 if($old == '') {
                     $this->output->info("register module '$sModuleId' with version $sModuleVersion");
                 } else {
-                    $this->output->error("$sModuleId fixing module version from $old to $sModuleVersion");
+                    $this->output->warning("$sModuleId fixing module version from $old to $sModuleVersion");
                 }
                 $this->_saveToConfig('aModuleVersions', $aVersions);
                 $this->needCacheClear = true;
@@ -399,7 +427,7 @@ class ModuleStateFixer extends ModuleInstaller
                 } ;
             }
             if ($diff) {
-                $this->output->error("$moduleId: settings fixed'");
+                $this->output->warning("$moduleId: settings fixed'");
                 $this->needCacheClear = true;
             }
         }
@@ -419,9 +447,10 @@ class ModuleStateFixer extends ModuleInstaller
 
 
         if ($diff) {
-            $this->output->error("$moduleId fixing module controllers");
-            $this->output->debug(" (in md):"  . var_export($moduleControllers, true));
-            $this->output->debug(" (in db):"  . var_export($controllersForThatModuleInDb, true));
+            $shopId = $this->getConfig()->getShopId();
+            $this->output->warning("in shop $shopId: $moduleId fixing module controllers");
+            $this->output->warning(" (in md):"  . var_export($moduleControllers, true));
+            $this->output->warning(" (in db):"  . var_export($controllersForThatModuleInDb, true));
 
             $this->deleteModuleControllers($moduleId);
             $this->resetModuleCache($module);
@@ -432,6 +461,9 @@ class ModuleStateFixer extends ModuleInstaller
 
                 $classProviderStorage->add($moduleId, $moduleControllers);
             }
+
+            $afterControllersForThatModuleInDb = $this->getModuleControllerEntries($moduleId);
+
             $this->needCacheClear = true;
         }
 
@@ -457,13 +489,14 @@ class ModuleStateFixer extends ModuleInstaller
 
     public function cleanUpControllers(){
         $allFromDb = $this->getAllControllers();
+        $modules = $this->modules;
+
         //? is aModuleVersions fixed already in that place
-        $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
-        $aVersions = array_change_key_case($aVersions,CASE_LOWER);
-        $cleaned = array_intersect_key($allFromDb, $aVersions);
+        $modules = array_change_key_case($modules,CASE_LOWER);
+        $cleaned = array_intersect_key($allFromDb, $modules);
         if ($this->diff($allFromDb, $cleaned)) {
             $this->needCacheClear = true;
-            $this->output->error(" cleaning up controllers");
+            $this->output->warning(" cleaning up controllers");
             $classProviderStorage = $this->getClassProviderStorage();
             $classProviderStorage->set($cleaned);
         }
