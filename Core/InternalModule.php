@@ -13,7 +13,7 @@ namespace OxidCommunity\ModuleInternals\Core;
 use \OxidEsales\Eshop\Core\DatabaseProvider as DatabaseProvider;
 use \OxidEsales\Eshop\Core\Registry as Registry;
 use \OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
-use OxidEsales\Eshop\Core\Request;
+
 
 /**
  * Class InternalModule: chain extends OxidEsales\Eshop\Core\Module\Module
@@ -403,7 +403,7 @@ class InternalModule extends InternalModule_parent
                 $aBlock['t_state'] = self::OK;
                 $aBlock['b_state'] = self::OK;
                 $sContent = file_get_contents($sTemplate);
-                if (!preg_match('/\[{.*block.* name.*= *"' . $block . '".*}\]/', $sContent)) {
+                if (!preg_match('/\[{\s*block[^}]+?name\s*=\s*["\']' . $block . '[\'"].*?}\]/', $sContent)) {
                     $aBlock['b_state'] = self::SHOP_FILE_NOT_FOUND;
                     $this->state |= self::MAY_NEED_MANUAL_FIX;
                 }
