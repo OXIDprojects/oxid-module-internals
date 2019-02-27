@@ -65,8 +65,8 @@ class ModuleStateFixer extends ModuleInstaller
                 return false;
             }
             $this->isRunning = true;
-            $this->moduleList = oxNew('oxModuleList');
-            $this->moduleList->getModulesFromDir(\oxRegistry::getConfig()->getModulesDir());
+            $this->moduleList = Registry::get('oxModuleList');
+            $this->moduleList->getModulesFromDir(Registry::getConfig()->getModulesDir());
             $this->modules = $this->moduleList->getList();
             $this->initDone = true;
 
