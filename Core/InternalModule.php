@@ -535,10 +535,6 @@ class InternalModule extends InternalModule_parent
         $aModule['oxid'] = $sId = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
 
-        //Commented the condition to show the states for disabled module as well
-        /*if ($this->_isInDisabledList($sId)) {
-            return $aModule;
-        }*/
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
         $aModule['aSettings'] = $oModule->checkModuleSettings();
