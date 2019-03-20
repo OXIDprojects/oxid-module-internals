@@ -225,6 +225,14 @@ class InternalModule extends InternalModule_parent
     {
         $sDatabaseVersion = $this->getModuleEntries(ModuleList::MODULE_KEY_VERSIONS);
 
+        /**
+         * Set version for disabled module
+         */
+        if (!count($sDatabaseVersion)) {
+            $iLang = \OxidEsales\Eshop\Core\Registry::getLang()->getTplLanguage();
+            $sDatabaseVersion = $this->getInfo("version", $iLang);
+        }
+
         $aResult = $this->toResult(['version'=>$sDatabaseVersion]);
 
         return $aResult;
@@ -526,9 +534,7 @@ class InternalModule extends InternalModule_parent
         $aModule = array();
         $aModule['oxid'] = $sId = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
-        if ($this->_isInDisabledList($sId)) {
-            return $aModule;
-        }
+
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
         $aModule['aSettings'] = $oModule->checkModuleSettings();
