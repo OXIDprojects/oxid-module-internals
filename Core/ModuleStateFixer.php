@@ -143,23 +143,19 @@ class ModuleStateFixer extends ModuleInstaller
         $extensionChainDb = $this->getConfig()->getConfigParam('aModules');
         $extensionChainDb = $oxModuleList->parseModuleChains($extensionChainDb);
 
-        $trash = [];
         //calculate trash as extensions that are only in db
-        foreach ($extensionChainDb as $oxidClass => $arrayOfExtendingClasses) {
+        foreach ($extensionChainDb as $oxidClass => &$arrayOfExtendingClasses) {
 
-            foreach ($arrayOfExtendingClasses as $extendingClass){
+            foreach ($arrayOfExtendingClasses as $key => $extendingClass){
                 if (!isset($moduleClassesMf[$extendingClass])) {
-                    $trash[] = [$oxidClass, $extendingClass];
+                    $this->output->warning("module extension trash found: '$extendingClass'' (registered for $oxidClass)");
+                    unset($arrayOfExtendingClasses[$key]);
                 }
             }
-        }
-
-        //remove diff
-        foreach ($trash as $item){
-            list($oxidClass, $extendingClass) = $item;
-            $this->output->warning("wrong extension found $extendingClass (registered for $oxidClass)");
-            $key = array_search($extendingClass, $extensionChainDb[$oxidClass]);
-            unset($extensionChainDb[$oxidClass][$key]);
+            $arrayOfExtendingClasses = array_values($arrayOfExtendingClasses);
+            if (empty($arrayOfExtendingClasses)) {
+                unset($extensionChainDb[$oxidClass]);
+            }
         }
 
         if (!$this->dryRun) {
