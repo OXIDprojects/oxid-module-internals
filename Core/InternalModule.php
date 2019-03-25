@@ -306,7 +306,7 @@ class InternalModule extends InternalModule_parent
                 if (strpos($sClassName,'oxerp') === 0) {
                     //AS ERP module does still use a own autoloader
                     //classes of oxerp will not be found with class_exists
-                    $erp_dir = $this->getConfig()->getModulesDir() .'erp/';
+                    $erp_dir = Registry::getConfig()->getModulesDir() .'erp/';
                     if (strpos($sClassName,'oxerptype_') === 0) {
                         $dir = $erp_dir.'objects/';
                     } else {

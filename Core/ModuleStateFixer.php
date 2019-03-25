@@ -140,7 +140,7 @@ class ModuleStateFixer extends ModuleInstaller
         }
 
         //get all extesions from db
-        $extensionChainDb = $this->getConfig()->getConfigParam('aModules');
+        $extensionChainDb = Registry::getConfig()->getConfigParam('aModules');
         $extensionChainDb = $oxModuleList->parseModuleChains($extensionChainDb);
 
         //calculate trash as extensions that are only in db
@@ -173,7 +173,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addTemplateFiles($aModuleTemplates, $sModuleId)
     {
-        $aTemplates = (array) $this->getConfig()->getConfigParam('aModuleTemplates');
+        $aTemplates = (array) Registry::getConfig()->getConfigParam('aModuleTemplates');
         $old = isset($aTemplates[$sModuleId]) ? $aTemplates[$sModuleId] : null;
         if (is_array($aModuleTemplates)) {
             $diff = $this->diff($old,$aModuleTemplates);
@@ -203,7 +203,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addModuleFiles($aModuleFiles, $sModuleId)
     {
-        $aFiles = (array) $this->getConfig()->getConfigParam('aModuleFiles');
+        $aFiles = (array) Registry::getConfig()->getConfigParam('aModuleFiles');
 
         $old =  isset($aFiles[$sModuleId]) ? $aFiles[$sModuleId] : null;
         if ($aModuleFiles !== null) {
@@ -239,7 +239,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addModuleEvents($aModuleEvents, $sModuleId)
     {
-        $aEvents = (array) $this->getConfig()->getConfigParam('aModuleEvents');
+        $aEvents = (array) Registry::getConfig()->getConfigParam('aModuleEvents');
         $old =  isset($aEvents[$sModuleId]) ? $aEvents[$sModuleId] : null;
         if (is_array($aModuleEvents) && count($aModuleEvents)) {
             $diff = $this->diff($old,$aModuleEvents);
@@ -269,7 +269,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addModuleExtensions($moduleExtensions, $moduleId)
     {
-        $extensions = (array) $this->getConfig()->getConfigParam('aModuleExtensions');
+        $extensions = (array) Registry::getConfig()->getConfigParam('aModuleExtensions');
         $old = isset($extensions[$moduleId]) ? $extensions[$moduleId] : null;
         $old = (array) $old;
         $new = $moduleExtensions === null ? [] : array_values($moduleExtensions);
@@ -299,7 +299,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addModuleVersion($sModuleVersion, $sModuleId)
     {
-        $aVersions = (array) $this->getConfig()->getConfigParam('aModuleVersions');
+        $aVersions = (array) Registry::getConfig()->getConfigParam('aModuleVersions');
         $old =  isset($aVersions[$sModuleId]) ? $aVersions[$sModuleId] : '';
         if (isset($sModuleVersion)) {
             if ($old !== $sModuleVersion) {
@@ -383,7 +383,7 @@ class ModuleStateFixer extends ModuleInstaller
 
     protected function isActive($sId)
     {
-        return !in_array($sId, (array) $this->getConfig()->getConfigParam('aDisabledModules'));
+        return !in_array($sId, (array) Registry::getConfig()->getConfigParam('aDisabledModules'));
     }
 
     /**
@@ -405,7 +405,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function _addModuleSettings($moduleSettings, $moduleId)
     {
-        $config = $this->getConfig();
+        $config = Registry::getConfig();
         $shopId = $config->getShopId();
         if (is_array($moduleSettings)) {
             $diff = false;
@@ -443,7 +443,7 @@ class ModuleStateFixer extends ModuleInstaller
 
 
         if ($diff) {
-            $shopId = $this->getConfig()->getShopId();
+            $shopId = Registry::getConfig()->getShopId();
             $this->output->warning("in shop $shopId: $moduleId fixing module controllers");
             $this->output->warning(" (in md):"  . var_export($moduleControllers, true));
             $this->output->warning(" (in db):"  . var_export($controllersForThatModuleInDb, true));
@@ -585,7 +585,7 @@ class ModuleStateFixer extends ModuleInstaller
         if (!is_array($moduleBlocks)) {
             $moduleBlocks = array();
         }
-        $shopId = $this->getConfig()->getShopId();
+        $shopId = Registry::getConfig()->getShopId();
         $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
         $knownBlocks = ['dummy']; // Start with a dummy value to prevent having an empty list in the NOT IN statement.
         $rowsEffected = 0;
@@ -645,7 +645,7 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function checkExtensions(\OxidEsales\Eshop\Core\Module\Module $module, &$aModulesDefault, &$aModules)
     {
-        $aModulesDefault = $this->getConfig()->getConfigParam('aModules');
+        $aModulesDefault = Registry::getConfig()->getConfigParam('aModules');
         //in case someone deleted values from the db using a empty array avoids php warnings
         $aModulesDefault = is_null($aModulesDefault) ? [] : $aModulesDefault;
         $aModules = $this->getModulesWithExtendedClass();
