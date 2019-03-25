@@ -21,7 +21,7 @@ if(trim(Registry::get(Config::class)->getConfigParam('sACActiveCompleteKey')) ==
 </p>';
 
     $sLinkAndText_DE = '<p>
-    <strong>Es ist keine Zugriffsschl&uuml;ssel gepeichert - bitte in der Konfiguration hinterlegen!</strong>
+    <strong>Es ist kein Zugriffsschl&uuml;ssel gepeichert - bitte in der Konfiguration hinterlegen!</strong>
     
 </p>';
 }
