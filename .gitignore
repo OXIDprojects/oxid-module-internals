@@ -6,4 +6,5 @@
 /ci/oxideshop/.ide-helper.php
 /ci/oxideshop/source
 /ci/oxideshop/.phpstorm.meta.php
+/ci/oxideshop/test_config.yml
 /ci/logs/

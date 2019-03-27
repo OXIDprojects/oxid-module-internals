@@ -5,4 +5,6 @@ use this to get a default oxid eshop including apache webserver and php in a iso
 # run it
 
 start the prepare.sh script it will start the docker stack and trigger the oxid installation
-in case of error see that file
+in case of error run the steps from the prepare.sh script manually
+
+
