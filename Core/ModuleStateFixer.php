@@ -568,14 +568,12 @@ class ModuleStateFixer extends ModuleInstaller
         }
     }
 
-
-
     /**
      * Add module templates to database.
      *
-     * @deprecated please use setTemplateBlocks this method will be removed because
      * the combination of deleting and adding does unnessery writes and so it does not scale
      * also it's more likely to get race conditions (in the moment the blocks are deleted)
+     * so this method is now updating existing entries and deleting the trash
      *
      * @param array  $moduleBlocks Module blocks array
      * @param string $moduleId     Module id
@@ -586,16 +584,42 @@ class ModuleStateFixer extends ModuleInstaller
             $moduleBlocks = array();
         }
         $shopId = Registry::getConfig()->getShopId();
-        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
+        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb(\OxidEsales\Eshop\Core\DatabaseProvider::FETCH_MODE_ASSOC);
         $knownBlocks = ['dummy']; // Start with a dummy value to prevent having an empty list in the NOT IN statement.
         $rowsEffected = 0;
+        $select_sql = "SELECT `OXID`, `OXTHEME` as `theme`, `OXTEMPLATE` as `template`, `OXBLOCKNAME` as `block`, `OXPOS` as `position`, `OXFILE` as `file` 
+            FROM `oxtplblocks` 
+            WHERE `OXMODULE` = ? AND `OXSHOPID` = ?";
+        $existingBlocks = $db->getAll($select_sql,[$moduleId,$shopId]);
+
+        foreach ($existingBlocks as $block) {
+            $id = $block['OXID'];
+            $block['position'] = (int) $block['position'];
+
+            unset($block['OXID']);
+            ksort($block);
+            $str1 = $moduleId . json_encode($block) . $shopId;
+            $wellGeneratedId = md5($str1);
+            if ($id !== $wellGeneratedId) {
+               $sql = "UPDATE IGNORE `oxtplblocks` SET OXID = ? WHERE OXID = ?";
+               $this->output->debug("$sql, $wellGeneratedId, $id");
+               $db->execute($sql, [$wellGeneratedId, $id]);
+            }
+        }
+
+
         foreach ($moduleBlocks as $moduleBlock) {
-            $blockId = md5($moduleId . json_encode($moduleBlock) . $shopId);
+            $moduleBlock['theme'] = isset($moduleBlock['theme']) ? $moduleBlock['theme'] : '';
+            $moduleBlock['position'] = $position = isset($moduleBlock['position']) && is_numeric($moduleBlock['position']) ?
+                intval($moduleBlock['position']) : 1;
+
+            ksort($moduleBlock);
+
+            $str = $moduleId . json_encode($moduleBlock) . $shopId;
+            $blockId = md5($str);
             $knownBlocks[] = $blockId;
 
             $template = $moduleBlock["template"];
-            $position = isset($moduleBlock['position']) && is_numeric($moduleBlock['position']) ?
-                intval($moduleBlock['position']) : 1;
 
             $block = $moduleBlock["block"];
             $filePath = $moduleBlock["file"];
@@ -627,7 +651,6 @@ class ModuleStateFixer extends ModuleInstaller
 
         $listOfKnownBlocks = join(',', $db->quoteArray($knownBlocks));
         $deleteblocks = "DELETE FROM oxtplblocks WHERE OXSHOPID = ? AND OXMODULE = ? AND OXID NOT IN ({$listOfKnownBlocks});";
-
         $rowsEffected += $db->execute(
             $deleteblocks,
             array($shopId, $moduleId)
@@ -638,6 +661,8 @@ class ModuleStateFixer extends ModuleInstaller
         }
     }
 
+
+    
     /**
      * @param Module $module
      * @param $aModulesDefault
