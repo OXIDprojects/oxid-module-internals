@@ -635,6 +635,7 @@ class ModuleStateFixer extends ModuleInstaller
 
         if ($rowsEffected) {
             $this->needCacheClear = true;
+            $this->output->info("fixed template blocks for module " . $moduleId);
         }
     }
 
