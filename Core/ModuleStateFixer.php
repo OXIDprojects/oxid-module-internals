@@ -571,9 +571,10 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * Add module templates to database.
      *
-     * the combination of deleting and adding does unnessery writes and so it does not scale
-     * also it's more likely to get race conditions (in the moment the blocks are deleted)
-     * so this method is now updating existing entries and deleting the trash
+     * this method sets template blocks with less conflicting writes as possible
+     * to reduce race conditions (in the moment the blocks are deleted)
+     * it will only report major changes even if id may be changed to ensure consistency of the data 
+     * 
      *
      * @param array  $moduleBlocks Module blocks array
      * @param string $moduleId     Module id
@@ -609,10 +610,9 @@ class ModuleStateFixer extends ModuleInstaller
 
 
         foreach ($moduleBlocks as $moduleBlock) {
-            $moduleBlock['theme'] = isset($moduleBlock['theme']) ? $moduleBlock['theme'] : '';
+            $moduleBlock['theme'] = $moduleBlock['theme'] ?? '';
             $moduleBlock['position'] = $position = isset($moduleBlock['position']) && is_numeric($moduleBlock['position']) ?
-                intval($moduleBlock['position']) : 1;
-
+                (int) $moduleBlock['position'] : 1;            
             ksort($moduleBlock);
 
             $str = $moduleId . json_encode($moduleBlock) . $shopId;
@@ -651,6 +651,7 @@ class ModuleStateFixer extends ModuleInstaller
 
         $listOfKnownBlocks = join(',', $db->quoteArray($knownBlocks));
         $deleteblocks = "DELETE FROM oxtplblocks WHERE OXSHOPID = ? AND OXMODULE = ? AND OXID NOT IN ({$listOfKnownBlocks});";
+
         $rowsEffected += $db->execute(
             $deleteblocks,
             array($shopId, $moduleId)
@@ -660,8 +661,6 @@ class ModuleStateFixer extends ModuleInstaller
             $this->needCacheClear = true;
         }
     }
-
-
     
     /**
      * @param Module $module
