@@ -16,12 +16,12 @@
   ],
   "require":{
     "symfony/console" : "^2.7||^3.1||^4.0",
-    "composer/composer" : "^1.6"
+    "composer/composer" : "^1.7"
   },
   "require-dev":{
-    "oxid-esales/oxideshop-ce" : "^6.1",
-    "oxid-esales/testing-library": "^5",
-    "phpunit/phpcov": "~2.0.2"
+    "oxid-esales/oxideshop-ce" : "^6.3",
+    "oxid-esales/testing-library": "^6.0",
+    "codeception/codeception": "^2.5.2"
   },
   "extra": {
     "oxideshop": {
@@ -30,7 +30,8 @@
       "console-commands" : ["OxidCommunity\\ModuleInternals\\Command\\ModuleFixCommand"],
       "blacklist-filter": [
                 "C*/**/*",
-                ".*"
+                ".*",
+                "ci/**/*"
             ]
     }
   },

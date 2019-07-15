@@ -1,0 +1,37 @@
+namespace: OxidCommunity\ModuleInternals\Testscc
+actor: Tester
+paths:
+    tests: Testscc
+    log: Testscc/_output
+    data: Testscc/_data
+    support: Testscc/_support
+    envs: Testscc/_envs
+settings:
+    colors: true
+    memory_limit: 1024M
+    shuffle: true
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+coverage:
+    enabled: true
+    include:
+        - Command/*
+        - Controller/*
+        - Core/*
+    exclude:
+        - .Build/*
+modules:
+    config:
+        Db:
+            dsn: 'mysql:host=mysql;dbname=oxid'
+            user: 'oxid'
+            password: 'oxid'
+        WebDriver:
+            url: 'http://apache:8080'
+            host: selenium
+            browser: chrome
+            window_size: 1600x1000
+            connection_timeout: 5
+            request_timeout: 30
+

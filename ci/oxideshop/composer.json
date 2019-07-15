@@ -1,0 +1,62 @@
+{
+  "name": "oxid-esales/oxideshop-project",
+  "type": "project",
+  "description": "This file should be used as an OXID eShop project root composer.json file. Entries provided here intended to be examples and could be changed to your specific needs.",
+  "license": [
+    "GPL-3.0-only"
+  ],
+  "minimum-stability": "stable",
+  "repositories":
+    [
+      {
+        "type": "path",
+        "url": "/module/"
+      }
+    ],
+  "require": {
+    "oxid-community/moduleinternals": "*@dev",
+    "oxid-esales/oxideshop-ce": "^v6.3.2",
+    "oxid-esales/oxideshop-unified-namespace-generator": "^v2.0.1",
+    "oxid-esales/oxideshop-doctrine-migration-wrapper": "^v2.1",
+    "oxid-esales/oxideshop-db-views-generator": "^v1.2",
+    "oxid-esales/oxideshop-composer-plugin": "^v2.0",
+    "oxid-esales/azure-theme": "^v1.4.2",
+    "oxid-esales/flow-theme": "^3.1"
+  },
+  "require-dev": {
+    "oxid-esales/testing-library": "^v6",
+    "oxid-esales/coding-standards": "^v3.0.5",
+    "incenteev/composer-parameter-handler": "~v2.0",
+    "codeception/codeception": "^2.5.2"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "OxidEsales\\EshopCommunity\\Tests\\": "./vendor/oxid-esales/oxideshop-ce/tests"
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ],
+    "post-update-cmd": [
+      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters"
+    ]
+  },
+  "config": {
+    "preferred-install": {
+      "*": "dist"
+    }
+  },
+  "extra": {
+    "incenteev-parameters": {
+      "file": "test_config.yml",
+      "dist-file": "vendor/oxid-esales/testing-library/test_config.yml.dist",
+      "parameter-key": "mandatory_parameters",
+      "env-map": {
+        "shop_path": "SHOP_PATH",
+        "shop_tests_path": "SHOP_TESTS_PATH",
+        "partial_module_paths": "PARTIAL_MODULE_PATHS"
+      }
+    }
+  }
+}

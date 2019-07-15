@@ -1,0 +1,55 @@
+version: "3"
+services:
+
+  selenium:
+    image: selenium/standalone-chrome
+    networks:
+      - frontend
+    ports:
+      - 4444:4444
+
+  fpm:
+    image: keywanghadamioxid/php-fpm-oxid
+    networks:
+      - frontend
+    volumes:
+      - ${PWD}/:/ci
+      - ${PWD}/..:/module
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ${HOME}:${HOME}
+    depends_on:
+      - mysql
+    user: "${UID}:${GID}"
+
+  apache:
+    user: "${UID}"
+    image: httpd:2.4-alpine
+    depends_on:
+      - mysql
+      - fpm
+    volumes:
+      - ${PWD}/:/ci
+      - ${PWD}/logs:/usr/local/apache2/logs
+      - ${PWD}/httpd.conf:/usr/local/apache2/conf/httpd.conf
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+      - ${HOME}:${HOME}
+    ports:
+      - 8080:8080
+    networks:
+      - frontend
+
+  mysql:
+    image: mysql:5.7
+    hostname: mysql
+    environment:
+      MYSQL_DATABASE: oxid
+      MYSQL_USER: oxid
+      MYSQL_PASSWORD: oxid
+      MYSQL_ROOT_PASSWORD: oxid
+    networks:
+      - frontend
+
+networks:
+  frontend:
