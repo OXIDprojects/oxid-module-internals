@@ -16,7 +16,8 @@
   ],
   "require":{
     "symfony/console" : "^2.7||^3.1||^4.0",
-    "composer/composer" : "^1.6"
+    "composer/composer" : "^1.6",
+    "php": ">=7.0"
   },
   "require-dev":{
     "oxid-esales/oxideshop-ce" : "^6.1",
