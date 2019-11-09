@@ -228,7 +228,7 @@ class InternalModule extends InternalModule_parent
         /**
          * Set version for disabled module
          */
-        if (!count($sDatabaseVersion)) {
+        if (!$sDatabaseVersion || !count($sDatabaseVersion)) {
             $iLang = \OxidEsales\Eshop\Core\Registry::getLang()->getTplLanguage();
             $sDatabaseVersion = $this->getInfo("version", $iLang);
         }
