@@ -5,8 +5,13 @@ php:
   - "7.1"
 
 env:
-  - OXID=6.1
   - OXID=6.0
+  - OXID=6.1
+  - OXID=6.2
+
+jobs:
+  allow_failures:
+    - env: OXID=6.2
 
 cache:
   directories:
