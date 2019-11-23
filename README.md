@@ -32,6 +32,16 @@ composer require oxid-community/moduleinternals
 
 ![OXID_moduleinternals](screenshot.png)
 
+## Compatibillity Map
+
+| oxid eshop| module internals |
+| ---| --- |
+| 6.0| ^2.0 |
+| 6.1| ^2.0 |
+| 6.2| ^3.0 (planed, help wanted) |
+
+
+
 ## Changelog
 * 2019-01-21  2.0.0 Option to disable blocks,autodiscover module version number from composer,automatic module state fix (when opening admin module list) with feedback, overview page with accordion, admin homepage warnings, improved logging, improved fixing, remove state from disabled modules, support for different console versions
 * 2018-12-12  1.5.2 avoid php warning if module namespace can not be found
