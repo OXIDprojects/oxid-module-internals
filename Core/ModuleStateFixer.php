@@ -415,12 +415,18 @@ class ModuleStateFixer extends ModuleInstaller
                 $name = $setting["name"];
                 $type = $setting["type"];
 
-                if (isset($setting["value"]) && is_null($config->getConfigParam($name))){
+                // Third party modules might extend getShopConfVar() and/or getConfigParam()
+                $dbValue=$config->getShopConfVar($name,$shopId,$module);
+                if (is_null($dbValue)) {
+                    $dbValue = $config->getConfigParam($name);
+                }
+
+                if (isset($setting["value"]) && is_null($dbValue)){
                     $diff = true;
                     $value = $setting["value"];
                     $config->saveShopConfVar($type, $name, $value, $shopId, $module);
                     $this->output->debug("$moduleId: setting for '$name' fixed'");
-                } ;
+                };
             }
             if ($diff) {
                 $this->output->warning("$moduleId: settings fixed'");
