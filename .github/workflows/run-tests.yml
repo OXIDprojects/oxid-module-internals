@@ -1,0 +1,51 @@
+name: run-tests
+
+on: [push]
+
+jobs:
+    test:
+
+        runs-on: ubuntu-latest
+        services:
+            mysql:
+                image: mariadb:10.3
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: true
+                    MYSQL_USER: oxid
+                    MYSQL_DATABASE: oxid
+                ports:
+                    - 33306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        strategy:
+            fail-fast: true
+            matrix:
+                php: ["7.0", 7.1]
+                oxid: ["6.0", 6.1]
+
+        name: P${{ matrix.php }} - O${{ matrix.oxid }}
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v1
+
+            -   name: Cache dependencies
+                uses: actions/cache@v1
+                with:
+                    path: ~/.composer/cache/files
+                    key: dependencies-oxid-${{ matrix.oxid }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v1
+                with:
+                    php-version: ${{ matrix.php }}
+                    extension-csv: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, mysql
+                    coverage: none
+
+            -   name: Clear the composer cache for now
+                run: composer clearcache
+
+            -   name: Install Composer dependencies
+                run: composer install
+
+            -   name: Install OXID Shop
+                run: DB_HOST=mariadb OXID=${{ matrix.oxid }} vendor/bin/install-oxid && cd ../.OXID && vendor/bin/runtests
