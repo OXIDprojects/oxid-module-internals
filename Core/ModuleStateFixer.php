@@ -19,9 +19,14 @@ use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
  */
 class ModuleStateFixer extends ModuleInstaller
 {
+    /** @var \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner */
+    private $moduleCleaner;
 
     public function __construct($cache = null, $cleaner = null){
-        $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
+        if (is_null($cleaner)) {
+            $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
+        }
+        $this->moduleCleaner = $cleaner;
         $this->output = $this->getLogger();
         parent::__construct($cache, $cleaner);
     }
@@ -710,6 +715,97 @@ class ModuleStateFixer extends ModuleInstaller
             return \getLogger();
         }
         return new FallbackLogger();
+    }
+
+    /**
+     * Save module parameters to shop config
+     *
+     * @param string $sVariableName  config name
+     * @param string $sVariableValue config value
+     * @param string $sVariableType  config type
+     */
+    protected function _saveToConfig($sVariableName, $sVariableValue, $sVariableType = 'aarr')
+    {
+        $oConfig = Registry::getConfig();
+        $oConfig->saveShopConfVar($sVariableType, $sVariableName, $sVariableValue);
+    }
+
+    /**
+     * Validate module metadata extend section.
+     * Only Unified Namespace shop classes are free to patch.
+     *
+     * @param \OxidEsales\Eshop\Core\Module\Module $module
+     *
+     * @throws ModuleValidationException
+     */
+    protected function validateMetadataExtendSection(\OxidEsales\Eshop\Core\Module\Module $module)
+    {
+        $validator = $this->getModuleMetadataValidator();
+        $validator->checkModuleExtensionsForIncorrectNamespaceClasses($module);
+    }
+
+    /**
+     * @return \OxidEsales\Eshop\Core\Module\ModuleMetadataValidator
+     */
+    protected function getModuleMetadataValidator()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Module\ModuleMetadataValidator::class);
+    }
+
+    /**
+     * Merge two nested module arrays together so that the values of
+     * $aAddModuleArray are appended to the end of the $aAllModuleArray
+     *
+     * @param array $aAllModuleArray All Module array (nested format)
+     * @param array $aAddModuleArray Added Module array (nested format)
+     *
+     * @return array
+     */
+    protected function _mergeModuleArrays($aAllModuleArray, $aAddModuleArray)
+    {
+        if (is_array($aAllModuleArray) && is_array($aAddModuleArray)) {
+            foreach ($aAddModuleArray as $sClass => $aModuleChain) {
+                if (!is_array($aModuleChain)) {
+                    $aModuleChain = [$aModuleChain];
+                }
+                if (isset($aAllModuleArray[$sClass])) {
+                    foreach ($aModuleChain as $sModule) {
+                        if (!in_array($sModule, $aAllModuleArray[$sClass])) {
+                            $aAllModuleArray[$sClass][] = $sModule;
+                        }
+                    }
+                } else {
+                    $aAllModuleArray[$sClass] = $aModuleChain;
+                }
+            }
+        }
+
+        return $aAllModuleArray;
+    }
+
+    /**
+     * Removes garbage ( module not used extensions ) from all installed extensions list
+     *
+     * @param array                                $installedExtensions Installed extensions
+     * @param \OxidEsales\Eshop\Core\Module\Module $module              Module
+     *
+     * @deprecated on b-dev, \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner::cleanExtensions() should be used.
+     *
+     * @return array
+     */
+    protected function _removeNotUsedExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
+    {
+        return $this->getModuleCleaner()->cleanExtensions($installedExtensions, $module);
+    }
+
+    /**
+     * Returns module cleaner object.
+     *
+     * @return \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner
+     */
+    protected function getModuleCleaner()
+    {
+        return $this->moduleCleaner;
     }
 
 }
