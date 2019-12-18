@@ -44,6 +44,7 @@ $aModule = [
     Komplette &Uuml;bersicht: '.$sLinkAndText,
     ],
     'thumbnail'   => 'module_internals.png',
+    'version'      => '3.0',
     'author'      => 'OXID Community',
     'url'         => 'https://github.com/OXIDprojects/oxid-module-internals',
     'email'       => '',
