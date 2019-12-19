@@ -19,7 +19,7 @@ jobs:
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
     runs-on: ubuntu-latest
-    container: oxidprojects/oxid-test::${{matrix.tag}}
+    container: oxidprojects/oxid-test:${{matrix.tag}}
     env:
       MODULE_NAME: moduleinternals
     steps:
