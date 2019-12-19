@@ -41,6 +41,7 @@ class NavigationController extends NavigationController_parent
         $aModules = $moduleService->getActiveModules();
         $stateFixer = Registry::get(ModuleStateFixer::class);
         $stateFixer->cleanUp();
+        $aMessage['warning'] = [];
         /*
          * @var InternalModule $oModule
          */
