@@ -7,11 +7,11 @@ php:
 env:
   - OXID=6.0
   - OXID=6.1
-  - OXID=6.2
+  - OXID=6.2-rc
 
 jobs:
   allow_failures:
-    - env: OXID=6.2
+    - env: OXID=6.2-rc
 
 cache:
   directories:
