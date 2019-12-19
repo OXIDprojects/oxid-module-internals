@@ -10,6 +10,7 @@ class NavigationControllerTest extends UnitTestCase
     {
         $controller = oxNew(NavigationController::class);
         $messages = [];
+        $this->setConfigParam('aModuleExtensions', ['a' => ['b']]);
         $controller->checkModules($messages);
         //print_r($messages);
         //print $this->exceptionLogHelper->getExceptionLogFileContent();
