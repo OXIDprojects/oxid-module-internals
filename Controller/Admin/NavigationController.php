@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: keywan
@@ -8,18 +9,18 @@
 
 namespace OxidCommunity\ModuleInternals\Controller\Admin;
 
-
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidCommunity\ModuleInternals\Core\OxidComposerModulesService;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Registry;
-
 
 class NavigationController extends NavigationController_parent
 {
     /**
      * Every Time Admin starts we perform these checks
      * returns some messages if there is something to display
+     *
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      *
      * @return string
      */
@@ -35,7 +36,7 @@ class NavigationController extends NavigationController_parent
     /**
      * @param $aMessage
      */
-    public function checkModules(& $aMessage)
+    public function checkModules(&$aMessage)
     {
         $moduleService = Registry::get(OxidComposerModulesService::class);
         $aModules = $moduleService->getActiveModules();
@@ -57,5 +58,4 @@ class NavigationController extends NavigationController_parent
             }
         }
     }
-
 }

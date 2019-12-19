@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -6,14 +7,14 @@
  * @author    Alfonsas Cirtautas / OXID Community
  * @link      https://github.com/OXIDprojects/ocb_cleartmp
  * @see       https://github.com/acirtautas/oxid-module-internals
+ * @phpcs:disable PSR12.Properties.ConstantVisibility.NotFound
  */
 
 namespace OxidCommunity\ModuleInternals\Core;
 
-use \OxidEsales\Eshop\Core\DatabaseProvider as DatabaseProvider;
-use \OxidEsales\Eshop\Core\Registry as Registry;
-use \OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
-
+use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Module\ModuleList;
 
 /**
  * Class InternalModule: chain extends OxidEsales\Eshop\Core\Module\Module
@@ -24,7 +25,7 @@ class InternalModule extends InternalModule_parent
     protected $state = self::FINE;
     protected $checked = false;
     /** @var ModuleStateFixer */
-    protected $_oModuleFixHelper;
+    protected $moduleFixHelper;
 
     const FINE = 0;
     const NEED_MANUAL_FIXED = 1;
@@ -34,7 +35,8 @@ class InternalModule extends InternalModule_parent
     const MODULE_FILE_NOT_FOUND = 'sfatalm';
     const SHOP_FILE_NOT_FOUND = 'sfatals';
 
-    public function load($id){
+    public function load($id)
+    {
         $this->metaDataVersion = 0;
         $this->checked = false;
         $this->state = self::FINE;
@@ -47,11 +49,12 @@ class InternalModule extends InternalModule_parent
      */
     public function setModuleFixHelper($oModuleFixHelper)
     {
-        $this->_oModuleFixHelper = $oModuleFixHelper;
+        $this->moduleFixHelper = $oModuleFixHelper;
     }
 
 
-    public function getModuleHelper(){
+    public function getModuleHelper()
+    {
         return Registry::get(ModuleHelper::class);
     }
 
@@ -61,12 +64,12 @@ class InternalModule extends InternalModule_parent
      */
     public function getModuleStateFixer()
     {
-        if ($this->_oModuleFixHelper === null) {
-            $this->_oModuleFixHelper = Registry::get(ModuleStateFixer::class);
-	    //$this->_oModuleFixHelper->disableInitialCacheClear();
+        if ($this->moduleFixHelper === null) {
+            $this->moduleFixHelper = Registry::get(ModuleStateFixer::class);
+        //$this->_oModuleFixHelper->disableInitialCacheClear();
         }
 
-        return $this->_oModuleFixHelper;
+        return $this->moduleFixHelper;
     }
 
     /**
@@ -90,7 +93,7 @@ class InternalModule extends InternalModule_parent
                            OXTEMPLATE as template,
                            OXBLOCKNAME as block,
                            OXFILE as file,
-                           OXPOS 
+                           OXPOS
                     FROM oxtplblocks
                     WHERE oxModule = ? AND oxshopid = ? AND OXTHEME IN ($themeIdsSql)
                     ORDER BY OXTHEME, OXTEMPLATE, OXBLOCKNAME",
@@ -233,12 +236,13 @@ class InternalModule extends InternalModule_parent
             $sDatabaseVersion = $this->getInfo("version", $iLang);
         }
 
-        $aResult = $this->toResult(['version'=>$sDatabaseVersion]);
+        $aResult = $this->toResult(['version' => $sDatabaseVersion]);
 
         return $aResult;
     }
 
-    public function getTitle() {
+    public function getTitle()
+    {
         if ($this->checked !== false) {
             return $this->checked['title'];
         }
@@ -261,7 +265,8 @@ class InternalModule extends InternalModule_parent
         return $title;
     }
 
-    public function hasIssue(){
+    public function hasIssue()
+    {
         return ($this->state & self::NEED_MANUAL_FIXED) == self::NEED_MANUAL_FIXED;
     }
 
@@ -283,7 +288,7 @@ class InternalModule extends InternalModule_parent
         if (!$this->isMetadataVersionGreaterEqual('2.0')) {
             $aMetadataExtend = array_change_key_case($aMetadataExtend, CASE_LOWER);
             //convert legacy classnames because $aAllModules dos not contain legacy classes
-            if (method_exists(Registry::class ,'getBackwardsCompatibilityClassMap')) {
+            if (method_exists(Registry::class, 'getBackwardsCompatibilityClassMap')) {
                 $map = Registry::getBackwardsCompatibilityClassMap();
                 foreach ($aMetadataExtend as $legacyName => $file) {
                     if (isset($map[$legacyName])) {
@@ -298,22 +303,23 @@ class InternalModule extends InternalModule_parent
         foreach ($aMetadataExtend as $sClassName => $sModuleName) {
             $key_state = $iState = self::OK;
 
-            if (strpos($sClassName,'OxidEsales\\EshopCommunity\\') === 0 ||
-                strpos($sClassName,'OxidEsales\\EshopEnterprise\\') === 0 ||
-                strpos($sClassName,'OxidEsales\\EshopProfessional\\') === 0 ||
+            if (
+                strpos($sClassName, 'OxidEsales\\EshopCommunity\\') === 0 ||
+                strpos($sClassName, 'OxidEsales\\EshopEnterprise\\') === 0 ||
+                strpos($sClassName, 'OxidEsales\\EshopProfessional\\') === 0 ||
                 !class_exists($sClassName)
             ) {
-                if (strpos($sClassName,'oxerp') === 0) {
+                if (strpos($sClassName, 'oxerp') === 0) {
                     //AS ERP module does still use a own autoloader
                     //classes of oxerp will not be found with class_exists
-                    $erp_dir = Registry::getConfig()->getModulesDir() .'erp/';
-                    if (strpos($sClassName,'oxerptype_') === 0) {
-                        $dir = $erp_dir.'objects/';
+                    $erp_dir = Registry::getConfig()->getModulesDir() . 'erp/';
+                    if (strpos($sClassName, 'oxerptype_') === 0) {
+                        $dir = $erp_dir . 'objects/';
                     } else {
                         $dir = $erp_dir;
                     }
 
-                    $sFullPath  = $dir.$sClassName.'.php';
+                    $sFullPath  = $dir . $sClassName . '.php';
 
                     if (!file_exists($sFullPath)) {
                         $key_state = self::SHOP_FILE_NOT_FOUND;
@@ -374,9 +380,10 @@ class InternalModule extends InternalModule_parent
 
 
             $file = $aBlock['file'];
-            if (!$this->checkFileExists( $sModulePath . '/' . $file) &&
-                !$this->checkFileExists( $sModulePath . '/out/blocks/' . basename($file)) &&
-                !$this->checkFileExists( $sModulePath . '/out/blocks/' . basename($file) . '.tpl')
+            if (
+                !$this->checkFileExists($sModulePath . '/' . $file) &&
+                !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file)) &&
+                !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file) . '.tpl')
             ) {
                 $iState = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
@@ -398,7 +405,6 @@ class InternalModule extends InternalModule_parent
 
             // Get template from module ..
             if (!$sTemplate && isset($aMetadataTemplates[$template])) {
-
                 if ($this->checkFileExists($aMetadataTemplates[$template])) {
                     $sTemplate = $sModulesDir . '/' . $aMetadataTemplates[$template];
                 }
@@ -416,7 +422,6 @@ class InternalModule extends InternalModule_parent
                     $this->state |= self::MAY_NEED_MANUAL_FIX;
                 }
             }
-
         }
 
         return $aDatabaseBlocks;
@@ -476,7 +481,8 @@ class InternalModule extends InternalModule_parent
         return $this->checkFiles($aDatabaseFiles, false);
     }
 
-    protected function toResult($array){
+    protected function toResult($array)
+    {
         $result = [];
         foreach ($array as $key => $data) {
             $result[$key]['data'] = $data;
@@ -485,13 +491,16 @@ class InternalModule extends InternalModule_parent
         return $result;
     }
 
-    protected function checkFiles($files , $php){
+    protected function checkFiles($files, $php)
+    {
         $result = [];
         foreach ($files as $key => $file) {
             $result[$key]['data'] = $file;
             $s = self::OK;
-            if (($php && !$this->checkPhpFileExists($file))
-                || ((!$php) && !$this->checkFileExists($file))) {
+            if (
+                ($php && !$this->checkPhpFileExists($file))
+                || ((!$php) && !$this->checkFileExists($file))
+            ) {
                 $s = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
             }
@@ -510,10 +519,14 @@ class InternalModule extends InternalModule_parent
         $aDatabaseEvents = $this->getModuleEntries(ModuleList::MODULE_KEY_EVENTS);
 
         $aDatabaseEvents = is_array($aDatabaseEvents) ? $aDatabaseEvents : [];
-        $aDatabaseEvents = array_map(function ($value){return print_r($value,true);}, $aDatabaseEvents);
+        $aDatabaseEvents = array_map(function ($value) {
+            return print_r($value, true);
+        }, $aDatabaseEvents);
         $aResult = $this->toResult($aDatabaseEvents);
-        foreach ($aResult as $eventName => &$data){
-            $data['key_state'] = ($eventName == 'onActivate' || $eventName == 'onDeactivate') ? self::OK : self::SHOP_FILE_NOT_FOUND;
+        foreach ($aResult as $eventName => &$data) {
+            $data['key_state'] = ($eventName == 'onActivate' || $eventName == 'onDeactivate')
+                ? self::OK
+                : self::SHOP_FILE_NOT_FOUND;
         }
         return $aResult;
     }
@@ -599,7 +612,7 @@ class InternalModule extends InternalModule_parent
      */
     protected function getComposerPackage($moduleId = null)
     {
-        if ($moduleId == null){
+        if ($moduleId == null) {
             $moduleId = $this->getId();
         }
         /**
@@ -609,6 +622,4 @@ class InternalModule extends InternalModule_parent
         $package = $packageService->getPackage($moduleId);
         return $package;
     }
-
-
 }

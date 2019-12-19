@@ -21,8 +21,9 @@ class OxidComposerModulesService
     /**
      * get List of packages
      */
-    public function getList(){
-        if ($this->list !== null){
+    public function getList()
+    {
+        if ($this->list !== null) {
             return $this->list;
         }
         $list = [];
@@ -49,7 +50,8 @@ class OxidComposerModulesService
      * @param $moduleId
      * @return bool|PackageInterface
      */
-    public function getPackage($moduleId) {
+    public function getPackage($moduleId)
+    {
         $list = $this->getList();
         if (!isset($list[$moduleId])) {
             return false;
@@ -78,16 +80,16 @@ class OxidComposerModulesService
         $packages = $this->getPackages();
         $packages = array_filter($packages, function (PackageInterface $package) {
             return $package->getType() == 'oxideshop-module';
-        }
-        );
+        });
         return $packages;
     }
 
     /**
      * @return \Composer\Package\PackageInterface[]
      */
-    public function getPackages(){
-        $localRepository = new InstalledFilesystemRepository(new JsonFile(VENDOR_PATH.'/composer/installed.json'));
+    public function getPackages()
+    {
+        $localRepository = new InstalledFilesystemRepository(new JsonFile(VENDOR_PATH . '/composer/installed.json'));
         $packages = $localRepository->getPackages();
         return $packages;
     }
@@ -103,7 +105,9 @@ class OxidComposerModulesService
 
         $oModuleList = oxNew(ModuleList::Class);
         $aModules = $oModuleList->getModulesFromDir($sModulesDir);
-        $aActiveModules =  array_filter($aModules, function($module){return $module->isActive();});
+        $aActiveModules =  array_filter($aModules, function ($module) {
+            return $module->isActive();
+        });
 
         return $aActiveModules;
     }

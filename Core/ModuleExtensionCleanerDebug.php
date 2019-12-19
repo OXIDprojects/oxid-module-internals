@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: keywan
@@ -7,7 +8,6 @@
  */
 
 namespace OxidCommunity\ModuleInternals\Core;
-
 
 use OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner;
 use OxidEsales\Eshop\Core\Registry;
@@ -18,16 +18,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 {
-    protected $_debugOutput;
+    protected $debugOutput;
 
     public function __construct()
     {
-        $this->_debugOutput= new NullLogger();
+        $this->debugOutput = new NullLogger();
     }
 
-    public function setOutput(LoggerInterface $out){
+    public function setOutput(LoggerInterface $out)
+    {
 
-        $this->_debugOutput = $out;
+        $this->debugOutput = $out;
     }
 
     /**
@@ -53,19 +54,19 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
             }
         }
 
-        $oModules = oxNew( \OxidEsales\EshopCommunity\Core\Module\ModuleList::class );
+        $oModules = oxNew(\OxidEsales\EshopCommunity\Core\Module\ModuleList::class);
         //ids will include garbage in case there are files that not registered by any module
         $ids = $oModules->getModuleIds();
 
         $config = Registry::getConfig();
         $knownIds = array_keys($config->getConfigParam('aModulePaths'));
-        $diff = array_diff($ids,$knownIds);
+        $diff = array_diff($ids, $knownIds);
         if ($diff) {
             foreach ($diff as $item) {
                 foreach ($installedExtensions as &$coreClassExtension) {
                     foreach ($coreClassExtension as $i => $ext) {
                         if ($ext === $item) {
-                            $this->_debugOutput->debug("$item will be removed");
+                            $this->debugOutput->debug("$item will be removed");
                             unset($coreClassExtension[$i]);
                         }
                     }
@@ -79,7 +80,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
     protected function removeGarbage($aInstalledExtensions, $aarGarbage)
     {
         foreach ($aarGarbage as $moduleId => $aExt) {
-            $this->_debugOutput->info("removing garbage for module $moduleId: " . join(',', $aExt));
+            $this->debugOutput->info("removing garbage for module $moduleId: " . join(',', $aExt));
         }
         return parent::removeGarbage($aInstalledExtensions, $aarGarbage);
     }
@@ -99,7 +100,11 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 
         foreach ($moduleInstalledExtensions as $coreClassName => $listOfExtensions) {
             foreach ($listOfExtensions as $extensions) {
-                if (! (isset($moduleMetaDataExtensions[$coreClassName]) && $moduleMetaDataExtensions[$coreClassName] == $extensions)) {
+                if (
+                    !(isset($moduleMetaDataExtensions[$coreClassName])
+                    && $moduleMetaDataExtensions[$coreClassName] == $extensions
+                    )
+                ) {
                     $garbage[$coreClassName][] = $extensions;
                 }
             }
@@ -123,7 +128,6 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
             $moduleHelper->setModule($module);
             $path = $moduleHelper->getModuleNameSpace();
         } else {
-
             $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
 
             $moduleId = $module->getId();
@@ -142,7 +146,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
             return $filteredModules;
         }
 
-       foreach ($modules as $class => $extend) {
+        foreach ($modules as $class => $extend) {
             foreach ($extend as $extendPath) {
                 if (strpos($extendPath, $path) === 0) {
                     $filteredModules[$class][] = $extendPath;

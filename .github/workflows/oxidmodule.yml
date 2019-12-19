@@ -11,7 +11,7 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: oxid
-        ports: 
+        ports:
           - 3306
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
@@ -21,9 +21,18 @@ jobs:
       MODULE_NAME: moduleinternals
     steps:
     - uses: actions/checkout@v1
-        
+
     - name: Validate composer.json and composer.lock
       run: composer validate
+
+    - name: Install composer dependencies
+      run: composer install
+
+    - name: Check code style
+      run: vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=vendor .
+
+    - name: Remove phpcs for unit tests (due to conflict)
+      run: composer remove --dev squizlabs/php_codesniffer
 
     - name: setup oxid
       run: bash /var/www/OXID/setup.sh

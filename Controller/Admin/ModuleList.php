@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module

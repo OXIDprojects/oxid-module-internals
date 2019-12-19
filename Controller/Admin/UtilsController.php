@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -11,9 +12,9 @@
 
 namespace OxidCommunity\ModuleInternals\Controller\Admin;
 
-use \OxidEsales\Eshop\Core\Module\Module as Module;
-use \OxidEsales\Eshop\Core\Module\ModuleCache as ModuleCache;
-use \OxidEsales\Eshop\Core\Module\ModuleInstaller as ModuleInstaller;
+use OxidEsales\Eshop\Core\Module\Module;
+use OxidEsales\Eshop\Core\Module\ModuleCache;
+use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 
 /**
  * Module internals tools.
@@ -28,13 +29,13 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
 {
 
     /** @var oxModule */
-    protected $_oModule;
+    protected $module;
 
     /** @var oxModuleCache */
-    protected $_oModuleCache;
+    protected $moduleCache;
 
     /** @var oxModuleInstaller */
-    protected $_oModuleInstaller;
+    protected $moduleInstaller;
 
     /**
      * @var string
@@ -48,15 +49,15 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
      */
     public function getModule()
     {
-        if ($this->_oModule === null) {
+        if ($this->module === null) {
             $sModuleId = $this->getEditObjectId();
 
             $this->addTplParam('oxid', $sModuleId);
-            $this->_oModule = oxNew(Module::class);
-            $this->_oModule->load($sModuleId);
+            $this->module = oxNew(Module::class);
+            $this->module->load($sModuleId);
         }
 
-        return $this->_oModule;
+        return $this->module;
     }
 
     /**
@@ -66,11 +67,11 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
      */
     public function getModuleCache()
     {
-        if ($this->_oModuleCache === null) {
-            $this->_oModuleCache = oxNew(ModuleCache::class, $this->getModule());
+        if ($this->moduleCache === null) {
+            $this->moduleCache = oxNew(ModuleCache::class, $this->getModule());
         }
 
-        return $this->_oModuleCache;
+        return $this->moduleCache;
     }
 
     /**
@@ -80,11 +81,11 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
      */
     public function getModuleInstaller()
     {
-        if ($this->_oModuleInstaller === null) {
-            $this->_oModuleInstaller = oxNew(ModuleInstaller::class, $this->getModuleCache());
+        if ($this->moduleInstaller === null) {
+            $this->moduleInstaller = oxNew(ModuleInstaller::class, $this->getModuleCache());
         }
 
-        return $this->_oModuleInstaller;
+        return $this->moduleInstaller;
     }
 
     /**

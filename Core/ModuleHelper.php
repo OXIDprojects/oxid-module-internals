@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: keywan
@@ -8,14 +9,14 @@
 
 namespace OxidCommunity\ModuleInternals\Core;
 
-
 use OxidEsales\Eshop\Core\Registry;
 
 class ModuleHelper
 {
     protected $module;
 
-    public function setModule($module){
+    public function setModule($module)
+    {
         $this->module = $module;
     }
 
@@ -81,13 +82,13 @@ class ModuleHelper
     }
 
 
-    public function getAutoloader(){
-        if (Registry::instanceExists('autoloader')){
+    public function getAutoloader()
+    {
+        if (Registry::instanceExists('autoloader')) {
             return Registry::get('autoloader');
         }
         $composerClassLoader = include VENDOR_PATH . 'autoload.php';
         Registry::set('autoloader', $composerClassLoader);
         return $composerClassLoader;
     }
-
 }

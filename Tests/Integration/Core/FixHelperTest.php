@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -24,7 +25,7 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 class FixHelperTest extends UnitTestCase
 {
 
-   public function testFixTemplate()
+    public function testFixTemplate()
     {
         $this->setConfigParam('aModuleTemplates', ['a' => 'b']);
         $this->callSut();
@@ -52,7 +53,7 @@ class FixHelperTest extends UnitTestCase
     public function testCleanUpControllers()
     {
         $old = $this->getConfigParam('aModuleControllers');
-        $this->setConfigParam('aModuleControllers', ['module-a' => ['mycontroller'=>'notexistingclass']]);
+        $this->setConfigParam('aModuleControllers', ['module-a' => ['mycontroller' => 'notexistingclass']]);
         $this->callSut();
         $this->assertEquals($this->getConfigParam('aModuleControllers'), $old);
         $this->assertLogEntry("fixing module controllers");
@@ -87,5 +88,4 @@ class FixHelperTest extends UnitTestCase
         $this->assertContains($text, $content);
         $this->exceptionLogHelper->clearExceptionLogFile();
     }
-
 }

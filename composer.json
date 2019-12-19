@@ -22,8 +22,8 @@
   "require-dev":{
     "oxid-esales/oxideshop-ce" : "^6.1",
     "oxid-esales/testing-library": "^5",
-    "phpunit/phpcov": "~2.0.2",
-    "oxid-professional-services/install-oxid-for-module": "^0.1"
+    "oxid-professional-services/install-oxid-for-module": "^0.1",
+    "squizlabs/php_codesniffer": "3.*"
   },
   "extra": {
     "oxideshop": {
