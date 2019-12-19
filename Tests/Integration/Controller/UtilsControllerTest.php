@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -22,12 +23,21 @@ class UtilsControllerTest extends UnitTestCase
     public function testGetModule()
     {
         $moduleId = 'moduleinternals';
-        $utilsController = $this->getMock(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class, ['getEditObjectId']);
-        $utilsController->expects($this->any())->method('getEditObjectId')->will($this->returnValue($moduleId));
+        $utilsController = $this->getMock(
+            \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+            ['getEditObjectId']
+        );
+        $utilsController
+            ->expects($this->any())
+            ->method('getEditObjectId')
+            ->will($this->returnValue($moduleId));
 
         $module = $utilsController->getModule();
 
-        $this->assertTrue(is_a($module, \OxidEsales\Eshop\Core\Module\Module::class), 'class not as expected');
+        $this->assertTrue(
+            is_a($module, \OxidEsales\Eshop\Core\Module\Module::class),
+            'class not as expected'
+        );
         $this->assertEquals($moduleId, $module->getId(), 'id not as expected');
     }
 
@@ -37,8 +47,14 @@ class UtilsControllerTest extends UnitTestCase
     public function testGetModulePath()
     {
         $moduleId = 'moduleinternals';
-        $utilsController = $this->getMock(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class, ['getEditObjectId']);
-        $utilsController->expects($this->any())->method('getEditObjectId')->will($this->returnValue($moduleId));
+        $utilsController = $this->getMock(
+            \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+            ['getEditObjectId']
+        );
+        $utilsController
+            ->expects($this->any())
+            ->method('getEditObjectId')
+            ->will($this->returnValue($moduleId));
 
         $module = $utilsController->getModuleCache();
 
@@ -66,12 +82,25 @@ class UtilsControllerTest extends UnitTestCase
         $module = oxNew(\OxidEsales\Eshop\Core\Module\Module::class);
         $module->load($moduleId);
 
-        $moduleCache = $this->getMock(\OxidEsales\Eshop\Core\Module\ModuleCache::class, ['resetCache'], [$module]);
+        $moduleCache = $this->getMock(
+            \OxidEsales\Eshop\Core\Module\ModuleCache::class,
+            ['resetCache'],
+            [$module]
+        );
         $moduleCache->expects($this->any())->method('resetCache');
 
-        $utilsController = $this->getMock(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class, ['getModuleCache', 'getEditObjectId']);
-        $utilsController->expects($this->any())->method('getEditObjectId')->will($this->returnValue($moduleId));
-        $utilsController->expects($this->any())->method('getModuleCache')->will($this->returnValue($moduleCache));
+        $utilsController = $this->getMock(
+            \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+            ['getModuleCache', 'getEditObjectId']
+        );
+        $utilsController
+            ->expects($this->any())
+            ->method('getEditObjectId')
+            ->will($this->returnValue($moduleId));
+        $utilsController
+            ->expects($this->any())
+            ->method('getModuleCache')
+            ->will($this->returnValue($moduleCache));
 
         $utilsController->resetModuleCache();
     }
@@ -81,11 +110,23 @@ class UtilsControllerTest extends UnitTestCase
      */
     public function testActivateModule()
     {
-        $moduleInstaller = $this->getMock(\OxidEsales\Eshop\Core\Module\ModuleInstaller::class, ['activate'], [], '', false);
+        $moduleInstaller = $this->getMock(
+            \OxidEsales\Eshop\Core\Module\ModuleInstaller::class,
+            ['activate'],
+            [],
+            '',
+            false
+        );
         $moduleInstaller->expects($this->once())->method('activate');
 
-        $utilsController = $this->getMock(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class, ['getModuleInstaller']);
-        $utilsController->expects($this->once())->method('getModuleInstaller')->will($this->returnValue($moduleInstaller));
+        $utilsController = $this->getMock(
+            \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+            ['getModuleInstaller']
+        );
+        $utilsController
+            ->expects($this->once())
+            ->method('getModuleInstaller')
+            ->will($this->returnValue($moduleInstaller));
 
         $utilsController->activateModule();
     }
@@ -95,11 +136,23 @@ class UtilsControllerTest extends UnitTestCase
      */
     public function testDeactivateModule()
     {
-        $moduleInstaller = $this->getMock(\OxidEsales\Eshop\Core\Module\ModuleInstaller::class, ['deactivate'], [], '', false);
+        $moduleInstaller = $this->getMock(
+            \OxidEsales\Eshop\Core\Module\ModuleInstaller::class,
+            ['deactivate'],
+            [],
+            '',
+            false
+        );
         $moduleInstaller->expects($this->once())->method('deactivate');
 
-        $utilsController = $this->getMock(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class, ['getModuleInstaller']);
-        $utilsController->expects($this->once())->method('getModuleInstaller')->will($this->returnValue($moduleInstaller));
+        $utilsController = $this->getMock(
+            \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
+            ['getModuleInstaller']
+        );
+        $utilsController
+            ->expects($this->once())
+            ->method('getModuleInstaller')
+            ->will($this->returnValue($moduleInstaller));
 
         $utilsController->deactivateModule();
     }

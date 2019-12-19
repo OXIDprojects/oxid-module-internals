@@ -24,7 +24,7 @@ class ModuleFixCommand extends Command
     /**
      * @var array|null Available module ids
      */
-    protected $_aAvailableModuleIds = null;
+    protected $availableModuleIds = null;
 
     /** @var InputInterface */
     private $input;
@@ -56,8 +56,8 @@ class ModuleFixCommand extends Command
             : new NullOutput();
 
         try {
-            $aModuleIds = $this->_parseModuleIds();
-            $aShopConfigs = $this->_parseShopConfigs();
+            $aModuleIds = $this->parseModuleIds();
+            $aShopConfigs = $this->parseShopConfigs();
         } catch (InputException $oEx) {
             $output->writeLn($oEx->getMessage());
             exit(1);
@@ -73,7 +73,9 @@ class ModuleFixCommand extends Command
 
         foreach ($aShopConfigs as $oConfig) {
             $moduleCount = count($aModuleIds);
-            $verboseOutput->writeLn('[DEBUG] Working on shop id ' . $oConfig->getShopId() . " fixing $moduleCount modules");
+            $verboseOutput->writeLn(
+                '[DEBUG] Working on shop id ' . $oConfig->getShopId() . " fixing $moduleCount modules"
+            );
             $oModuleStateFixer->setConfig($oConfig);
             $oModuleStateFixer->cleanUp();
             foreach ($aModuleIds as $sModuleId) {
@@ -100,10 +102,10 @@ class ModuleFixCommand extends Command
      *
      * @throws InputException
      */
-    protected function _parseModuleIds()
+    protected function parseModuleIds()
     {
         if ($this->input->getOption('all')) {
-            return $this->_getAvailableModuleIds();
+            return $this->getAvailableModuleIds();
         }
 
         if (count($this->input->getArguments()['module-id']) === 0) {
@@ -114,7 +116,7 @@ class ModuleFixCommand extends Command
         }
 
         $requestedModuleIds = $this->input->getArguments()['module-id'];
-        $availableModuleIds = $this->_getAvailableModuleIds();
+        $availableModuleIds = $this->getAvailableModuleIds();
 
         // Checking if all provided module ids exist
         foreach ($requestedModuleIds as $moduleId) {
@@ -136,7 +138,7 @@ class ModuleFixCommand extends Command
      *
      * @throws InputException
      */
-    protected function _parseShopConfigs()
+    protected function parseShopConfigs()
     {
         if ($this->input->getOption('base-shop')) {
             return array(Registry::getConfig());
@@ -161,21 +163,21 @@ class ModuleFixCommand extends Command
      *
      * @return array
      */
-    protected function _getAvailableModuleIds()
+    protected function getAvailableModuleIds()
     {
-        if ($this->_aAvailableModuleIds === null) {
+        if ($this->availableModuleIds === null) {
             $oConfig = Registry::getConfig();
 
             // We are calling getModulesFromDir() because we want to refresh
             // the list of available modules. This is a workaround for OXID
             // bug.
             oxNew(ModuleList::class)->getModulesFromDir($oConfig->getModulesDir());
-            $this->_aAvailableModuleIds = array_keys($oConfig->getConfigParam('aModulePaths'));
+            $this->availableModuleIds = array_keys($oConfig->getConfigParam('aModulePaths'));
         }
 
-        return $this->_aAvailableModuleIds;
+        return $this->availableModuleIds;
     }
-    
+
     /**
      * important method for oxrun to bootstrap oxid
      * @return bool
@@ -183,10 +185,9 @@ class ModuleFixCommand extends Command
     public function isEnabled()
     {
         $app = $this->getApplication();
-        if (method_exists($app,'bootstrapOxid') ) {
+        if (method_exists($app, 'bootstrapOxid')) {
                 return $app->bootstrapOxid(true);
         }
         return true;
     }
-
 }

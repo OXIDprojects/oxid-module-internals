@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: keywan
@@ -7,7 +8,6 @@
  */
 
 namespace OxidCommunity\ModuleInternals\Core;
-
 
 use OxidEsales\EshopCommunity\Core\Registry;
 use Psr\Log\AbstractLogger;

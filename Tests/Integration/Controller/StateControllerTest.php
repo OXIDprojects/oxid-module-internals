@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -48,8 +49,11 @@ class StateControllerTest extends UnitTestCase
 
         $db = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC);
         $db->execute(
-            "INSERT INTO `oxtplblocks` (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
-                     VALUES (?, 1, 'testtheme', 'testtemplate', 'block', 1, 'testfile', ?)",[$data,$moduleId]);
+            "INSERT INTO `oxtplblocks`
+                (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
+                VALUES (?, 1, 'testtheme', 'testtemplate', 'block', 1, 'testfile', ?)",
+            [$data,$moduleId]
+        );
 
         $stateController = oxNew(State::class);
         $stateController->block();
@@ -57,7 +61,6 @@ class StateControllerTest extends UnitTestCase
         $this->checkActive('0');
         $stateController->block();
         $this->checkActive('1');
-
     }
 
     /**
@@ -68,8 +71,10 @@ class StateControllerTest extends UnitTestCase
     {
         $db = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC);
         $active = $db->getOne(
-            "SELECT OXACTIVE FROM `oxtplblocks` WHERE `OXID` = 'testid' AND OXMODULE ='moduleinternals' AND OXSHOPID = 1");
-        $this->assertSame($should,$active);
+            "SELECT OXACTIVE FROM `oxtplblocks`
+            WHERE `OXID` = 'testid' AND OXMODULE ='moduleinternals' AND OXSHOPID = 1"
+        );
+        $this->assertSame($should, $active);
 
         return $active;
     }

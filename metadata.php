@@ -1,28 +1,29 @@
 <?php
+
 /**
  * @license   GPL3 License http://opensource.org/licenses/GPL
  * @author    Alfonsas Cirtautas / OXID Community
  */
+
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
 
 $sMetadataVersion = '2.0';
 
-$sLinkToClass = Registry::get(Config::class)->getConfigParam('sShopURL').'index.php';
-$sLinkToClass.= "?cl=checkconsistency";
-$sLinkToClass.= "&key=".Registry::get(Config::class)->getConfigParam('sACActiveCompleteKey');
+$sLinkToClass = Registry::get(Config::class)->getConfigParam('sShopURL') . 'index.php';
+$sLinkToClass .= "?cl=checkconsistency";
+$sLinkToClass .= "&key=" . Registry::get(Config::class)->getConfigParam('sACActiveCompleteKey');
 
-$sLinkAndText = '<a href="'.$sLinkToClass.'" target="_blank">'.$sLinkToClass.'</a>';
+$sLinkAndText = '<a href="' . $sLinkToClass . '" target="_blank">' . $sLinkToClass . '</a>';
 
-if(trim(Registry::get(Config::class)->getConfigParam('sACActiveCompleteKey')) == '')
-{
+if (trim(Registry::get(Config::class)->getConfigParam('sACActiveCompleteKey')) == '') {
     $sLinkAndText_EN = '<p>
     <strong>No Access-Key is set - change it in configuration!</strong>
 </p>';
 
     $sLinkAndText_DE = '<p>
     <strong>Es ist kein Zugriffsschl&uuml;ssel gepeichert - bitte in der Konfiguration hinterlegen!</strong>
-    
+
 </p>';
 }
 
@@ -35,13 +36,13 @@ $aModule = [
     'description' => [
         'en' => 'Internal OXID eShop module system information and troubleshooting tools (V6).
         <hr>
-        '.$sLinkAndText_EN.'        
-    Overview health status: '.$sLinkAndText,
+        ' . $sLinkAndText_EN . '
+    Overview health status: ' . $sLinkAndText,
 
         'de' => 'Internes OXID eShop Modulsystem Informations- und Troubleshooting Werkzeuge (V6).
         <hr>
-        '.$sLinkAndText_DE.'
-    Komplette &Uuml;bersicht: '.$sLinkAndText,
+        ' . $sLinkAndText_DE . '
+    Komplette &Uuml;bersicht: ' . $sLinkAndText,
     ],
     'thumbnail'   => 'module_internals.png',
     'version'      => '3.0',
@@ -50,7 +51,8 @@ $aModule = [
     'email'       => '',
     'extend'      => [
         \OxidEsales\Eshop\Core\Module\Module::class => \OxidCommunity\ModuleInternals\Core\InternalModule::class,
-        \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class => \OxidCommunity\ModuleInternals\Controller\Admin\NavigationController::class
+        \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class
+            => \OxidCommunity\ModuleInternals\Controller\Admin\NavigationController::class
     ],
     'controllers' => [
         'module_internals_metadata' => \OxidCommunity\ModuleInternals\Controller\Admin\Metadata::class,
@@ -80,5 +82,3 @@ $aModule = [
         ],
     ]
 ];
-
-

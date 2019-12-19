@@ -10,7 +10,7 @@ use OxidEsales\Eshop\Core\Module\Module as Module;
 use OxidEsales\Eshop\Core\SeoEncoder;
 use OxidEsales\Eshop\Core\Request;
 
-class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\FrontendController
+class CheckConsistency extends \OxidEsales\Eshop\Application\Controller\FrontendController
 {
     /**
      * @var string
@@ -18,7 +18,7 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
     public $sTemplate = 'checkconsistency.tpl';
 
     /** @var Module */
-    protected $_oModule;
+    protected $module;
 
     public function init()
     {
@@ -28,14 +28,12 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
 
         //todo: add Exeception / Logging
         $utils = Registry::getUtils();
-        if((bool)$oConfig->getConfigParam('blACActiveCompleteCheck') == false )
-        {
+        if ((bool)$oConfig->getConfigParam('blACActiveCompleteCheck') == false) {
             $utils->handlePageNotFoundError();
         }
 
         //todo: add Exeception / Logging
-        if($sKey != $oConfig->getConfigParam('sACActiveCompleteKey'))
-        {
+        if ($sKey != $oConfig->getConfigParam('sACActiveCompleteKey')) {
             $utils->handlePageNotFoundError();
         }
     }
@@ -51,8 +49,7 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
         /*
          * @var InternalModule $oModule
          */
-        foreach($aModules as $oModule)
-        {
+        foreach ($aModules as $oModule) {
             $aModule = $oModule->checkState();
             $sModId = $oModule->getId();
             $aModuleChecks[$sModId] = $aModule;
@@ -62,6 +59,4 @@ class CheckConsistency  extends \OxidEsales\Eshop\Application\Controller\Fronten
 
         return $this->sTemplate;
     }
-
-
 }
