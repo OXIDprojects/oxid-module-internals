@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        tag: [6.1_php7.1, 6.2_php7.1]
+        tag: [6.1_php7.1, 6.2-rc_php7.1]
     services:
       mysql:
         image: mysql:5.7
