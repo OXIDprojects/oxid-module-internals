@@ -17,6 +17,8 @@ jobs:
 
     runs-on: ubuntu-latest
     container: keywanghadamioxid/oxid-test:6.1
+    env:
+      MODULE_NAME: moduleinternals
     steps:
     - uses: actions/checkout@v1
         
