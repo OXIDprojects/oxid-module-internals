@@ -30,5 +30,7 @@ jobs:
 
     - name: runt tests
       run: |
+        MD=$(pwd)
         cd /var/www/OXID/
+        vendor/bin/phpstan analyse --configuration phpstan.neon $MD
         vendor/bin/runtests
