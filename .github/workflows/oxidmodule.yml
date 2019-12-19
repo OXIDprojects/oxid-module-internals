@@ -1,0 +1,23 @@
+name: oxid module tests
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: keywanghadamioxid/oxid-test:6.1
+    
+    steps:
+    - uses: actions/checkout@v1
+        
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: setup oxid
+      run: bash /var/www/OXID/setup.sh
+
+    - name: runt tests
+      run: |
+        cd /var/www/OXID/
+        vendor/bin/runtests
