@@ -39,6 +39,7 @@ class InternalModule extends InternalModule_parent
     {
         $this->checked = false;
         $this->state = self::FINE;
+        $this->metaDataVersion = null;
         $res = parent::load($id);
         return $res;
     }
