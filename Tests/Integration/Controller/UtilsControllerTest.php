@@ -67,6 +67,7 @@ class UtilsControllerTest extends UnitTestCase
     public function testGetModuleInstaller()
     {
         $utilsController = oxNew(\OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class);
+        $_POST['oxid'] = 'moduleinternals';
 
         $module = $utilsController->getModuleInstaller();
 
@@ -110,6 +111,7 @@ class UtilsControllerTest extends UnitTestCase
      */
     public function testActivateModule()
     {
+        $_POST['oxid'] = 'moduleinternals';
         $moduleInstaller = $this->getMock(
             \OxidEsales\Eshop\Core\Module\ModuleInstaller::class,
             ['activate'],
@@ -136,6 +138,7 @@ class UtilsControllerTest extends UnitTestCase
      */
     public function testDeactivateModule()
     {
+        $_POST['oxid'] = 'moduleinternals';
         $moduleInstaller = $this->getMock(
             \OxidEsales\Eshop\Core\Module\ModuleInstaller::class,
             ['deactivate'],
