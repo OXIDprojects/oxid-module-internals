@@ -6,8 +6,8 @@ proudly presented by [OXID Hackathon 2017](https://openspacer.org/12-oxid-commun
 Original module (for Oxid eShop 5.x/4.x) by [Alfonsas Cirtautas](https://github.com/acirtautas/oxid-module-internals).
 
 ## Features
-[![Build Status](https://travis-ci.org/OXIDprojects/oxid-module-internals.svg?branch=master)](https://travis-ci.org/OXIDprojects/oxid-module-internals)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d57c5d4c3f5047a99dbe23b34f0ef1df)](https://app.codacy.com/app/keywan.ghadami/oxid-module-internals?utm_source=github.com&utm_medium=referral&utm_content=OXIDprojects/oxid-module-internals&utm_campaign=Badge_Grade_Settings)
+[![Next Release Test Status](https://github.com/OXIDprojects/oxid-module-internals/workflows/oxid%20module%20tests/badge.svg?branch=master)](https://github.com/OXIDprojects/docker-oxid-test/actions?query=branch%3Amaster)
 
  * Display highlighted metadata file content.
  * Reset module related shop cache data.
@@ -37,8 +37,9 @@ composer require oxid-community/moduleinternals
 | oxid eshop| module internals |
 | ---| --- |
 | 6.0| ^2.0 |
-| 6.1| ^2.0 |
-| 6.2| ^3.0 (planed, help wanted) |
+| 6.1| ^2.0 \|\| 3.0|
+| 6.2| ^3.0 (in progress, help wanted) [![Next Release Test Status](https://github.com/OXIDprojects/oxid-module-internals/workflows/oxid%20module%20tests/badge.svg?branch=master)](https://github.com/OXIDprojects/docker-oxid-test/actions?query=branch%3Amaster)
+|
 
 
 
