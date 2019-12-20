@@ -7,7 +7,7 @@ Original module (for Oxid eShop 5.x/4.x) by [Alfonsas Cirtautas](https://github.
 
 ## Features
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d57c5d4c3f5047a99dbe23b34f0ef1df)](https://app.codacy.com/app/keywan.ghadami/oxid-module-internals?utm_source=github.com&utm_medium=referral&utm_content=OXIDprojects/oxid-module-internals&utm_campaign=Badge_Grade_Settings)
-[![Next Release Test Status](https://github.com/{owner}/{repo}/workflows/{workflow_name}/badge.svg)](https://github.com/{owner}/{repo}/actions)
+[![Next Release Test Status](https://github.com/OXIDprojects/oxid-module-internals/workflows/oxid%20module%20tests/badge.svg?branch=master)]https://github.com/OXIDprojects/oxid-module-internals/actions?query=workflow%3A%22oxid+module+tests%22)
 
 
  * Display highlighted metadata file content.
