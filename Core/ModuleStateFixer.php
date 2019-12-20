@@ -5,6 +5,7 @@ namespace OxidCommunity\ModuleInternals\Core;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Routing\Module\ClassProviderStorage;
 use OxidEsales\Eshop\Core\SettingsHandler;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
@@ -758,6 +759,74 @@ class ModuleStateFixer extends ModuleInstaller
     {
         $validator = $this->getModuleMetadataValidator();
         $validator->checkModuleExtensionsForIncorrectNamespaceClasses($module);
+    }
+
+    /**
+     * @return object
+     */
+    protected function getClassProviderStorage()
+    {
+        $classProviderStorage = oxNew(ClassProviderStorage::class);
+
+        return $classProviderStorage;
+    }
+
+    /**
+     * Remove controllers map for a given module Id from config
+     *
+     * @param string $moduleId The Id of the module
+     */
+    protected function deleteModuleControllers($moduleId)
+    {
+        $moduleControllerProvider = $this->getClassProviderStorage();
+        $moduleControllerProvider->remove($moduleId);
+    }
+
+    /**
+     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     */
+    protected function getModuleControllerMapProvider()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Routing\ModuleControllerMapProvider::class);
+    }
+    /**
+     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     */
+    protected function getShopControllerMapProvider()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Routing\ShopControllerMapProvider::class);
+    }
+
+    /**
+     * Ensure integrity of the controllerMap before storing it.
+     * Both keys and values must be unique with in the same shop or sub-shop.
+     *
+     * @param array $moduleControllers
+     *
+     * @throws ModuleValidationException
+     */
+    protected function validateModuleMetadataControllersOnActivation($moduleControllers)
+    {
+        $moduleControllerMapProvider = $this->getModuleControllerMapProvider();
+        $shopControllerMapProvider = $this->getShopControllerMapProvider();
+        $moduleControllerMap = $moduleControllerMapProvider->getControllerMap();
+        $shopControllerMap = $shopControllerMapProvider->getControllerMap();
+        $existingMaps = array_merge($moduleControllerMap, $shopControllerMap);
+        /**
+         * Ensure, that controller keys are unique.
+         * As keys are always stored in lower case, we must test against lower case keys here as well
+         */
+        $duplicatedKeys = array_intersect_key(array_change_key_case($moduleControllers, CASE_LOWER), $existingMaps);
+        if (!empty($duplicatedKeys)) {
+            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedKeys));
+        }
+        /**
+         * Ensure, that controller values are unique.
+         */
+        $duplicatedValues = array_intersect($moduleControllers, $existingMaps);
+        if (!empty($duplicatedValues)) {
+            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedValues));
+        }
     }
 
     /**
