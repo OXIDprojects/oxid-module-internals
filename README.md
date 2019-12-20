@@ -38,7 +38,7 @@ composer require oxid-community/moduleinternals
 | ---| --- |
 | 6.0| ^2.0 |
 | 6.1| ^2.0 \|\| 3.0|
-| 6.2| ^3.0 (in progress, help wanted) [![Next Release Test Status](https://github.com/OXIDprojects/oxid-module-internals/workflows/oxid%20module%20tests/badge.svg?branch=master)](https://github.com/OXIDprojects/docker-oxid-test/actions?query=branch%3Amaster)|
+| 6.2| ^3.0 (in progress, help wanted) [![Next Release Test Status](https://github.com/OXIDprojects/oxid-module-internals/workflows/oxid%20module%20tests/badge.svg?branch=master)](https://github.com/OXIDprojects/oxid-module-internals/actions?query=branch%3Amaster)|
 
 
 
