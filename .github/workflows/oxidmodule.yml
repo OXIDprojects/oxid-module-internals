@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        tag: [6.1_php7.1, 6.2-rc_php7.1]
+        tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]
     services:
       mysql:
         image: mysql:5.7
@@ -29,12 +29,12 @@ jobs:
       run: composer validate
 
     - name: setup oxid
-      run: bash /var/www/OXID/setup.sh
+      run: bash /var/www/oxid/setup.sh
 
     - name: runt tests
       run: |
         MD=$(pwd)
-        cd /var/www/OXID/
+        cd /var/www/oxid/
         vendor/bin/runtests
         php phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor $MD
 
