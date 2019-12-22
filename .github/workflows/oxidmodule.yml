@@ -7,8 +7,9 @@ jobs:
   build:
     strategy:
       matrix:
-        tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]
-    services:
+      #  tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]
+        tag: [v2_dev-master_php7.2]     
+     services:
       mysql:
         image: mysql:5.7
         env:
@@ -31,8 +32,8 @@ jobs:
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
  
-#    - name: debug
-#      run: cat /var/www/oxid/test_config.yml
+    - name: debug
+      run: cat /var/www/oxid/test_config.yml
  
     - name: phpcs
       run: |
@@ -43,6 +44,7 @@ jobs:
     - name: runt tests
       run: |
         cd /var/www/oxid/
-        vendor/bin/runtests | ack --passthru "OK"
+        vendor/bin/runtests
+        ls -al source/log
 
   
