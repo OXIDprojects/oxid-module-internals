@@ -40,4 +40,4 @@ jobs:
     - name: runt tests
       run: |
         cd /var/www/oxid/
-        vendor/bin/runtests | ack --passthrough "ok"
+        vendor/bin/runtests | ack --passthru "ok"
