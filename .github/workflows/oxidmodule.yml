@@ -31,10 +31,13 @@ jobs:
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
 
-    - name: runt tests
+    - name: phpcs
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
-        vendor/bin/runtests
         php phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor $MD
 
+    - name: runt tests
+      run: |
+        cd /var/www/oxid/
+        vendor/bin/runtests
