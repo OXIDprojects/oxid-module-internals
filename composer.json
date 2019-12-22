@@ -20,7 +20,7 @@
     "php": ">=7.0"
   },
   "require-dev":{
-    "oxid-esales/oxideshop-ce" : "^6.1"
+    "oxid-esales/oxideshop-ce" : ">=6.1"
   },
   "extra": {
     "oxideshop": {
