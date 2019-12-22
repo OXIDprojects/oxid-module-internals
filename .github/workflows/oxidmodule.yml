@@ -44,8 +44,10 @@ jobs:
     - name: runt tests
       run: |
         cd /var/www/oxid/
-        vendor/bin/runtests 
-        ls log
+        vendor/bin/runtests
+        ls -al
+        ls -al source
+        ls source/log
         cat log/oxideshop.log
 #| ack --passthru "ok"
 
