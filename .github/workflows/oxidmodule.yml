@@ -30,7 +30,10 @@ jobs:
 
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
-
+ 
+#    - name: debug
+#      run: cat /var/www/oxid/test_config.yml
+ 
     - name: phpcs
       run: |
         MD=$(pwd)
@@ -40,4 +43,6 @@ jobs:
     - name: runt tests
       run: |
         cd /var/www/oxid/
-        vendor/bin/runtests
+        vendor/bin/runtests | ack --passthru "OK"
+
+  
