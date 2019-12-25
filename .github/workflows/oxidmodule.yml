@@ -3,8 +3,45 @@ name: oxid module tests
 on: [push]
 
 jobs:
+  pretest:
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: oxid
+        ports:
+          - 3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
-  build:
+    runs-on: ubuntu-latest
+    container: oxidprojects/oxid-test:v2_6.1_php7.2
+    env:
+      MODULE_NAME: moduleinternals
+    steps:
+    - uses: actions/checkout@v1
+    
+    - name: Validate composer.json
+      run: composer validate
+    
+    - name: phpsyntax
+      run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+      
+    - name: phpcs
+      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .
+    
+    - name: setup oxid
+      run: bash /var/www/oxid/setup.sh
+
+    - name: phpstan
+      continue-on-error: true
+      run: |
+        MD=$(pwd)
+        cd /var/www/oxid/
+        vendor/bin/phpstan analys --configuration phpstan.neon $MD
+
+  test:
+    needs: pretest
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]   
@@ -25,22 +62,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
  
     - name: debug
       run: cat /var/www/oxid/test_config.yml
  
-    - name: phpcs
-      run: |
-        MD=$(pwd)
-        cd /var/www/oxid/
-        php phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor $MD
-
-    - name: runt tests
+    - name: run tests
       run: |
         cd /var/www/oxid/
         vendor/bin/runtests
