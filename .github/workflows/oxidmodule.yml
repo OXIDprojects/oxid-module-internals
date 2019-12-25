@@ -34,6 +34,7 @@ jobs:
       run: bash /var/www/oxid/setup.sh
 
     - name: phpstan
+      continue-on-error: true
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
