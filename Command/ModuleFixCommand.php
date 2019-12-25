@@ -22,7 +22,7 @@ class ModuleFixCommand extends Command
 {
 
     /**
-     * @var array|null Available module ids
+     * @var array<string>|null Available module ids
      */
     protected $availableModuleIds = null;
 
@@ -93,12 +93,13 @@ class ModuleFixCommand extends Command
         }
 
         $output->writeLn('Fixed module states successfully');
+        return null;
     }
 
     /**
      * Parse and return module ids from input
      *
-     * @return array
+     * @return array<string>
      *
      * @throws InputException
      */
@@ -134,7 +135,7 @@ class ModuleFixCommand extends Command
     /**
      * Parse and return shop config objects from input
      *
-     * @return ShopConfig[]
+     * @return array<int, OxidEsales\Eshop\Core\Config>
      *
      * @throws InputException
      */
