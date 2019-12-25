@@ -7,12 +7,12 @@ jobs:
     service:
       mysql:
         image: mysql:5.7
-          env:
-            MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: oxid
-          ports:
-            - 3306
-          options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: oxid
+        ports:
+          - 3306
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
     runs-on: ubuntu-latest
     container: oxidprojects/oxid-test:v2_6.1_php7.2
