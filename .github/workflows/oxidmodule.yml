@@ -37,7 +37,7 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
-        vendor/bin/phpstan analysonfiguration phpstan.neon $MD
+        vendor/bin/phpstan analys --configuration phpstan.neon $MD
 
   test:
     needs: pretest
