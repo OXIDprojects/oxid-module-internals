@@ -36,7 +36,7 @@ jobs:
     - name: phpstan
       run: |
         MD=$(pwd)
-        cd /var/www/OXID/
+        cd /var/www/oxid/
         vendor/bin/phpstan analysonfiguration phpstan.neon $MD
 
   test:
