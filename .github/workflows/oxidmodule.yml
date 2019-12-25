@@ -62,9 +62,6 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
  
