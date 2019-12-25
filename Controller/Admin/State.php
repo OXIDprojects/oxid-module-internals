@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package   moduleinternals
  * @category  OXID Module
@@ -29,7 +30,7 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 
 /**
- * Module state checker, compares module data across different storage levels (metadata file / database / configuration).
+ * Module state checker, compares module data across different storage levels (metadata file/database/configuration).
  */
 class State extends AdminController
 {
@@ -40,7 +41,7 @@ class State extends AdminController
     public $sTemplate = 'state.tpl';
 
     /** @var Module */
-    protected $_oModule;
+    protected $module;
 
     /**
      * init current Module
@@ -59,17 +60,17 @@ class State extends AdminController
      */
     public function getModule()
     {
-        if ($this->_oModule === null) {
+        if ($this->module === null) {
             $sModuleId = $this->getEditObjectId();
 
             $this->addTplParam('oxid', $sModuleId);
 
             $module = oxNew(Module::class);
             $module->load($sModuleId);
-            $this->_oModule = $module;
+            $this->module = $module;
         }
 
-        return $this->_oModule;
+        return $this->module;
     }
 
     /**
@@ -98,7 +99,8 @@ class State extends AdminController
         $request = Registry::getRequest();
         $data = $request->getRequestParameter('data');
         DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->execute(
-        "UPDATE oxtplblocks SET OXACTIVE = NOT OXACTIVE WHERE OXID = ?",[$data]);
+            "UPDATE oxtplblocks SET OXACTIVE = NOT OXACTIVE WHERE OXID = ?",
+            [$data]
+        );
     }
-
 }

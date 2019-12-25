@@ -5,6 +5,7 @@ namespace OxidCommunity\ModuleInternals\Core;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\DatabaseProvider;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Routing\Module\ClassProviderStorage;
 use OxidEsales\Eshop\Core\SettingsHandler;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
@@ -14,14 +15,21 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
+
 /**
  * Module state fixer
  */
 class ModuleStateFixer extends ModuleInstaller
 {
+    /** @var \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner */
+    private $moduleCleaner;
 
-    public function __construct($cache = null, $cleaner = null){
-        $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
+    public function __construct($cache = null, $cleaner = null)
+    {
+        if (is_null($cleaner)) {
+            $cleaner = oxNew(ModuleExtensionCleanerDebug::class);
+        }
+        $this->moduleCleaner = $cleaner;
         $this->output = $this->getLogger();
         parent::__construct($cache, $cleaner);
     }
@@ -54,7 +62,8 @@ class ModuleStateFixer extends ModuleInstaller
         Registry::set(\OxidEsales\Eshop\Core\Config::class, $config);
     }
 
-    public function disableInitialCacheClear(){
+    public function disableInitialCacheClear()
+    {
         $this->initialCacheClearDone = true;
     }
 
@@ -71,7 +80,6 @@ class ModuleStateFixer extends ModuleInstaller
             $this->initDone = true;
 
             if (!$this->initialCacheClearDone) {
-
                 //clearing some cache to be sure that fix runs not against a stale cache
                 ModuleVariablesLocator::resetModuleVariables();
                 if (extension_loaded('apc') && ini_get('apc.enabled')) {
@@ -114,7 +122,8 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * After fixing all modules call this method to clean up trash that is not related to any installed module
      */
-    public function cleanUp() {
+    public function cleanUp()
+    {
         if ($this->init()) {
             $this->cleanUpControllers();
             $this->cleanUpExtensions();
@@ -124,7 +133,8 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * remove extensions that are not registered by any module
      */
-    public function cleanUpExtensions(){
+    public function cleanUpExtensions()
+    {
 
         //get all extions from all metadata
         $oxModuleList = $this->moduleList;
@@ -145,10 +155,11 @@ class ModuleStateFixer extends ModuleInstaller
 
         //calculate trash as extensions that are only in db
         foreach ($extensionChainDb as $oxidClass => &$arrayOfExtendingClasses) {
-
-            foreach ($arrayOfExtendingClasses as $key => $extendingClass){
+            foreach ($arrayOfExtendingClasses as $key => $extendingClass) {
                 if (!isset($moduleClassesMf[$extendingClass])) {
-                    $this->output->warning("module extension trash found: '$extendingClass'' (registered for $oxidClass)");
+                    $this->output->warning(
+                        "module extension trash found: '$extendingClass'' (registered for $oxidClass)"
+                    );
                     unset($arrayOfExtendingClasses[$key]);
                 }
             }
@@ -162,7 +173,6 @@ class ModuleStateFixer extends ModuleInstaller
             $extensionChainDb = $this->buildModuleChains($extensionChainDb);
             $this->_saveToConfig('aModules', $extensionChainDb);
         }
-
     }
 
     /**
@@ -170,13 +180,14 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * @param array  $aModuleTemplates Module templates array
      * @param string $sModuleId        Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addTemplateFiles($aModuleTemplates, $sModuleId)
     {
         $aTemplates = (array) Registry::getConfig()->getConfigParam('aModuleTemplates');
         $old = isset($aTemplates[$sModuleId]) ? $aTemplates[$sModuleId] : null;
         if (is_array($aModuleTemplates)) {
-            $diff = $this->diff($old,$aModuleTemplates);
+            $diff = $this->diff($old, $aModuleTemplates);
             if ($diff) {
                 $what = $old === null ? ' everything ' :  var_export($diff, true);
                 $this->output->warning("$sModuleId fixing templates");
@@ -200,6 +211,7 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * @param array  $aModuleFiles Module files array
      * @param string $sModuleId    Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addModuleFiles($aModuleFiles, $sModuleId)
     {
@@ -211,7 +223,7 @@ class ModuleStateFixer extends ModuleInstaller
         }
 
         if (is_array($aModuleFiles)) {
-            $diff = $this->diff($old,$aModuleFiles);
+            $diff = $this->diff($old, $aModuleFiles);
             if ($diff) {
                 $what = $old === null ? ' everything' : var_export($diff, true);
                 $this->output->warning("$sModuleId fixing files");
@@ -227,7 +239,6 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         }
-
     }
 
 
@@ -236,13 +247,14 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * @param array  $aModuleEvents Module events
      * @param string $sModuleId     Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addModuleEvents($aModuleEvents, $sModuleId)
     {
         $aEvents = (array) Registry::getConfig()->getConfigParam('aModuleEvents');
         $old =  isset($aEvents[$sModuleId]) ? $aEvents[$sModuleId] : null;
         if (is_array($aModuleEvents) && count($aModuleEvents)) {
-            $diff = $this->diff($old,$aModuleEvents);
+            $diff = $this->diff($old, $aModuleEvents);
             if ($diff) {
                 $aEvents[$sModuleId] = $aModuleEvents;
                 $what = $old == null ? ' everything ' : var_export($diff, true);
@@ -258,7 +270,6 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         }
-
     }
 
     /**
@@ -266,6 +277,7 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * @param array  $moduleExtensions Module version
      * @param string $moduleId         Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addModuleExtensions($moduleExtensions, $moduleId)
     {
@@ -296,6 +308,7 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * @param string $sModuleVersion Module version
      * @param string $sModuleId      Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addModuleVersion($sModuleVersion, $sModuleId)
     {
@@ -304,7 +317,7 @@ class ModuleStateFixer extends ModuleInstaller
         if (isset($sModuleVersion)) {
             if ($old !== $sModuleVersion) {
                 $aVersions[$sModuleId] = $sModuleVersion;
-                if($old == '') {
+                if ($old == '') {
                     $this->output->info("register module '$sModuleId' with version $sModuleVersion");
                 } else {
                     $this->output->warning("$sModuleId fixing module version from $old to $sModuleVersion");
@@ -319,7 +332,6 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         }
-
     }
 
     /**
@@ -329,7 +341,8 @@ class ModuleStateFixer extends ModuleInstaller
      * @param $array2
      * @return bool
      */
-    protected function diff($array1,$array2){
+    protected function diff($array1, $array2)
+    {
         if ($array1 === null) {
             if ($array2 === null) {
                 return false; //indicate no diff
@@ -340,7 +353,7 @@ class ModuleStateFixer extends ModuleInstaller
             //indicate that diff is there  (so return a true value) but everthing should be droped
             return 'null';
         }
-        $diff = array_merge(array_diff_assoc($array1,$array2),array_diff_assoc($array2,$array1));
+        $diff = array_merge(array_diff_assoc($array1, $array2), array_diff_assoc($array2, $array1));
         return $diff;
     }
 
@@ -364,8 +377,8 @@ class ModuleStateFixer extends ModuleInstaller
             $this->_addModuleFiles($active ? $module->getInfo("files") : [], $moduleId);
         }
         $this->_addTemplateBlocks($active ? $module->getInfo("blocks") : [], $moduleId);
-        $this->_addTemplateFiles($active ? $module->getInfo("templates"): [], $moduleId);
-        $this->_addModuleSettings($module->getInfo("settings"), $moduleId);
+        $this->_addTemplateFiles($active ? $module->getInfo("templates") : [], $moduleId);
+        $this->addModuleSettings($module->getInfo("settings"), $moduleId);
         $this->_addModuleVersion($active ? $module->getInfo("version") : null, $moduleId);
 
         $this->_addModuleEvents($active ? $module->getInfo("events") : [], $moduleId);
@@ -375,7 +388,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $moduleControllers = $active ? $module->getControllers() : [];
                 $this->setModuleControllers($moduleControllers, $moduleId, $module);
             } catch (ModuleValidationException $exception) {
-                print "[ERROR]: duplicate controllers:" . $exception->getMessage() ."\n";
+                print "[ERROR]: duplicate controllers:" . $exception->getMessage() . "\n";
             }
         }
     }
@@ -403,19 +416,18 @@ class ModuleStateFixer extends ModuleInstaller
      * @param array  $moduleSettings Module settings array
      * @param string $moduleId       Module id
      */
-    protected function _addModuleSettings($moduleSettings, $moduleId)
+    protected function addModuleSettings($moduleSettings, $moduleId)
     {
         $config = Registry::getConfig();
         $shopId = $config->getShopId();
         if (is_array($moduleSettings)) {
             $diff = false;
             foreach ($moduleSettings as $setting) {
-
                 $module = $this->getModuleConfigId($moduleId);
                 $name = $setting["name"];
                 $type = $setting["type"];
 
-                if (isset($setting["value"]) && is_null($config->getConfigParam($name))){
+                if (isset($setting["value"]) && is_null($config->getConfigParam($name))) {
                     $diff = true;
                     $value = $setting["value"];
                     $config->saveShopConfVar($type, $name, $value, $shopId, $module);
@@ -462,10 +474,10 @@ class ModuleStateFixer extends ModuleInstaller
 
             $this->needCacheClear = true;
         }
-
     }
 
-    public function getModuleControllerEntries($moduleId){
+    public function getModuleControllerEntries($moduleId)
+    {
         $dbMap = $this->getAllControllers();
         //for some unknown reasons the core uses lowercase module id to reference controllers
         $moduleIdLc = strtolower($moduleId);
@@ -483,12 +495,13 @@ class ModuleStateFixer extends ModuleInstaller
         return $dbMap;
     }
 
-    public function cleanUpControllers(){
+    public function cleanUpControllers()
+    {
         $allFromDb = $this->getAllControllers();
         $modules = $this->modules;
 
         //? is aModuleVersions fixed already in that place
-        $modules = array_change_key_case($modules,CASE_LOWER);
+        $modules = array_change_key_case($modules, CASE_LOWER);
         $cleaned = array_intersect_key($allFromDb, $modules);
         if ($this->diff($allFromDb, $cleaned)) {
             $this->needCacheClear = true;
@@ -534,6 +547,7 @@ class ModuleStateFixer extends ModuleInstaller
      * Add extension to module
      *
      * @param \OxidEsales\Eshop\Core\Module\Module $module
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addExtensions(\OxidEsales\Eshop\Core\Module\Module $module)
     {
@@ -573,11 +587,12 @@ class ModuleStateFixer extends ModuleInstaller
      *
      * this method sets template blocks with less conflicting writes as possible
      * to reduce race conditions (in the moment the blocks are deleted)
-     * it will only report major changes even if id may be changed to ensure consistency of the data 
-     * 
+     * it will only report major changes even if id may be changed to ensure consistency of the data
+     *
      *
      * @param array  $moduleBlocks Module blocks array
      * @param string $moduleId     Module id
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
     protected function _addTemplateBlocks($moduleBlocks, $moduleId)
     {
@@ -588,10 +603,11 @@ class ModuleStateFixer extends ModuleInstaller
         $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb(\OxidEsales\Eshop\Core\DatabaseProvider::FETCH_MODE_ASSOC);
         $knownBlocks = ['dummy']; // Start with a dummy value to prevent having an empty list in the NOT IN statement.
         $rowsEffected = 0;
-        $select_sql = "SELECT `OXID`, `OXTHEME` as `theme`, `OXTEMPLATE` as `template`, `OXBLOCKNAME` as `block`, `OXPOS` as `position`, `OXFILE` as `file` 
-            FROM `oxtplblocks` 
+        $select_sql = "SELECT `OXID`, `OXTHEME` as `theme`, `OXTEMPLATE` as `template`, `OXBLOCKNAME` as `block`,
+            `OXPOS` as `position`, `OXFILE` as `file`
+            FROM `oxtplblocks`
             WHERE `OXMODULE` = ? AND `OXSHOPID` = ?";
-        $existingBlocks = $db->getAll($select_sql,[$moduleId,$shopId]);
+        $existingBlocks = $db->getAll($select_sql, [$moduleId,$shopId]);
 
         foreach ($existingBlocks as $block) {
             $id = $block['OXID'];
@@ -602,17 +618,18 @@ class ModuleStateFixer extends ModuleInstaller
             $str1 = $moduleId . json_encode($block) . $shopId;
             $wellGeneratedId = md5($str1);
             if ($id !== $wellGeneratedId) {
-               $sql = "UPDATE IGNORE `oxtplblocks` SET OXID = ? WHERE OXID = ?";
-               $this->output->debug("$sql, $wellGeneratedId, $id");
-               $db->execute($sql, [$wellGeneratedId, $id]);
+                $sql = "UPDATE IGNORE `oxtplblocks` SET OXID = ? WHERE OXID = ?";
+                $this->output->debug("$sql, $wellGeneratedId, $id");
+                $db->execute($sql, [$wellGeneratedId, $id]);
             }
         }
 
 
         foreach ($moduleBlocks as $moduleBlock) {
             $moduleBlock['theme'] = $moduleBlock['theme'] ?? '';
-            $moduleBlock['position'] = $position = isset($moduleBlock['position']) && is_numeric($moduleBlock['position']) ?
-                (int) $moduleBlock['position'] : 1;            
+            $moduleBlock['position'] = isset($moduleBlock['position']) && is_numeric($moduleBlock['position'])
+                ? (int) $moduleBlock['position']
+                : 1;
             ksort($moduleBlock);
 
             $str = $moduleId . json_encode($moduleBlock) . $shopId;
@@ -621,11 +638,13 @@ class ModuleStateFixer extends ModuleInstaller
 
             $template = $moduleBlock["template"];
 
+            $position = $moduleBlock['position'];
             $block = $moduleBlock["block"];
             $filePath = $moduleBlock["file"];
             $theme = isset($moduleBlock['theme']) ? $moduleBlock['theme'] : '';
 
-            $sql = "INSERT INTO `oxtplblocks` (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
+            $sql = "INSERT INTO `oxtplblocks`
+                    (`OXID`, `OXSHOPID`, `OXTHEME`, `OXTEMPLATE`, `OXBLOCKNAME`, `OXPOS`, `OXFILE`, `OXMODULE`)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                      ON DUPLICATE KEY UPDATE
                       `OXID` = VALUES(OXID),
@@ -650,7 +669,8 @@ class ModuleStateFixer extends ModuleInstaller
         }
 
         $listOfKnownBlocks = join(',', $db->quoteArray($knownBlocks));
-        $deleteblocks = "DELETE FROM oxtplblocks WHERE OXSHOPID = ? AND OXMODULE = ? AND OXID NOT IN ({$listOfKnownBlocks});";
+        $deleteblocks = 'DELETE FROM oxtplblocks WHERE OXSHOPID = ? ';
+        $deleteblocks .= "AND OXMODULE = ? AND OXID NOT IN ({$listOfKnownBlocks});";
 
         $rowsEffected += $db->execute(
             $deleteblocks,
@@ -662,7 +682,7 @@ class ModuleStateFixer extends ModuleInstaller
             $this->output->info("fixed template blocks for module " . $moduleId);
         }
     }
-    
+
     /**
      * @param Module $module
      * @param $aModulesDefault
@@ -705,11 +725,173 @@ class ModuleStateFixer extends ModuleInstaller
         }
     }
 
-    public function getLogger(){
-        if(function_exists("\getLogger")){
+    public function getLogger()
+    {
+        if (function_exists("\getLogger")) {
             return \getLogger();
         }
         return new FallbackLogger();
     }
 
+    /**
+     * Save module parameters to shop config
+     *
+     * @param string $sVariableName  config name
+     * @param string $sVariableValue config value
+     * @param string $sVariableType  config type
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     */
+    protected function _saveToConfig($sVariableName, $sVariableValue, $sVariableType = 'aarr')
+    {
+        $oConfig = Registry::getConfig();
+        $oConfig->saveShopConfVar($sVariableType, $sVariableName, $sVariableValue);
+    }
+
+    /**
+     * Validate module metadata extend section.
+     * Only Unified Namespace shop classes are free to patch.
+     *
+     * @param \OxidEsales\Eshop\Core\Module\Module $module
+     *
+     * @throws ModuleValidationException
+     */
+    protected function validateMetadataExtendSection(\OxidEsales\Eshop\Core\Module\Module $module)
+    {
+        $validator = $this->getModuleMetadataValidator();
+        $validator->checkModuleExtensionsForIncorrectNamespaceClasses($module);
+    }
+
+    /**
+     * @return object
+     */
+    protected function getClassProviderStorage()
+    {
+        $classProviderStorage = oxNew(ClassProviderStorage::class);
+
+        return $classProviderStorage;
+    }
+
+    /**
+     * Remove controllers map for a given module Id from config
+     *
+     * @param string $moduleId The Id of the module
+     */
+    protected function deleteModuleControllers($moduleId)
+    {
+        $moduleControllerProvider = $this->getClassProviderStorage();
+        $moduleControllerProvider->remove($moduleId);
+    }
+
+    /**
+     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     */
+    protected function getModuleControllerMapProvider()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Routing\ModuleControllerMapProvider::class);
+    }
+    /**
+     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     */
+    protected function getShopControllerMapProvider()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Routing\ShopControllerMapProvider::class);
+    }
+
+    /**
+     * Ensure integrity of the controllerMap before storing it.
+     * Both keys and values must be unique with in the same shop or sub-shop.
+     *
+     * @param array $moduleControllers
+     *
+     * @throws ModuleValidationException
+     */
+    protected function validateModuleMetadataControllersOnActivation($moduleControllers)
+    {
+        $moduleControllerMapProvider = $this->getModuleControllerMapProvider();
+        $shopControllerMapProvider = $this->getShopControllerMapProvider();
+        $moduleControllerMap = $moduleControllerMapProvider->getControllerMap();
+        $shopControllerMap = $shopControllerMapProvider->getControllerMap();
+        $existingMaps = array_merge($moduleControllerMap, $shopControllerMap);
+        /**
+         * Ensure, that controller keys are unique.
+         * As keys are always stored in lower case, we must test against lower case keys here as well
+         */
+        $duplicatedKeys = array_intersect_key(array_change_key_case($moduleControllers, CASE_LOWER), $existingMaps);
+        if (!empty($duplicatedKeys)) {
+            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedKeys));
+        }
+        /**
+         * Ensure, that controller values are unique.
+         */
+        $duplicatedValues = array_intersect($moduleControllers, $existingMaps);
+        if (!empty($duplicatedValues)) {
+            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedValues));
+        }
+    }
+
+    /**
+     * @return \OxidEsales\Eshop\Core\Module\ModuleMetadataValidator
+     */
+    protected function getModuleMetadataValidator()
+    {
+        return oxNew(\OxidEsales\Eshop\Core\Module\ModuleMetadataValidator::class);
+    }
+
+    /**
+     * Merge two nested module arrays together so that the values of
+     * $aAddModuleArray are appended to the end of the $aAllModuleArray
+     *
+     * @param array $aAllModuleArray All Module array (nested format)
+     * @param array $aAddModuleArray Added Module array (nested format)
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     *
+     * @return array
+     */
+    protected function _mergeModuleArrays($aAllModuleArray, $aAddModuleArray)
+    {
+        if (is_array($aAllModuleArray) && is_array($aAddModuleArray)) {
+            foreach ($aAddModuleArray as $sClass => $aModuleChain) {
+                if (!is_array($aModuleChain)) {
+                    $aModuleChain = [$aModuleChain];
+                }
+                if (isset($aAllModuleArray[$sClass])) {
+                    foreach ($aModuleChain as $sModule) {
+                        if (!in_array($sModule, $aAllModuleArray[$sClass])) {
+                            $aAllModuleArray[$sClass][] = $sModule;
+                        }
+                    }
+                } else {
+                    $aAllModuleArray[$sClass] = $aModuleChain;
+                }
+            }
+        }
+
+        return $aAllModuleArray;
+    }
+
+    /**
+     * Removes garbage ( module not used extensions ) from all installed extensions list
+     *
+     * @param array                                $installedExtensions Installed extensions
+     * @param \OxidEsales\Eshop\Core\Module\Module $module              Module
+     *
+     * @deprecated on b-dev, \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner::cleanExtensions() should be used.
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     *
+     * @return array
+     */
+    protected function _removeNotUsedExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
+    {
+        return $this->getModuleCleaner()->cleanExtensions($installedExtensions, $module);
+    }
+
+    /**
+     * Returns module cleaner object.
+     *
+     * @return \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner
+     */
+    protected function getModuleCleaner()
+    {
+        return $this->moduleCleaner;
+    }
 }

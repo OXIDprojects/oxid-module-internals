@@ -20,9 +20,7 @@
     "php": ">=7.0"
   },
   "require-dev":{
-    "oxid-esales/oxideshop-ce" : "^6.1",
-    "oxid-esales/testing-library": "^5",
-    "phpunit/phpcov": "~2.0.2"
+    "oxid-esales/oxideshop-ce" : ">=6.1"
   },
   "extra": {
     "oxideshop": {

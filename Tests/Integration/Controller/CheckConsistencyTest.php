@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: keywan
@@ -33,5 +34,4 @@ class CheckConsistencyTest extends UnitTestCase
         Registry::set(Utils::class, $utils);
         $controller->init();
     }
-
 }
