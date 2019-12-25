@@ -223,17 +223,17 @@ class InternalModule extends InternalModule_parent
      */
     public function checkModuleVersions()
     {
-        $sDatabaseVersion = $this->getModuleEntries(ModuleList::MODULE_KEY_VERSIONS);
+        $databaseVersion = $this->getModuleEntries(ModuleList::MODULE_KEY_VERSIONS);
 
         /**
          * Set version for disabled module
          */
-        if (!$sDatabaseVersion || !count($sDatabaseVersion)) {
+        if (!is_array(databaseVersion) || !count($sDatabaseVersion)) {
             $iLang = \OxidEsales\Eshop\Core\Registry::getLang()->getTplLanguage();
-            $sDatabaseVersion = $this->getInfo("version", $iLang);
+            $databaseVersion = $this->getInfo("version", $iLang);
         }
 
-        $aResult = $this->toResult(['version'=>$sDatabaseVersion]);
+        $aResult = $this->toResult(['version'=>$databaseVersion]);
 
         return $aResult;
     }
