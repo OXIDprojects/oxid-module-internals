@@ -229,7 +229,7 @@ class InternalModule extends InternalModule_parent
         $iLang = \OxidEsales\Eshop\Core\Registry::getLang()->getTplLanguage();
         $databaseVersion = $this->getInfo("version", $iLang);
         
-        $aResult = $this->toResult(['version'=>$databaseVersion]);
+        $aResult = $this->toResult(['version' => $databaseVersion]);
 
         return $aResult;
     }
