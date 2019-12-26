@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\NullOutput;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleList;
 use OxidEsales\Eshop\Core\Exception\InputException;
@@ -31,6 +32,7 @@ class ModuleFixCommand extends Command
 
     /**
      * {@inheritdoc}
+     * @return void
      */
     public function configure()
     {
@@ -46,6 +48,7 @@ class ModuleFixCommand extends Command
 
     /**
      * {@inheritdoc}
+     * @return null
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -135,7 +138,7 @@ class ModuleFixCommand extends Command
     /**
      * Parse and return shop config objects from input
      *
-     * @return array<int, OxidEsales\Eshop\Core\Config>
+     * @return array<int, Config>
      *
      * @throws InputException
      */
