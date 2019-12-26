@@ -13,6 +13,7 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     steps:
+    - run: apt update
     - run: apt install mariadb-server
     - run: ls -al /etc/mysql
     - run: ls -al /etc/init.d
