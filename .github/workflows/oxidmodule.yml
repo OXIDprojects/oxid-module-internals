@@ -14,7 +14,7 @@ jobs:
       DB_HOST: localhost
     steps:
     - run: apt update
-    - run: apt install mariadb-server
+    - run: apt -y install mysql-server
     - run: ls -al /etc/mysql
     - run: ls -al /etc/init.d
     - run: which mysqld
