@@ -6,16 +6,12 @@ jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
-    - run: mysql -u root -proot -e "create database oxid"
-    - run: ls -al /tmp
-    - run: mysqladmin -proot -u root variables
+#    - run: mysqladmin -proot -u root variables
     - uses: actions/checkout@v1   
     - name: Validate composer.json
       run: composer validate   
     - name: phpsyntax
       run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l     
-    - name: phpcs
-      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .   
   check:
     runs-on: ubuntu-latest
     env:
@@ -24,11 +20,13 @@ jobs:
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.2
       volumes:
-        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
+        - /var/run/mysqld/mysqld.sock:/var/lib/mysql/mysql.sock
     needs: syntax
     steps:
     - run: mysql -u root -proot -e "create database oxid" 
-    - uses: actions/checkout@v1   
+    - uses: actions/checkout@v1
+    - name: phpcs
+      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
 
