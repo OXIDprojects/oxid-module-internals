@@ -9,18 +9,15 @@ jobs:
     - run: mysql -u root -proot -e "create database oxid"
     - run: ls -al /var/lib/mysql/
     - run: cat /etc/mysql/*
-    - uses: actions/checkout@v1
-    
+    - uses: actions/checkout@v1   
     - name: Validate composer.json
-      run: composer validate
-    
+      run: composer validate   
     - name: phpsyntax
-      run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
-      
+      run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l     
     - name: phpcs
-      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .
-    
-  analysis:
+      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .   
+  check:
+    runs-on: ubuntu-latest
     env:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
@@ -41,9 +38,8 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
- 
   test:
-    needs: analysis
+    needs: check
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]   
