@@ -7,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.2
-      volume:
-        /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
+      volumes:
+        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
     env:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
