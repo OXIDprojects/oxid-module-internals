@@ -13,8 +13,8 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     steps:
-    - run: ls -al /etc
-    - run: "systemctl list-unit-files | grep enabled"
+    - run: ls -al /etc/mysql
+    - run: ls -al /etc/init.d
     - run: service mysql status    
     - run: service mysql start
     - run: mysqladmin ping
