@@ -15,6 +15,8 @@ jobs:
     steps:
     - run: ls -al /etc/mysql
     - run: ls -al /etc/init.d
+    - run: apt install mysql-server
+    - run: which mysqld
     - run: service mysql status    
     - run: service mysql start
     - run: mysqladmin ping
