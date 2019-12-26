@@ -13,7 +13,7 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     steps:
-    - run: mysqladmin ping --health-interval 10s --health-timeout 5s --health-retries 10
+    - run: mysqladmin ping
 
     - uses: actions/checkout@v1
     
