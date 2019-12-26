@@ -3,18 +3,12 @@ name: oxid module tests
 on: [push]
 
 jobs:
-  pretest:
+  syntax:
     runs-on: ubuntu-latest
-#    container:
-#      image: oxidprojects/oxid-test:v2_6.1_php7.2
-#      volumes:
-#        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
-    env:
-      MODULE_NAME: moduleinternals
-      DB_HOST: localhost
     steps:
-    - run: mysqladmin ping
-
+    - run: mysql -u root -proot -e "create database oxid"
+    - run: ls -al /var/lib/mysql/
+    - run: cat /etc/mysql/*
     - uses: actions/checkout@v1
     
     - name: Validate composer.json
@@ -26,6 +20,18 @@ jobs:
     - name: phpcs
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .
     
+  analysis:
+    env:
+      MODULE_NAME: moduleinternals
+      DB_HOST: localhost
+    container:
+      image: oxidprojects/oxid-test:v2_6.1_php7.2
+      volumes:
+        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
+    needs: syntax
+    steps:
+    - run: mysql -u root -proot -e "create database oxid"
+  
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
 
@@ -35,9 +41,9 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
-
+ 
   test:
-    needs: pretest
+    needs: analysis
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]   
