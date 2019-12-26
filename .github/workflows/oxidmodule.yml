@@ -6,11 +6,10 @@ jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
-#    - run: mysqladmin -proot -u root variables
     - uses: actions/checkout@v1   
     - name: Validate composer.json
       run: composer validate   
-    - name: phpsyntax
+    - name: validate php syntax
       run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l     
   check:
     runs-on: ubuntu-latest
@@ -21,7 +20,6 @@ jobs:
       image: oxidprojects/oxid-test:v2_6.1_php7.1
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
-    #- run: mysql -u root -proot -e "create database oxid" 
     - uses: actions/checkout@v1
     - name: phpcs
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
@@ -34,7 +32,6 @@ jobs:
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
   test:
-    needs: check
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
@@ -44,12 +41,11 @@ jobs:
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     env:
       MODULE_NAME: moduleinternals
+      DB_HOST: "localhost;unix_socket=/var/run/mysqld/mysqld.sock"
     steps:
     - uses: actions/checkout@v1
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh 
-    - name: debug
-      run: cat /var/www/oxid/test_config.yml 
     - name: run tests
       run: |
         cd /var/www/oxid/
