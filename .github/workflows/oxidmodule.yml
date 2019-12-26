@@ -29,6 +29,15 @@ jobs:
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
+      continue-on-error: true
+    - run: |
+        cd /var/www/oxid
+        mysql -u $DB_USER -p$DB_PWD -h localhost $DB_NAME < vendor/oxid-esales/oxideshop-ce/source/Setup/Sql/database_schema.sql
+        mysql -u $DB_USER -p$DB_PWD -h localhost $DB_NAME < vendor/oxid-esales/oxideshop-ce/source/Setup/Sql/initial_data.sql
+        vendor/bin/oe-eshop-db_migrate migrations:migrate
+        vendor/bin/oe-eshop-db_views_generate
+        vendor/bin/oxid module:activate $MODULE_NAME
+        vendor/bin/oxid-dump-autoload
     - name: phpstan
       continue-on-error: true
       run: |
