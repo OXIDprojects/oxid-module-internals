@@ -13,9 +13,10 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     steps:
-    - run: service mysqld status
     - run: ls -al /etc
-    - run: service mysqld start
+    - run: chkconfig --list.
+    - run: service mysql status    
+    - run: service mysql start
     - run: mysqladmin ping
 
     - uses: actions/checkout@v1
