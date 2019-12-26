@@ -19,9 +19,7 @@ jobs:
       DB_HOST: localhost
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.1
-      volumes:
-        - "/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock"
-      options: "-v /:/host"
+      options: --privileged
     steps:
     - run: mount
     - run: ls -al /var/run/
