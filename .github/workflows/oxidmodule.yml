@@ -21,23 +21,12 @@ jobs:
       image: oxidprojects/oxid-test:v2_6.1_php7.1
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
-    - run: mount
-    - run: ls -al /var/run/
-    - run: mysql -u root -proot -e "create database oxid" 
+    #- run: mysql -u root -proot -e "create database oxid" 
     - uses: actions/checkout@v1
     - name: phpcs
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
-      continue-on-error: true
-    - run: |
-        cd /var/www/oxid
-        mysql -u root -proot -h localhost oxid < vendor/oxid-esales/oxideshop-ce/source/Setup/Sql/database_schema.sql
-        mysql -u root -proot -h localhost oxid < vendor/oxid-esales/oxideshop-ce/source/Setup/Sql/initial_data.sql
-        vendor/bin/oe-eshop-db_migrate migrations:migrate
-        vendor/bin/oe-eshop-db_views_generate
-        vendor/bin/oxid module:activate $MODULE_NAME
-        vendor/bin/oxid-dump-autoload
     - name: phpstan
       continue-on-error: true
       run: |
