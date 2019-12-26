@@ -18,12 +18,12 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     container:
-      image: oxidprojects/oxid-test:v2_6.1_php7.2
+      image: oxidprojects/oxid-test:v2_6.1_php7.1
       volumes:
         - "/var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock"
       options: "-v /:/host"
-    needs: syntax
     steps:
+    - run: mount
     - run: ls -al /var/run/
     - run: mysql -u root -proot -e "create database oxid" 
     - uses: actions/checkout@v1
