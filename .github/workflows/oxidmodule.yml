@@ -20,9 +20,10 @@ jobs:
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.2
       volumes:
-        - /var/run/mysqld/mysqld.sock:var/run/mysqld/mysqld.sock
+        - /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     needs: syntax
     steps:
+    - run: ls -al /var/run/mysqld
     - run: mysql -u root -proot -e "create database oxid" 
     - uses: actions/checkout@v1
     - name: phpcs
