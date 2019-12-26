@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - run: mysql -u root -proot -e "create database oxid"
-    - run: ls -al /var/lib/mysql/
+    - run: ls -al /tmp
     - run: cat /etc/mysql/*
     - uses: actions/checkout@v1   
     - name: Validate composer.json
