@@ -19,7 +19,7 @@ jobs:
       DB_HOST: localhost
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.1
-      options: --privileged
+      options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
     - run: mount
     - run: ls -al /var/run/
@@ -29,7 +29,6 @@ jobs:
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
-
     - name: phpstan
       continue-on-error: true
       run: |
@@ -44,8 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: oxidprojects/oxid-test:${{matrix.tag}}
-      volumes:
-        - /var/run/mysqld/mysqld.sock:var/run/mysqld/mysqld.sock   
+      options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     env:
       MODULE_NAME: moduleinternals
     steps:
