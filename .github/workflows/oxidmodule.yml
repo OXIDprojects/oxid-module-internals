@@ -5,21 +5,14 @@ on: [push]
 jobs:
   pretest:
     runs-on: ubuntu-latest
-    container:
-      image: oxidprojects/oxid-test:v2_6.1_php7.2
-      volumes:
-        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
+#    container:
+#      image: oxidprojects/oxid-test:v2_6.1_php7.2
+#      volumes:
+#        - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
     env:
       MODULE_NAME: moduleinternals
       DB_HOST: localhost
     steps:
-    - run: apt update
-    - run: apt -y install mysql-server
-    - run: ls -al /etc/mysql
-    - run: ls -al /etc/init.d
-    - run: which mysqld
-    - run: mysqld --verbose --help
-    - run: "mysqld --user mysql&"
     - run: mysqladmin ping
 
     - uses: actions/checkout@v1
