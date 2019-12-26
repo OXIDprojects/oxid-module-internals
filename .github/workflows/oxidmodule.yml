@@ -8,7 +8,7 @@ jobs:
     steps:
     - run: mysql -u root -proot -e "create database oxid"
     - run: ls -al /tmp
-    - run: cat /etc/mysql/*
+    - run: mysqladmin -proot -u root variables
     - uses: actions/checkout@v1   
     - name: Validate composer.json
       run: composer validate   
@@ -27,8 +27,8 @@ jobs:
         - /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
     needs: syntax
     steps:
-    - run: mysql -u root -proot -e "create database oxid"
-  
+    - run: mysql -u root -proot -e "create database oxid" 
+    - uses: actions/checkout@v1   
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
 
