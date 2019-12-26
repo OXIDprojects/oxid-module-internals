@@ -11,6 +11,7 @@ jobs:
         /var/lib/mysql/mysql.sock:/var/lib/mysql/mysql.sock
     env:
       MODULE_NAME: moduleinternals
+      DB_HOST: localhost
     steps:
     - run: mysqladmin ping --health-interval 10s --health-timeout 5s --health-retries 10
 
