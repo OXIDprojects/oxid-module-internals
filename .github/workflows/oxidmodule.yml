@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MODULE_NAME: moduleinternals
-      DB_HOST: localhost
+      DB_HOST: "localhost;unix_socket=/var/run/mysqld/mysqld.sock"
     container:
       image: oxidprojects/oxid-test:v2_6.1_php7.1
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
