@@ -20,7 +20,9 @@
     "php": ">=7.0"
   },
   "require-dev":{
-    "oxid-esales/oxideshop-ce" : ">=6.1"
+    "oxid-esales/oxideshop-ce" : ">=6.1",
+    "phpstan/phpstan-strict-rules" : "*",
+    "phpstan/extension-installer": "^1.0"
   },
   "extra": {
     "oxideshop": {
