@@ -22,7 +22,8 @@
   "require-dev":{
     "oxid-esales/oxideshop-ce" : ">=6.1",
     "phpstan/phpstan-strict-rules" : "*",
-    "phpstan/extension-installer": "^1.0"
+    "phpstan/extension-installer": "^1.0",
+    "slam/phpstan-extensions" : "^4.0"
   },
   "extra": {
     "oxideshop": {
