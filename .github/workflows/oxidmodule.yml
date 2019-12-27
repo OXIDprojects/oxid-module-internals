@@ -30,6 +30,7 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
+        cat autoload.oxid.php
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
   test:
     strategy:
