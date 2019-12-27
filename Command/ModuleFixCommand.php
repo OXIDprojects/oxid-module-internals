@@ -165,7 +165,7 @@ class ModuleFixCommand extends Command
     /**
      * Get all available module ids
      *
-     * @return array
+     * @return array<string>
      */
     protected function getAvailableModuleIds()
     {
