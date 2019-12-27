@@ -34,9 +34,10 @@ class NavigationController extends NavigationController_parent
     }
 
     /**
-     * @param $aMessage
+     * @param string[] $aMessage
+     * @return void
      */
-    public function checkModules(&$aMessage)
+    public function checkModules(&$aMessage): void
     {
         $moduleService = Registry::get(OxidComposerModulesService::class);
         $aModules = $moduleService->getActiveModules();
