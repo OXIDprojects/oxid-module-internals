@@ -3,7 +3,7 @@ name: oxid module tests
 on: [push]
 
 jobs:
-  syntax:
+  stand_alone_checks:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1   
@@ -11,7 +11,13 @@ jobs:
       run: composer validate   
     - name: validate php syntax
       run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l     
-  check:
+    - name: phpcs psr12
+      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
+    - name: phpcs consistence
+      run: php /var/www/oxid/phpcs.phar --standard=/var/www/oxid/vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp .  
+      continue-on-error: true
+  checks_with_oxid:
+    needs: stand_alone_checks
     runs-on: ubuntu-latest
     env:
       MODULE_NAME: moduleinternals
@@ -21,10 +27,6 @@ jobs:
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
     - uses: actions/checkout@v1
-    - name: phpcs psr12
-      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
-    - name: phpcs consistence
-      run: php /var/www/oxid/phpcs.phar --standard=/var/www/oxid/vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp .  
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
     - name: phpstan
@@ -34,12 +36,13 @@ jobs:
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
     - name: psalm
+      continue-on-error: true
       run: |
         MD=$(pwd)
         cd /var/www/oxid
         vendor/bin/psalm.phar --show-info=false $MD
-  test:
-    needs: check
+  tests:
+    needs: stand_alone_checks
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
