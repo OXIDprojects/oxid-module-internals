@@ -11,11 +11,6 @@ jobs:
       run: composer validate   
     - name: validate php syntax
       run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l     
-    - name: phpcs psr12
-      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
-    - name: phpcs consistence
-      run: php /var/www/oxid/phpcs.phar --standard=/var/www/oxid/vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp .  
-      continue-on-error: true
   checks_with_oxid:
     needs: stand_alone_checks
     runs-on: ubuntu-latest
@@ -41,6 +36,11 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid
         vendor/bin/psalm.phar --show-info=false $MD
+    - name: phpcs psr12
+      run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
+    - name: phpcs consistence
+      run: php /var/www/oxid/phpcs.phar --standard=/var/www/oxid/vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp .  
+      continue-on-error: true        
   tests:
     needs: stand_alone_checks
     strategy:
