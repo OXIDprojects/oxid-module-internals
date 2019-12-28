@@ -18,7 +18,7 @@ jobs:
       MODULE_NAME: moduleinternals
       DB_HOST: "localhost;unix_socket=/var/run/mysqld/mysqld.sock"
     container:
-      image: oxidprojects/oxid-test:v2_6.2-rc_php7.2
+      image: oxidprojects/oxid-test:v2_6.1_php7.2
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
     - uses: actions/checkout@v1
@@ -38,12 +38,6 @@ jobs:
         vendor/bin/psalm.phar --show-info=false $MD
     - name: phpcs psr12
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
-    - name: phpcs consistence
-      run: |
-        MD=$(pwd)
-        cd /var/www/oxid
-        php phpcs.phar --standard=vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp $MD  
-      continue-on-error: true        
   tests:
     needs: stand_alone_checks
     strategy:
