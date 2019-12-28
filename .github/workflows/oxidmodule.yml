@@ -21,8 +21,10 @@ jobs:
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     steps:
     - uses: actions/checkout@v1
-    - name: phpcs
+    - name: phpcs psr12
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
+    - name: phpcs consistence
+      run: php /var/www/oxid/phpcs.phar --standard=/var/www/oxid/vendor/consistence/coding-standard/Consistence/ruleset.xml --extensions=php --encoding=utf-8 -sp .  
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh
     - name: phpstan
@@ -35,7 +37,6 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid
-        ls -al stubs
         vendor/bin/psalm.phar --show-info=false $MD
   test:
     needs: check
