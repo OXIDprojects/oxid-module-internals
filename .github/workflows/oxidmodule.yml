@@ -31,14 +31,14 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
-        vendor/bin/psalm.phar --show-info=false
     - name: psalm
-      continue-on-error: true
       run: |
         MD=$(pwd)
-        cd /var/www/oxid/
+        cd /var/www/oxid
+        ls -al stubs
         vendor/bin/psalm.phar --show-info=false $MD
   test:
+    needs: check
     strategy:
       matrix:
         tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
