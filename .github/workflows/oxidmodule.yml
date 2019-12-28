@@ -32,6 +32,7 @@ jobs:
         cd /var/www/oxid/
         cat autoload.oxid.php
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
+    - run: vendor/bin/psalm.phar --show-info=false
   test:
     strategy:
       matrix:
