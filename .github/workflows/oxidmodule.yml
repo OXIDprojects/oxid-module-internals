@@ -30,9 +30,14 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
-        cat autoload.oxid.php
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
-    - run: vendor/bin/psalm.phar --show-info=false
+        vendor/bin/psalm.phar --show-info=false
+    - name: psalm
+      continue-on-error: true
+      run: |
+        MD=$(pwd)
+        cd /var/www/oxid/
+        vendor/bin/psalm.phar --show-info=false $MD
   test:
     strategy:
       matrix:
