@@ -36,7 +36,7 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid
         cat autoload.oxid.php
-        vendor/bin/psalm.phar --debug-by-line --show-info=false $MD
+        vendor/bin/psalm.phar --show-info=false $MD
     - name: phpcs psr12
       run: php /var/www/oxid/phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor . 
   tests:
