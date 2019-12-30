@@ -41,8 +41,6 @@ class ModuleFixCommand extends Command
             ->setAliases(['fix:states'])
             ->setDescription('Fixes modules metadata states')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Includes all modules')
-            ->addOption('base-shop', 'b', InputOption::VALUE_NONE, 'Apply changes to base shop only')
-            ->addOption('shop', 's', InputOption::VALUE_REQUIRED, 'Apply changes to given shop only')
             ->addArgument('module-id', InputArgument::IS_ARRAY, 'Module id/ids to use');
     }
 
@@ -60,7 +58,6 @@ class ModuleFixCommand extends Command
 
         try {
             $aModuleIds = $this->parseModuleIds();
-            $aShopConfigs = $this->parseShopConfigs();
         } catch (InputException $oEx) {
             $output->writeln($oEx->getMessage());
             exit(1);
@@ -69,17 +66,14 @@ class ModuleFixCommand extends Command
         /** @var ModuleStateFixer $oModuleStateFixer */
         $oModuleStateFixer = Registry::get(ModuleStateFixer::class);
         $oModuleStateFixer->setOutput($output);
-        $oModuleStateFixer->setDebugOutput($verboseOutput);
 
         /** @var Module $oModule */
         $oModule = oxNew(Module::class);
 
-        foreach ($aShopConfigs as $oConfig) {
             $moduleCount = count($aModuleIds);
             $verboseOutput->writeln(
-                '[DEBUG] Working on shop id ' . $oConfig->getShopId() . " fixing $moduleCount modules"
+                "[DEBUG] fixing $moduleCount modules"
             );
-            $oModuleStateFixer->setConfig($oConfig);
             $oModuleStateFixer->cleanUp();
             foreach ($aModuleIds as $sModuleId) {
                 $oModule->setMetaDataVersion(null);
@@ -133,55 +127,6 @@ class ModuleFixCommand extends Command
         }
 
         return $requestedModuleIds;
-    }
-
-    /**
-     * Parse and return shop config objects from input
-     *
-     * @return array<int, Config>
-     *
-     * @throws InputException
-     */
-    protected function parseShopConfigs()
-    {
-        if ($this->input->getOption('base-shop')) {
-            return array(Registry::getConfig());
-        }
-
-        if ($shopId = $this->input->getOption('shop')) {
-            $config = ShopConfig::get($shopId);
-                            
-            if (!isset($config)) {
-                throw oxNew(
-                    InputException::class,
-                    'Shop id does not exist'
-                );
-            }
-
-            return array($config);
-        }
-
-        return ShopConfig::getAll();
-    }
-
-    /**
-     * Get all available module ids
-     *
-     * @return array<string>
-     */
-    protected function getAvailableModuleIds()
-    {
-        if ($this->availableModuleIds === null) {
-            $oConfig = Registry::getConfig();
-
-            // We are calling getModulesFromDir() because we want to refresh
-            // the list of available modules. This is a workaround for OXID
-            // bug.
-            oxNew(ModuleList::class)->getModulesFromDir($oConfig->getModulesDir());
-            $this->availableModuleIds = array_keys($oConfig->getConfigParam('aModulePaths'));
-        }
-
-        return $this->availableModuleIds;
     }
 
     /**
