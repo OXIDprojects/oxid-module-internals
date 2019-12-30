@@ -10,7 +10,7 @@
  * @see       https://github.com/acirtautas/oxid-module-internals
  */
 
-namespace OxidCommunity\ModuleInternals\Tests\Integration\core;
+namespace OxidCommunity\ModuleInternals\Tests\Integration\Core;
 
 use OxidCommunity\ModuleInternals\Core\FixHelper;
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;

@@ -47,7 +47,7 @@ class OxidComposerModulesService
     }
 
     /**
-     * @param $moduleId
+     * @param string $moduleId
      * @return bool|PackageInterface
      */
     public function getPackage($moduleId)
@@ -60,11 +60,12 @@ class OxidComposerModulesService
     }
 
     /**
-     * @param $metadataPath
+     * @param string $metadataPath
      * @return string
      */
     protected function getIdFromMetadata($metadataPath)
     {
+        $aModule = null;
         include $metadataPath;
         if (isset($aModule)) {
             return $aModule['id'];

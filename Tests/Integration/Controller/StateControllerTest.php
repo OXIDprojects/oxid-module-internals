@@ -65,7 +65,7 @@ class StateControllerTest extends UnitTestCase
     }
 
     /**
-     * @param DatabaseInterface $db
+     * @param bool $should
      * @return mixed
      */
     private function checkActive($should)
