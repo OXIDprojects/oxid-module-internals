@@ -11,6 +11,7 @@ namespace OxidCommunity\ModuleInternals\Core;
 
 use OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Core\Module\ModuleList;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\Console\Output\NullOutput;
@@ -54,7 +55,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
             }
         }
 
-        $oModules = oxNew(\OxidEsales\EshopCommunity\Core\Module\ModuleList::class);
+        $oModules = oxNew(ModuleList::class);
         //ids will include garbage in case there are files that not registered by any module
         $ids = $oModules->getModuleIds();
 
@@ -128,7 +129,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
             $moduleHelper->setModule($module);
             $path = $moduleHelper->getModuleNameSpace();
         } else {
-            $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
+            $modulePaths = Registry::getConfig()->getConfigParam('aModulePaths');
 
             $moduleId = $module->getId();
             $path = '';

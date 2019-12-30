@@ -9,6 +9,7 @@
 
 namespace OxidCommunity\ModuleInternals\Core;
 
+use Composer\Package\PackageInterface;
 use OxidEsales\Eshop\Core\Registry;
 
 class ModuleHelper
@@ -67,7 +68,7 @@ class ModuleHelper
 
     /**
      * @param Module $module
-     * @return bool|\Composer\Package\PackageInterface
+     * @return bool|PackageInterface
      */
     protected function getComposerPackage()
     {

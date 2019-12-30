@@ -5,7 +5,14 @@
  * @author    Alfonsas Cirtautas / OXID Community
  */
 
+use OxidCommunity\ModuleInternals\Controller\Admin\Metadata;
+use OxidCommunity\ModuleInternals\Controller\Admin\NavigationController;
+use OxidCommunity\ModuleInternals\Controller\Admin\State;
+use OxidCommunity\ModuleInternals\Controller\Admin\UtilsController;
+use OxidCommunity\ModuleInternals\Controller\CheckConsistency;
+use OxidCommunity\ModuleInternals\Core\InternalModule;
 use OxidEsales\Eshop\Core\Config;
+use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Registry;
 
 $sMetadataVersion = '2.0';
@@ -26,15 +33,15 @@ $aModule = [
     'url'         => 'https://github.com/OXIDprojects/oxid-module-internals',
     'email'       => '',
     'extend'      => [
-        \OxidEsales\Eshop\Core\Module\Module::class => \OxidCommunity\ModuleInternals\Core\InternalModule::class,
+        Module::class => InternalModule::class,
         \OxidEsales\Eshop\Application\Controller\Admin\NavigationController::class
-            => \OxidCommunity\ModuleInternals\Controller\Admin\NavigationController::class
+            => NavigationController::class
     ],
     'controllers' => [
-        'module_internals_metadata' => \OxidCommunity\ModuleInternals\Controller\Admin\Metadata::class,
-        'module_internals_state'    => \OxidCommunity\ModuleInternals\Controller\Admin\State::class,
-        'module_internals_utils'    => \OxidCommunity\ModuleInternals\Controller\Admin\UtilsController::class,
-        'checkconsistency'          => \OxidCommunity\ModuleInternals\Controller\CheckConsistency::class,
+        'module_internals_metadata' => Metadata::class,
+        'module_internals_state'    => State::class,
+        'module_internals_utils'    => UtilsController::class,
+        'checkconsistency'          => CheckConsistency::class,
     ],
     'templates'   => [
         'metadata.tpl'              => 'oxcom/moduleinternals/views/admin/tpl/metadata.tpl',

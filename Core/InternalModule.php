@@ -12,9 +12,12 @@
 
 namespace OxidCommunity\ModuleInternals\Core;
 
+use Composer\Package\PackageInterface;
 use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\Exception\DatabaseErrorException;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Module\ModuleList;
+use OxidEsales\Eshop\Core\Theme;
 
 /**
  * Class InternalModule: chain extends OxidEsales\Eshop\Core\Module\Module
@@ -23,6 +26,9 @@ use OxidEsales\Eshop\Core\Module\ModuleList;
 class InternalModule extends InternalModule_parent
 {
     protected $state = self::FINE;
+    /**
+     * @var bool|array $checked
+     */
     protected $checked = false;
     /** @var ModuleStateFixer */
     protected $moduleFixHelper;
@@ -76,15 +82,15 @@ class InternalModule extends InternalModule_parent
      * Get template blocks defined in database.
      *
      * @return array
-     * @throws \OxidEsales\Eshop\Core\Exception\DatabaseErrorException
+     * @throws DatabaseErrorException
      */
     public function getModuleBlocks()
     {
         $config = Registry::getConfig();
-        $activeThemeIds = oxNew(\OxidEsales\Eshop\Core\Theme::class)->getActiveThemesList();
+        $activeThemeIds = oxNew(Theme::class)->getActiveThemesList();
         $activeThemeIds[] = '';
 
-        $themeIdsSql = join(', ', \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray($activeThemeIds));
+        $themeIdsSql = join(', ', DatabaseProvider::getDb()->quoteArray($activeThemeIds));
 
         $aResults = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->select(
             "SELECT OXID as id,
@@ -225,7 +231,7 @@ class InternalModule extends InternalModule_parent
      */
     public function checkModuleVersions()
     {
-        $iLang = \OxidEsales\Eshop\Core\Registry::getLang()->getTplLanguage();
+        $iLang = Registry::getLang()->getTplLanguage();
         $databaseVersion = $this->getInfo("version", $iLang);
         
         $aResult = $this->toResult(['version' => $databaseVersion]);
@@ -525,12 +531,10 @@ class InternalModule extends InternalModule_parent
 
 
     /**
-     * @param $oModule
-     * @param $sModId
-     * @param $sTitle
+     * @param string $title
      * @return array
      */
-    public function checkState($sTitle = '')
+    public function checkState($title = '')
     {
         if ($this->checked !== false) {
             return $this->checked;
@@ -538,7 +542,7 @@ class InternalModule extends InternalModule_parent
         $oModule = $this;
         $aModule = array();
         $aModule['oxid'] = $sId = $oModule->getId();
-        $aModule['title'] = $aModule['oxid'] . " - " . $sTitle;
+        $aModule['title'] = $aModule['oxid'] . " - " . $title;
 
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
         $aModule['aBlocks'] = $oModule->checkTemplateBlocks();
@@ -575,7 +579,7 @@ class InternalModule extends InternalModule_parent
 
     protected $filelist = [];
     /**
-     * @param $filePath
+     * @param string $filePath
      * @return bool
      */
     protected function checkFileExists($filePath)
@@ -599,8 +603,8 @@ class InternalModule extends InternalModule_parent
     }
 
     /**
-     * @param $moduleId
-     * @return bool|\Composer\Package\PackageInterface
+     * @param string|null $moduleId
+     * @return bool|PackageInterface
      */
     protected function getComposerPackage($moduleId = null)
     {

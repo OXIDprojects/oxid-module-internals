@@ -2,10 +2,17 @@
 
 namespace OxidCommunity\ModuleInternals\Core;
 
+use function getLogger;
 use OxidEsales\Eshop\Core\Config;
+use OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface;
 use OxidEsales\Eshop\Core\DatabaseProvider;
+use OxidEsales\Eshop\Core\Exception\StandardException;
+use OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner;
+use OxidEsales\Eshop\Core\Module\ModuleMetadataValidator;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Routing\Module\ClassProviderStorage;
+use OxidEsales\Eshop\Core\Routing\ModuleControllerMapProvider;
+use OxidEsales\Eshop\Core\Routing\ShopControllerMapProvider;
 use OxidEsales\Eshop\Core\SettingsHandler;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
@@ -21,7 +28,7 @@ use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
  */
 class ModuleStateFixer extends ModuleInstaller
 {
-    /** @var \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner */
+    /** @var ModuleExtensionsCleaner */
     private $moduleCleaner;
 
     public function __construct($cache = null, $cleaner = null)
@@ -59,7 +66,7 @@ class ModuleStateFixer extends ModuleInstaller
     public function setConfig($config)
     {
         parent::setConfig($config);
-        Registry::set(\OxidEsales\Eshop\Core\Config::class, $config);
+        Registry::set(Config::class, $config);
     }
 
     public function disableInitialCacheClear()
@@ -364,7 +371,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param Module $module
      * @param string $moduleId
      *
-     * @throws \OxidEsales\Eshop\Core\Exception\StandardException
+     * @throws StandardException
      */
     private function restoreModuleInformation($module, $moduleId)
     {
@@ -546,10 +553,10 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * Add extension to module
      *
-     * @param \OxidEsales\Eshop\Core\Module\Module $module
+     * @param Module $module
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
-    protected function _addExtensions(\OxidEsales\Eshop\Core\Module\Module $module)
+    protected function _addExtensions(Module $module)
     {
         $needFix = $this->checkExtensions($module, $aModulesDefault, $aModules);
         if ($needFix) {
@@ -600,7 +607,7 @@ class ModuleStateFixer extends ModuleInstaller
             $moduleBlocks = array();
         }
         $shopId = Registry::getConfig()->getShopId();
-        $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb(\OxidEsales\Eshop\Core\DatabaseProvider::FETCH_MODE_ASSOC);
+        $db = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC);
         $knownBlocks = ['dummy']; // Start with a dummy value to prevent having an empty list in the NOT IN statement.
         $rowsEffected = 0;
         $select_sql = "SELECT `OXID`, `OXTHEME` as `theme`, `OXTEMPLATE` as `template`, `OXBLOCKNAME` as `block`,
@@ -688,7 +695,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param $aModulesDefault
      * @param $aModules
      */
-    protected function checkExtensions(\OxidEsales\Eshop\Core\Module\Module $module, &$aModulesDefault, &$aModules)
+    protected function checkExtensions(Module $module, &$aModulesDefault, &$aModules)
     {
         $aModulesDefault = Registry::getConfig()->getConfigParam('aModules');
         //in case someone deleted values from the db using a empty array avoids php warnings
@@ -728,7 +735,7 @@ class ModuleStateFixer extends ModuleInstaller
     public function getLogger()
     {
         if (function_exists("\getLogger")) {
-            return \getLogger();
+            return getLogger();
         }
         return new FallbackLogger();
     }
@@ -751,11 +758,11 @@ class ModuleStateFixer extends ModuleInstaller
      * Validate module metadata extend section.
      * Only Unified Namespace shop classes are free to patch.
      *
-     * @param \OxidEsales\Eshop\Core\Module\Module $module
+     * @param Module $module
      *
      * @throws ModuleValidationException
      */
-    protected function validateMetadataExtendSection(\OxidEsales\Eshop\Core\Module\Module $module)
+    protected function validateMetadataExtendSection(Module $module)
     {
         $validator = $this->getModuleMetadataValidator();
         $validator->checkModuleExtensionsForIncorrectNamespaceClasses($module);
@@ -783,18 +790,18 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     /**
-     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     * @return ControllerMapProviderInterface
      */
     protected function getModuleControllerMapProvider()
     {
-        return oxNew(\OxidEsales\Eshop\Core\Routing\ModuleControllerMapProvider::class);
+        return oxNew(ModuleControllerMapProvider::class);
     }
     /**
-     * @return \OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface
+     * @return ControllerMapProviderInterface
      */
     protected function getShopControllerMapProvider()
     {
-        return oxNew(\OxidEsales\Eshop\Core\Routing\ShopControllerMapProvider::class);
+        return oxNew(ShopControllerMapProvider::class);
     }
 
     /**
@@ -818,23 +825,23 @@ class ModuleStateFixer extends ModuleInstaller
          */
         $duplicatedKeys = array_intersect_key(array_change_key_case($moduleControllers, CASE_LOWER), $existingMaps);
         if (!empty($duplicatedKeys)) {
-            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedKeys));
+            throw new ModuleValidationException(implode(',', $duplicatedKeys));
         }
         /**
          * Ensure, that controller values are unique.
          */
         $duplicatedValues = array_intersect($moduleControllers, $existingMaps);
         if (!empty($duplicatedValues)) {
-            throw new \OxidEsales\Eshop\Core\Exception\ModuleValidationException(implode(',', $duplicatedValues));
+            throw new ModuleValidationException(implode(',', $duplicatedValues));
         }
     }
 
     /**
-     * @return \OxidEsales\Eshop\Core\Module\ModuleMetadataValidator
+     * @return ModuleMetadataValidator
      */
     protected function getModuleMetadataValidator()
     {
-        return oxNew(\OxidEsales\Eshop\Core\Module\ModuleMetadataValidator::class);
+        return oxNew(ModuleMetadataValidator::class);
     }
 
     /**
@@ -873,14 +880,14 @@ class ModuleStateFixer extends ModuleInstaller
      * Removes garbage ( module not used extensions ) from all installed extensions list
      *
      * @param array                                $installedExtensions Installed extensions
-     * @param \OxidEsales\Eshop\Core\Module\Module $module              Module
-     *
-     * @deprecated on b-dev, \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner::cleanExtensions() should be used.
-     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     * @param Module $module              Module
      *
      * @return array
+     *@deprecated on b-dev, \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner::cleanExtensions() should be used.
+     * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     *
      */
-    protected function _removeNotUsedExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
+    protected function _removeNotUsedExtensions($installedExtensions, Module $module)
     {
         return $this->getModuleCleaner()->cleanExtensions($installedExtensions, $module);
     }
@@ -888,7 +895,7 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * Returns module cleaner object.
      *
-     * @return \OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner
+     * @return ModuleExtensionsCleaner
      */
     protected function getModuleCleaner()
     {

@@ -12,7 +12,7 @@
     <!--
     window.onload = function () {
         top.oxid.admin.updateList('[{ $oxid }]');
-    }
+    };
     function module_internals_fix(fnc) {
         document.getElementById('fnc').value = fnc;
         document.getElementById('transfer').submit();

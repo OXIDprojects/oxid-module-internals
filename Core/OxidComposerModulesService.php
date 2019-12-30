@@ -73,7 +73,7 @@ class OxidComposerModulesService
     }
 
     /**
-     * @return array|\Composer\Package\PackageInterface[]
+     * @return array|PackageInterface[]
      */
     public function getOxidModulePackages()
     {
@@ -85,7 +85,7 @@ class OxidComposerModulesService
     }
 
     /**
-     * @return \Composer\Package\PackageInterface[]
+     * @return PackageInterface[]
      */
     public function getPackages()
     {

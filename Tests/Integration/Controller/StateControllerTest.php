@@ -13,6 +13,7 @@
 namespace OxidCommunity\ModuleInternals\Tests\Integration\Controller;
 
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
+use OxidEsales\Eshop\Core\Database\Adapter\DatabaseInterface;
 use OxidEsales\EshopCommunity\Core\DatabaseProvider;
 use OxidEsales\TestingLibrary\UnitTestCase;
 use OxidCommunity\ModuleInternals\Controller\Admin\State;
@@ -64,7 +65,7 @@ class StateControllerTest extends UnitTestCase
     }
 
     /**
-     * @param \OxidEsales\Eshop\Core\Database\Adapter\DatabaseInterface $db
+     * @param DatabaseInterface $db
      * @return mixed
      */
     private function checkActive($should)

@@ -3,14 +3,14 @@
 namespace OxidCommunity\ModuleInternals\Controller;
 
 use OxidCommunity\ModuleInternals\Core\OxidComposerModulesService;
+use OxidEsales\Eshop\Application\Controller\FrontendController;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Registry;
-use OxidEsales\Eshop\Core\Module\ModuleList as ModuleList;
 use OxidEsales\Eshop\Core\Module\Module as Module;
 use OxidEsales\Eshop\Core\SeoEncoder;
 use OxidEsales\Eshop\Core\Request;
 
-class CheckConsistency extends \OxidEsales\Eshop\Application\Controller\FrontendController
+class CheckConsistency extends FrontendController
 {
     /**
      * @var string

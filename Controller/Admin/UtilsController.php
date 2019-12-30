@@ -12,6 +12,7 @@
 
 namespace OxidCommunity\ModuleInternals\Controller\Admin;
 
+use OxidEsales\Eshop\Application\Controller\Admin\AdminController;
 use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
@@ -25,7 +26,7 @@ use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 /**
  * Internal module utilities.
  */
-class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\AdminController
+class UtilsController extends AdminController
 {
 
     /** @var Module */
