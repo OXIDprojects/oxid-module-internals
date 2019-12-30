@@ -33,19 +33,23 @@ jobs:
     - name: setup oxid
       run: bash /var/www/oxid/setup.sh 
     - name: phpstan
+      run: |
+        MD=$(pwd)
+        cd /var/www/oxid/
+        vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
+    - name: phpstan
       continue-on-error: true
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
     - name: psalm
-      continue-on-error: true
       run: |
         MD=$(pwd)
         cd /var/www/oxid
         cat autoload.oxid.php
         curl -OL https://circleci.com/api/v1.1/project/github/weirdan/psalm/232/artifacts/0/home/docker/project/build/psalm.phar
-        php psalm.phar --debug-by-line --show-info=false $MD
+        php psalm.phar --stats --debug-by-line --show-info=true $MD
     - name: run tests
       run: |
         cd /var/www/oxid/
