@@ -20,7 +20,7 @@ jobs:
     needs: stand_alone_checks
     strategy:
       matrix:
-        tag: [v2_6.1_php7.1, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
+        tag: [v2_6.1_php7.1, v2_6.1_php7.2, v2_6.2-rc_php7.2, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
     runs-on: ubuntu-latest
     container:
       image: oxidprojects/oxid-test:${{matrix.tag}}
