@@ -70,24 +70,24 @@ class ModuleFixCommand extends Command
         /** @var Module $oModule */
         $oModule = oxNew(Module::class);
 
-            $moduleCount = count($aModuleIds);
-            $verboseOutput->writeln(
-                "[DEBUG] fixing $moduleCount modules"
-            );
-            $oModuleStateFixer->cleanUp();
-            foreach ($aModuleIds as $sModuleId) {
-                $oModule->setMetaDataVersion(null);
-                if (!$oModule->load($sModuleId)) {
-                    $verboseOutput->writeln("[DEBUG] {$sModuleId} does not exist - skipping");
-                    continue;
-                }
-
-                $verboseOutput->writeln("[DEBUG] Fixing {$sModuleId} module");
-                $oModuleStateFixer->fix($oModule);
+        $moduleCount = count($aModuleIds);
+        $verboseOutput->writeln(
+            "[DEBUG] fixing $moduleCount modules"
+        );
+        $oModuleStateFixer->cleanUp();
+        foreach ($aModuleIds as $sModuleId) {
+            $oModule->setMetaDataVersion(null);
+            if (!$oModule->load($sModuleId)) {
+                $verboseOutput->writeln("[DEBUG] {$sModuleId} does not exist - skipping");
+                continue;
             }
 
-            $verboseOutput->writeln('');
+            $verboseOutput->writeln("[DEBUG] Fixing {$sModuleId} module");
+            $oModuleStateFixer->fix($oModule);
         }
+
+        $verboseOutput->writeln('');
+        
 
         $output->writeln('Fixed module states successfully');
         return null;
