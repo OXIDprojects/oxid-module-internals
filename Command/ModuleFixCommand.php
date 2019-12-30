@@ -62,7 +62,7 @@ class ModuleFixCommand extends Command
             $aModuleIds = $this->parseModuleIds();
             $aShopConfigs = $this->parseShopConfigs();
         } catch (InputException $oEx) {
-            $output->writeLn($oEx->getMessage());
+            $output->writeln($oEx->getMessage());
             exit(1);
         }
 
@@ -76,7 +76,7 @@ class ModuleFixCommand extends Command
 
         foreach ($aShopConfigs as $oConfig) {
             $moduleCount = count($aModuleIds);
-            $verboseOutput->writeLn(
+            $verboseOutput->writeln(
                 '[DEBUG] Working on shop id ' . $oConfig->getShopId() . " fixing $moduleCount modules"
             );
             $oModuleStateFixer->setConfig($oConfig);
@@ -84,18 +84,18 @@ class ModuleFixCommand extends Command
             foreach ($aModuleIds as $sModuleId) {
                 $oModule->setMetaDataVersion(null);
                 if (!$oModule->load($sModuleId)) {
-                    $verboseOutput->writeLn("[DEBUG] {$sModuleId} does not exist - skipping");
+                    $verboseOutput->writeln("[DEBUG] {$sModuleId} does not exist - skipping");
                     continue;
                 }
 
-                $verboseOutput->writeLn("[DEBUG] Fixing {$sModuleId} module");
+                $verboseOutput->writeln("[DEBUG] Fixing {$sModuleId} module");
                 $oModuleStateFixer->fix($oModule);
             }
 
-            $verboseOutput->writeLn('');
+            $verboseOutput->writeln('');
         }
 
-        $output->writeLn('Fixed module states successfully');
+        $output->writeln('Fixed module states successfully');
         return null;
     }
 
