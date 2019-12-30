@@ -726,7 +726,7 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     /**
-     * @param $module
+     * @param Module $module
      */
     public function fixExtensions($module)
     {

@@ -47,6 +47,7 @@ jobs:
         MD=$(pwd)
         cd /var/www/oxid/
         composer remove phpstan/phpstan-strict-rules --dev
+        composer remove phpstan/phpstan-deprecation-rules --dev
         vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
     - name: psalm
       run: |

@@ -70,7 +70,7 @@ class ModuleHelper
         $moduleId = $this->module->getId();
 
         /**
-         * @var $packageService OxidComposerModulesService
+         * @var OxidComposerModulesService $packageService
          */
         $packageService = Registry::get(OxidComposerModulesService::class);
         $package = $packageService->getPackage($moduleId);
