@@ -148,25 +148,25 @@ class InternalModule extends InternalModule_parent
     /**
      * check if current metadata version is $sVersion
      *
-     * @param $sVersion
+     * @param string $version
      *
      * @return bool
      */
-    public function isMetadataVersionGreaterEqual($sVersion)
+    public function isMetadataVersionGreaterEqual($version)
     {
-        return version_compare($this->getMetaDataVersion(), $sVersion) >= 0;
+        return version_compare($this->getMetaDataVersion(), $version) >= 0;
     }
 
     /**
      * check if current metadata version is $sVersion
      *
-     * @param $sVersion
+     * @param string $version
      *
      * @return bool
      */
-    public function checkMetadataVersion($sVersion)
+    public function checkMetadataVersion($version)
     {
-        return version_compare($this->getMetaDataVersion(), $sVersion) == 0;
+        return version_compare($this->getMetaDataVersion(), $version) == 0;
     }
 
     /**
@@ -178,13 +178,13 @@ class InternalModule extends InternalModule_parent
      * ModuleList::MODULE_KEY_CONTROLLERS = 'controllers'
      * ModuleList::MODULE_KEY_EVENTS => 'events'
      * ModuleList::MODULE_KEY_VERSIONS => module version
-     *
+     * @param string $type
      * @return array
      */
-    public function getModuleEntries($sType)
+    public function getModuleEntries($type)
     {
         $aReturn = [];
-        $aList = oxNew(ModuleList::class)->getModuleConfigParametersByKey($sType);
+        $aList = oxNew(ModuleList::class)->getModuleConfigParametersByKey($type);
 
         if (isset($aList[ $this->getId() ])) {
             $aReturn = $aList[ $this->getId() ];
@@ -198,19 +198,18 @@ class InternalModule extends InternalModule_parent
      * switches between metadata version for checking
      * checks also for namespace class if metadata version = 2.0
      *
-     * @param string $sClassName
-     * @param string $sExtention
+     * @param string $className
      *
      * @return bool
      */
-    public function checkPhpFileExists($sClassName)
+    public function checkPhpFileExists($className)
     {
         if ($this->isMetadataVersionGreaterEqual('2.0')) {
             $composerClassLoader = $this->getModuleHelper()->getAutoloader();
 
-            return $composerClassLoader->findFile($sClassName);
+            return $composerClassLoader->findFile($className);
         } else {
-            $sExtensionPath = $sClassName . '.php';
+            $sExtensionPath = $className . '.php';
             $res = $this->checkFileExists($sExtensionPath);
             return $res;
         }
