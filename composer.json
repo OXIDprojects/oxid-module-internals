@@ -23,7 +23,8 @@
     "oxid-esales/oxideshop-ce" : ">=6.1",
     "phpstan/phpstan-strict-rules" : "*",
     "phpstan/extension-installer": "^1.0",
-    "phpstan/phpstan-deprecation-rules" : "^0.12"
+    "phpstan/phpstan-deprecation-rules" : "^0.12",
+    "consistence/coding-standard" : "*"
   },
   "extra": {
     "oxideshop": {

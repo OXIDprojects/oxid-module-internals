@@ -67,7 +67,7 @@ class ModuleStateFixer extends ModuleInstaller
         $this->initialCacheClearDone = true;
     }
 
-    protected function init()
+    protected function init(): bool
     {
         if (!$this->initDone) {
             if ($this->isRunning) {
@@ -101,7 +101,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param Module      $module
      * @param Config|null $oConfig If not passed uses default base shop config
      */
-    public function fix($module, $oConfig = null)
+    public function fix($module, $oConfig = null): bool
     {
         if ($oConfig !== null) {
             $this->setConfig($oConfig);
@@ -122,7 +122,7 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * After fixing all modules call this method to clean up trash that is not related to any installed module
      */
-    public function cleanUp()
+    public function cleanUp(): void
     {
         if ($this->init()) {
             $this->cleanUpControllers();
@@ -133,7 +133,7 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * remove extensions that are not registered by any module
      */
-    public function cleanUpExtensions()
+    public function cleanUpExtensions(): void
     {
 
         //get all extions from all metadata
@@ -182,7 +182,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param string $sModuleId        Module id
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
-    protected function _addTemplateFiles($aModuleTemplates, $sModuleId)
+    protected function _addTemplateFiles($aModuleTemplates, $sModuleId): void
     {
         $aTemplates = (array) Registry::getConfig()->getConfigParam('aModuleTemplates');
         $old = isset($aTemplates[$sModuleId]) ? $aTemplates[$sModuleId] : null;
@@ -213,7 +213,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param string $sModuleId    Module id
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      */
-    protected function _addModuleFiles($aModuleFiles, $sModuleId)
+    protected function _addModuleFiles($aModuleFiles, $sModuleId): void
     {
         $aFiles = (array) Registry::getConfig()->getConfigParam('aModuleFiles');
 
