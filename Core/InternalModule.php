@@ -612,7 +612,7 @@ class InternalModule extends InternalModule_parent
             $moduleId = $this->getId();
         }
         /**
-         * @var $packageService OxidComposerModulesService
+         * @var OxidComposerModulesService $packageService
          */
         $packageService = Registry::get(OxidComposerModulesService::class);
         $package = $packageService->getPackage($moduleId);
