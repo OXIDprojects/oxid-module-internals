@@ -124,7 +124,7 @@ class ModuleFixCommand extends Command
 
         // Checking if all provided module ids exist
         foreach ($requestedModuleIds as $moduleId) {
-            if (!in_array($moduleId, $availableModuleIds)) {
+            if (!in_array($moduleId, $availableModuleIds, true)) {
                 throw oxNew(
                     InputException::class,
                     "{$moduleId} module does not exist"
@@ -149,14 +149,16 @@ class ModuleFixCommand extends Command
         }
 
         if ($shopId = $this->input->getOption('shop')) {
-            if ($oConfig = ShopConfig::get($shopId)) {
-                return array($oConfig);
+            $config = ShopConfig::get($shopId));
+                            
+            if (!isset($config)) {
+                throw oxNew(
+                  InputException::class,
+                  'Shop id does not exist'
+                );
             }
 
-            throw oxNew(
-                InputException::class,
-                'Shop id does not exist'
-            );
+            return array($config);
         }
 
         return ShopConfig::getAll();
