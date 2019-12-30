@@ -10,26 +10,31 @@
 namespace OxidCommunity\ModuleInternals\Core;
 
 use OxidEsales\Eshop\Core\Module\ModuleExtensionsCleaner;
+use OxidEsales\Eshop\Core\Module\Module;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\EshopCommunity\Core\Module\ModuleList;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 {
-    protected $debugOutput;
+    /**
+     * @var LoggerInterface $logger
+     */
+    protected $logger;
 
     public function __construct()
     {
-        $this->debugOutput = new NullLogger();
+        $this->logger = new NullLogger();
     }
 
-    public function setOutput(LoggerInterface $out)
+    /**
+     * @param LoggerInterface $out
+     */
+    public function setLogger(LoggerInterface $out)
     {
 
-        $this->debugOutput = $out;
+        $this->logger = $out;
     }
 
     /**
@@ -37,11 +42,11 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      * For example: some classes were renamed, so these should be removed.
      *
      * @param array                                $installedExtensions
-     * @param \OxidEsales\Eshop\Core\Module\Module $module
+     * @param Module $module
      *
      * @return array
      */
-    public function cleanExtensions($installedExtensions, \OxidEsales\Eshop\Core\Module\Module $module)
+    public function cleanExtensions($installedExtensions, Module $module)
     {
         $moduleExtensions = $module->getExtensions();
 
@@ -67,7 +72,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
                 foreach ($installedExtensions as &$coreClassExtension) {
                     foreach ($coreClassExtension as $i => $ext) {
                         if ($ext === $item) {
-                            $this->debugOutput->debug("$item will be removed");
+                            $this->logger->debug("$item will be removed");
                             unset($coreClassExtension[$i]);
                         }
                     }
@@ -81,7 +86,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
     protected function removeGarbage($aInstalledExtensions, $aarGarbage)
     {
         foreach ($aarGarbage as $moduleId => $aExt) {
-            $this->debugOutput->info("removing garbage for module $moduleId: " . join(',', $aExt));
+            $this->logger->info("removing garbage for module $moduleId: " . join(',', $aExt));
         }
         return parent::removeGarbage($aInstalledExtensions, $aarGarbage);
     }
@@ -118,7 +123,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
      * Returns extensions list by module id.
      *
      * @param array  $modules  Module array (nested format)
-     * @param string $module Module id/folder name
+     * @param Module $module Module
      *
      * @return array
      */
@@ -158,6 +163,11 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
         return $filteredModules;
     }
 
+    /**
+     * @param Module $module
+     * @param string $sVersion
+     * @return bool
+     */
     public function isMetadataVersionGreaterEqual($module, $sVersion)
     {
         return version_compare($module->getMetaDataVersion(), $sVersion) >= 0;

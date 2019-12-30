@@ -558,7 +558,7 @@ class ModuleStateFixer extends ModuleInstaller
     {
         $o  = new ConsoleLogger($output);
         $this->output = $o;
-        $this->getModuleCleaner()->setOutput($o);
+        $this->getModuleCleaner()->setLogger($o);
     }
 
 
