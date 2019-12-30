@@ -31,19 +31,23 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: setup oxid
-      run: bash /var/www/oxid/setup.sh 
-    - name: phpstan
-      run: |
-        MD=$(pwd)
-        cd /var/www/oxid/
-        composer require --dev phpstan/phpstan-phpunit
-        vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
+      run: bash /var/www/oxid/setup.sh
+    - name: try to install phpstan-phpunit
+      run: composer require --work-dir=/var/www/oxid --dev phpstan/phpstan-phpunit
+      continue-on-error: true
     - name: phpstan
       continue-on-error: true
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
+    - name: phpstan loose
+      continue-on-error: true
+      run: |
+        MD=$(pwd)
+        cd /var/www/oxid/
+        composer remove phpstan/phpstan-strict-rules    
+        vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
     - name: psalm
       run: |
         MD=$(pwd)
