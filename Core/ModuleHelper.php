@@ -1,18 +1,10 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: keywan
- * Date: 15.01.19
- * Time: 22:06
- */
-
 namespace OxidCommunity\ModuleInternals\Core;
 
 use Composer\Package\PackageInterface;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Module\Module;
-
 
 class ModuleHelper
 {
