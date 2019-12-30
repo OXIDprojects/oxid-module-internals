@@ -149,7 +149,7 @@ class ModuleFixCommand extends Command
         }
 
         if ($shopId = $this->input->getOption('shop')) {
-            $config = ShopConfig::get($shopId));
+            $config = ShopConfig::get($shopId);
                             
             if (!isset($config)) {
                 throw oxNew(
