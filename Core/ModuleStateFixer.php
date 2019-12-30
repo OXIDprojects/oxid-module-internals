@@ -735,7 +735,7 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     /**
-     * @param $module Module
+     * @param Module $module
      */
     private function clearCache($module)
     {

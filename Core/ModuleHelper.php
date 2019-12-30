@@ -11,9 +11,14 @@ namespace OxidCommunity\ModuleInternals\Core;
 
 use Composer\Package\PackageInterface;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\Eshop\Core\Module\Module;
+
 
 class ModuleHelper
 {
+    /**
+     * @var Module $module
+     */
     protected $module;
 
     public function setModule($module)
@@ -22,8 +27,6 @@ class ModuleHelper
     }
 
     /**
-     * @param Module $module
-     *
      * @return string
      */
     public function getModuleNameSpace()
@@ -31,6 +34,7 @@ class ModuleHelper
         $module = $this->module;
         $package = $this->getComposerPackage();
         $sModulePath = $module->getModulePath();
+        $autoload = false;
         if ($package) {
             $autoload = $package->getAutoload();
         } else {
@@ -43,8 +47,8 @@ class ModuleHelper
         }
 
         if ($autoload) {
-            $namesspaces = $autoload["psr-4"];
-            $prefix = array_keys($namesspaces);
+            $namespaces = $autoload["psr-4"];
+            $prefix = array_keys($namespaces);
             $moduleNameSpace = $prefix[0];
             return $moduleNameSpace;
         }
@@ -67,7 +71,6 @@ class ModuleHelper
     }
 
     /**
-     * @param Module $module
      * @return bool|PackageInterface
      */
     protected function getComposerPackage()
