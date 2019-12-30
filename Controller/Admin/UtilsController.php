@@ -28,13 +28,13 @@ use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\AdminController
 {
 
-    /** @var oxModule */
+    /** @var Module */
     protected $module;
 
-    /** @var oxModuleCache */
+    /** @var ModuleCache */
     protected $moduleCache;
 
-    /** @var oxModuleInstaller */
+    /** @var ModuleInstaller */
     protected $moduleInstaller;
 
     /**
@@ -45,7 +45,7 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
     /**
      * Get active module object.
      *
-     * @return oxModule
+     * @return Module
      */
     public function getModule()
     {
@@ -63,7 +63,7 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
     /**
      * Returns initialized cache instance
      *
-     * @return oxModuleCache
+     * @return ModuleCache
      */
     public function getModuleCache()
     {
@@ -77,7 +77,7 @@ class UtilsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
     /**
      * Returns initialized module installer instance
      *
-     * @return oxModuleInstaller
+     * @return ModuleInstaller
      */
     public function getModuleInstaller()
     {
