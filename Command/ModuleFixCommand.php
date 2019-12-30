@@ -153,8 +153,8 @@ class ModuleFixCommand extends Command
                             
             if (!isset($config)) {
                 throw oxNew(
-                  InputException::class,
-                  'Shop id does not exist'
+                    InputException::class,
+                    'Shop id does not exist'
                 );
             }
 
