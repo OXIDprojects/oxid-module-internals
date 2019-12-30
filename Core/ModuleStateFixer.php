@@ -68,6 +68,10 @@ class ModuleStateFixer extends ModuleInstaller
     protected $moduleList;
     protected $modules;
 
+    /**
+     * @var bool $initDone
+     */
+    protected $initDone;
 
     public function setConfig($config)
     {
@@ -350,8 +354,8 @@ class ModuleStateFixer extends ModuleInstaller
     /**
      * compares 2 assoc arrays
      * true if there is something changed
-     * @param $array1
-     * @param $array2
+     * @param array $array1
+     * @param array $array2
      * @return bool
      */
     protected function diff($array1, $array2)
@@ -406,10 +410,13 @@ class ModuleStateFixer extends ModuleInstaller
         }
     }
 
-
-    protected function isActive($sId)
+    /**
+     * @param string $id
+     * @return bool
+     */
+    protected function isActive($id)
     {
-        return !in_array($sId, (array) Registry::getConfig()->getConfigParam('aDisabledModules'));
+        return !in_array($id, (array) Registry::getConfig()->getConfigParam('aDisabledModules'));
     }
 
     /**
@@ -537,16 +544,15 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     /**
-     * @param $o OutputInterface
-     * @deprecated
+     * @param OutputInterface $o
+     * @deprecated please use setOutput
      */
     public function setDebugOutput($o)
     {
-        $this->_debugOutput = $o;
     }
 
     /**
-     * @param $o OutputInterface
+     * @param OutputInterface $output
      */
     public function setOutput($output)
     {
