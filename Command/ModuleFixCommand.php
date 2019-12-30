@@ -141,4 +141,22 @@ class ModuleFixCommand extends Command
         }
         return true;
     }
+    
+     /**
+     * Get all available module ids
+     *
+     * @return array<string>
+     */
+    protected function getAvailableModuleIds()
+    {
+        if ($this->availableModuleIds === null) {
+            $oConfig = Registry::getConfig();
+            // We are calling getModulesFromDir() because we want to refresh
+            // the list of available modules. This is a workaround for OXID
+            // bug.
+            oxNew(ModuleList::class)->getModulesFromDir($oConfig->getModulesDir());
+            $this->availableModuleIds = array_keys($oConfig->getConfigParam('aModulePaths'));
+        }
+        return $this->availableModuleIds;
+    }
 }
