@@ -36,6 +36,7 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
+        composer require --dev phpstan/phpstan-phpunit
         vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
     - name: phpstan
       continue-on-error: true
