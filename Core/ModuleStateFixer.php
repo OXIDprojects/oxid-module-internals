@@ -14,6 +14,7 @@ use OxidEsales\Eshop\Core\Routing\ModuleControllerMapProvider;
 use OxidEsales\Eshop\Core\Routing\ShopControllerMapProvider;
 use OxidEsales\Eshop\Core\SettingsHandler;
 use OxidEsales\Eshop\Core\Module\Module;
+use OxidEsales\Eshop\Core\Module\ModuleList;
 use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Exception\ModuleValidationException;
@@ -30,7 +31,7 @@ use function getLogger;
  */
 class ModuleStateFixer extends ModuleInstaller
 {
-    /** @var ModuleExtensionsCleaner */
+    /** @var ModuleExtensionsCleaner $moduleCleaner */
     private $moduleCleaner;
 
     public function __construct($cache = null, $cleaner = null)
@@ -44,7 +45,7 @@ class ModuleStateFixer extends ModuleInstaller
     }
 
     /**
-     * @var $output LoggerInterface
+     * @var LoggerInterface $output
      */
     protected $output;
 
@@ -58,6 +59,9 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected $module = null;
 
+    /**
+     * @var bool $dryRun
+     */
     protected $dryRun = false;
 
 
@@ -83,7 +87,7 @@ class ModuleStateFixer extends ModuleInstaller
                 return false;
             }
             $this->isRunning = true;
-            $this->moduleList = Registry::get('oxModuleList');
+            $this->moduleList = Registry::get(ModuleList::class);
             $this->moduleList->getModulesFromDir(Registry::getConfig()->getModulesDir());
             $this->modules = $this->moduleList->getList();
             $this->initDone = true;
@@ -108,12 +112,12 @@ class ModuleStateFixer extends ModuleInstaller
      * settings and events information fix tasks
      *
      * @param Module      $module
-     * @param Config|null $oConfig If not passed uses default base shop config
+     * @param Config|null $config If not passed uses default base shop config
      */
-    public function fix($module, $oConfig = null): bool
+    public function fix($module, $config = null): bool
     {
-        if ($oConfig !== null) {
-            $this->setConfig($oConfig);
+        if ($config !== null) {
+            $this->setConfig($config);
         }
 
         $moduleId = $module->getId();
