@@ -16,6 +16,8 @@ class FallbackLogger extends AbstractLogger
 {
     public function log($level, $message, array $context = array())
     {
-        \writeToLog("[$level]" . $message);
+        if (function_exists("writeToLog")) {
+            writeToLog("[$level]" . $message);
+        }
     }
 }
