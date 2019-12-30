@@ -2,7 +2,6 @@
 
 namespace OxidCommunity\ModuleInternals\Core;
 
-use function getLogger;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Contract\ControllerMapProviderInterface;
 use OxidEsales\Eshop\Core\DatabaseProvider;
@@ -19,9 +18,12 @@ use OxidEsales\Eshop\Core\Module\ModuleInstaller;
 use OxidEsales\Eshop\Core\Module\ModuleCache;
 use OxidEsales\Eshop\Core\Exception\ModuleValidationException;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use OxidEsales\Eshop\Core\Module\ModuleVariablesLocator;
+
+use function getLogger;
 
 /**
  * Module state fixer
@@ -692,8 +694,9 @@ class ModuleStateFixer extends ModuleInstaller
 
     /**
      * @param Module $module
-     * @param $aModulesDefault
-     * @param $aModules
+     * @param array $aModulesDefault
+     * @param array $aModules
+     * @return bool
      */
     protected function checkExtensions(Module $module, &$aModulesDefault, &$aModules)
     {
@@ -732,12 +735,12 @@ class ModuleStateFixer extends ModuleInstaller
         }
     }
 
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
-        if (function_exists("\getLogger")) {
+        if (function_exists("getLogger")) {
             return getLogger();
         }
-        return new FallbackLogger();
+        return new NullLogger();
     }
 
     /**
