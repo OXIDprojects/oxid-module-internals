@@ -46,7 +46,7 @@ jobs:
       run: |
         MD=$(pwd)
         cd /var/www/oxid/
-        composer remove phpstan/phpstan-strict-rules    
+        composer remove phpstan/phpstan-strict-rules --dev
         vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
     - name: psalm
       run: |
