@@ -45,7 +45,7 @@ jobs:
         cd /var/www/oxid
         cat autoload.oxid.php
         curl -OL https://circleci.com/api/v1.1/project/github/weirdan/psalm/232/artifacts/0/home/docker/project/build/psalm.phar
-        psalm.phar --show-info=false $MD
+        php psalm.phar --show-info=false $MD
     - name: run tests
       run: |
         cd /var/www/oxid/
