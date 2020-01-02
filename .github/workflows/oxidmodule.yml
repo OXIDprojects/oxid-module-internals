@@ -6,21 +6,19 @@ jobs:
   stand_alone_checks:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1   
+    - uses: actions/checkout@v1
     - name: Validate composer.json
-      run: composer validate   
+      run: composer validate
     - name: validate php syntax
       run: find . -not -path "./vendor/*" -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
-    - name: install phpcs
-      run: curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
-    - name: phpcs psr12
-      run: php phpcs.phar --standard=PSR12 --extensions=php --ignore=vendor .
-#    - name: phplint, phpmd ...  
+    - name: Check code style
+      run: tools/phpcs --standard=PSR12 --extensions=php --ignore=vendor .
+#    - name: phplint, phpmd ...
   tests:
     needs: stand_alone_checks
     strategy:
       matrix:
-        tag: [v2_6.1_php7.1, v2_6.1_php7.2, v2_6.2-rc_php7.2, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
+        tag: [v2_6.1_php7.1, v2_6.1_php7.2, v2_6.2-rc_php7.2, v2_6.2-rc_php7.1, v2_dev-master_php7.2]
     runs-on: ubuntu-latest
     container:
       image: oxidprojects/oxid-test:${{matrix.tag}}
@@ -62,4 +60,3 @@ jobs:
         vendor/bin/runtests
         ls -al source/log
 
-  
