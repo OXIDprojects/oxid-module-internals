@@ -22,7 +22,7 @@ class NavigationController extends NavigationController_parent
      *
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
      *
-     * @return string
+     * @return array
      */
     protected function _doStartUpChecks()
     {
