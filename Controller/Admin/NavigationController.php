@@ -44,7 +44,7 @@ class NavigationController extends NavigationController_parent
         $stateFixer = Registry::get(ModuleStateFixer::class);
         $stateFixer->cleanUp();
         $aMessage = array();
-        
+
         /*
          * @var InternalModule $oModule
          */
