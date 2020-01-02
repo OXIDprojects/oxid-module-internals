@@ -26,16 +26,16 @@ class NavigationController extends NavigationController_parent
      */
     protected function _doStartUpChecks()
     {
+        /** @var array $aMessage */
         $aMessage = parent::_doStartUpChecks();
 
-        $this->checkModules($aMessage);
+        $aMessage = array_merge($aMessage, $this->checkModules());
 
         return $aMessage;
     }
 
-    /**
-     * @param string[] $aMessage
-     * @return void
+     /**
+     * @return array
      */
     public function checkModules(&$aMessage): void
     {
@@ -43,7 +43,8 @@ class NavigationController extends NavigationController_parent
         $aModules = $moduleService->getActiveModules();
         $stateFixer = Registry::get(ModuleStateFixer::class);
         $stateFixer->cleanUp();
-        $aMessage['warning'] = [];
+        $aMessage = array();
+        
         /*
          * @var InternalModule $oModule
          */
@@ -58,5 +59,6 @@ class NavigationController extends NavigationController_parent
                 $aMessage['warning'] .= "<p><a href=\"$link\">Module $sTitle was fixed</a></p>";
             }
         }
+        return $aMessage;
     }
 }
