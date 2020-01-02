@@ -37,7 +37,7 @@ class NavigationController extends NavigationController_parent
      /**
      * @return array
      */
-    public function checkModules(&$aMessage): void
+    public function checkModules()
     {
         $moduleService = Registry::get(OxidComposerModulesService::class);
         $aModules = $moduleService->getActiveModules();
