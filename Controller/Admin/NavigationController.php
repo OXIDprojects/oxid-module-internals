@@ -26,12 +26,12 @@ class NavigationController extends NavigationController_parent
      */
     protected function _doStartUpChecks()
     {
-        /** @var array $aMessage */
-        $aMessage = parent::_doStartUpChecks();
+        /** @var array $messages */
+        $messages = parent::_doStartUpChecks();
 
-        $aMessage = array_merge($aMessage, $this->checkModules());
+        $messages = array_merge($messages, $this->checkModules());
 
-        return $aMessage;
+        return $messages;
     }
 
      /**
