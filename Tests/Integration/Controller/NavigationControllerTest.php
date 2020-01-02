@@ -8,13 +8,14 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 class NavigationControllerTest extends UnitTestCase
 {
 
-    public function testNavigationController()
+    public function testNavigationController(): void
     {
         $controller = oxNew(NavigationController::class);
-        $messages = [];
         $this->setConfigParam('aModuleExtensions', ['a' => ['b']]);
-        $controller->checkModules($messages);
-        $this->assertContains("Module OXID Community Module Internals was fixed", $messages["warning"]);
+        $this->assertContains(
+            'Module OXID Community Module Internals was fixed',
+            $controller->checkModules()['warning']
+        );
         $this->exceptionLogHelper->clearExceptionLogFile();
     }
 }
