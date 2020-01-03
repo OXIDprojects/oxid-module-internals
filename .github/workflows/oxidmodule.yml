@@ -33,7 +33,7 @@ jobs:
     - name: setup oxid
       run: bash /var/www/oxideshop/setup.sh
     - name: try to install phpstan-phpunit
-      run: composer require --work-dir=/var/www/oxid --dev phpstan/phpstan-phpunit
+      run: composer require --work-dir=/var/www/oxideshop --dev phpstan/phpstan-phpunit
       continue-on-error: true
     - name: phpstan
       continue-on-error: true
