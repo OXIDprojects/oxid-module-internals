@@ -24,7 +24,8 @@
     "phpstan/phpstan-strict-rules" : "*",
     "phpstan/extension-installer": "^1.0",
     "phpstan/phpstan-deprecation-rules" : "^0.12",
-    "consistence/coding-standard" : "*"
+    "consistence/coding-standard" : "*",
+    "oxid-professional-services/lib-shop-switcher" : "^1.0.0"
   },
   "extra": {
     "oxideshop": {
