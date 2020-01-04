@@ -20,45 +20,51 @@ jobs:
     needs: stand_alone_checks
     strategy:
       matrix:
-        tag: [v2_6.1_php7.1, v2_6.1_php7.2, v2_6.2-rc_php7.2, v2_6.2-rc_php7.1, v2_dev-master_php7.2]         
+        php: [7.1, 7.2]
+        oxid: [6.1, 6.2-rc, dev-master]
+        exclude:
+          - oxid: dev-master
+            php: 7.1
     runs-on: ubuntu-latest
     container:
-      image: oxidprojects/oxid-test:${{matrix.tag}}
+      image: oxidprojects/oxid-test:v3_${{matrix.oxid}}_php${{matrix.php}}
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     env:
       MODULE_NAME: moduleinternals
-      DB_HOST: "localhost;unix_socket=/var/run/mysqld/mysqld.sock"
+      DB_HOST: "127.0.0.1"
     steps:
     - uses: actions/checkout@v1
+    - name: route db from socket to port
+      run: bash /var/www/oxideshop/scripts/routeDbfromSocketToPort.sh        
     - name: setup oxid
-      run: bash /var/www/oxid/setup.sh
+      run: bash /var/www/oxideshop/scripts/setup.sh
     - name: try to install phpstan-phpunit
-      run: composer require --work-dir=/var/www/oxid --dev phpstan/phpstan-phpunit
+      run: composer require --work-dir=/var/www/oxideshop --dev phpstan/phpstan-phpunit
       continue-on-error: true
     - name: phpstan
       continue-on-error: true
       run: |
         MD=$(pwd)
-        cd /var/www/oxid/
+        cd /var/www/oxideshop/
         vendor/bin/phpstan analys --configuration phpstan.neon $MD
     - name: phpstan loose
       continue-on-error: true
       run: |
         MD=$(pwd)
-        cd /var/www/oxid/
+        cd /var/www/oxideshop/
         composer remove phpstan/phpstan-strict-rules --dev
         composer remove phpstan/phpstan-deprecation-rules --dev
         vendor/bin/phpstan analys  --level 2 --configuration phpstan.neon $MD
     - name: psalm
       run: |
         MD=$(pwd)
-        cd /var/www/oxid
+        cd /var/www/oxideshop/
         cat autoload.oxid.php
         curl -OL https://circleci.com/api/v1.1/project/github/weirdan/psalm/232/artifacts/0/home/docker/project/build/psalm.phar
         php psalm.phar --stats --debug-by-line --show-info=true $MD
     - name: run tests
       run: |
-        cd /var/www/oxid/
+        cd /var/www/oxideshop/
         vendor/bin/runtests
         ls -al source/log
 
