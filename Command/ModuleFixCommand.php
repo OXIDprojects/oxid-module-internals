@@ -61,9 +61,10 @@ class ModuleFixCommand extends Command
     }
     
     /**
-     * @param string $shopId 
+     * @param string $shopId
      **/
-    public function executeForShop($shopId) {   
+    public function executeForShop($shopId)
+    {
         $logger  = $this->logger;
         
         try {
