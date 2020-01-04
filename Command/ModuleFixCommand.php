@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Output\NullOutput;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Module\Module;
@@ -16,6 +15,7 @@ use OxidEsales\Eshop\Core\Exception\InputException;
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidProfessionalServices\OxidConsole\Core\ShopConfig;
 use Symfony\Component\Console\Logger\ConsoleLogger;
+use OxidProfessionalServices\ShopSwitcher\ShopSwitcher;
 
 /**
  * Fix States command
@@ -52,7 +52,19 @@ class ModuleFixCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
-        $logger  = new ConsoleLogger($output);
+        $this->output = $output;
+        $this->logger = new ConsoleLogger($output);
+        $shopSwitcher = new ShopSwitcher();
+        foreach (ShopSwitcher as $shopId) {
+            $this->executeForShop($shopId);
+        }
+    }
+    
+    /**
+     * @param string $shopId 
+     **/
+    public function executeForShop($shopId) {   
+        $logger  = $this->logger;
         
         try {
             $aModuleIds = $this->parseModuleIds();
@@ -63,7 +75,7 @@ class ModuleFixCommand extends Command
 
         /** @var ModuleStateFixer $oModuleStateFixer */
         $oModuleStateFixer = Registry::get(ModuleStateFixer::class);
-        $oModuleStateFixer->setOutput($output);
+        $oModuleStateFixer->setOutput($this->output);
 
         /** @var Module $oModule */
         $oModule = oxNew(Module::class);
