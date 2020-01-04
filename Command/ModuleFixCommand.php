@@ -15,6 +15,7 @@ use OxidEsales\Eshop\Core\Module\ModuleList;
 use OxidEsales\Eshop\Core\Exception\InputException;
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidProfessionalServices\OxidConsole\Core\ShopConfig;
+use Symfony\Component\Console\Logger\ConsoleLogger;
 
 /**
  * Fix States command
@@ -51,15 +52,12 @@ class ModuleFixCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
-
-        $verboseOutput = $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE
-            ? $output
-            : new NullOutput();
-
+        $logger  = new ConsoleLogger($output);
+        
         try {
             $aModuleIds = $this->parseModuleIds();
         } catch (InputException $oEx) {
-            $output->writeln($oEx->getMessage());
+            $logger->error($oEx->getMessage());
             exit(1);
         }
 
@@ -71,25 +69,22 @@ class ModuleFixCommand extends Command
         $oModule = oxNew(Module::class);
 
         $moduleCount = count($aModuleIds);
-        $verboseOutput->writeln(
-            "[DEBUG] fixing $moduleCount modules"
+        $logger->debug(
+            "fixing $moduleCount modules"
         );
         $oModuleStateFixer->cleanUp();
         foreach ($aModuleIds as $sModuleId) {
             $oModule->setMetaDataVersion(null);
             if (!$oModule->load($sModuleId)) {
-                $verboseOutput->writeln("[DEBUG] {$sModuleId} does not exist - skipping");
+                $logger->debug("{$sModuleId} does not exist - skipping");
                 continue;
             }
 
-            $verboseOutput->writeln("[DEBUG] Fixing {$sModuleId} module");
+            $logger->debug("Fixing {$sModuleId} module");
             $oModuleStateFixer->fix($oModule);
         }
 
-        $verboseOutput->writeln('');
-        
-
-        $output->writeln('Fixed module states successfully');
+        $logger->info('Fixed module states successfully');
         return null;
     }
 
