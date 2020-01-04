@@ -24,7 +24,7 @@ jobs:
         oxid: [6.1, 6.2-rc, dev-master]
     runs-on: ubuntu-latest
     container:
-      image: oxidprojects/oxid-test:v3_${{matrix.oxid}}php${{matrix.php}}
+      image: oxidprojects/oxid-test:v3_${{matrix.oxid}}_php${{matrix.php}}
       options: -v /var/run/mysqld/mysqld.sock:/var/run/mysqld/mysqld.sock
     env:
       MODULE_NAME: moduleinternals
