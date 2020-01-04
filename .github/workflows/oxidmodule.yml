@@ -22,6 +22,9 @@ jobs:
       matrix:
         php: [7.1, 7.2]
         oxid: [6.1, 6.2-rc, dev-master]
+        exclude:
+          - oxid: dev-master
+            php: 7.1
     runs-on: ubuntu-latest
     container:
       image: oxidprojects/oxid-test:v3_${{matrix.oxid}}_php${{matrix.php}}
