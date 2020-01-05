@@ -31,6 +31,12 @@ class ModuleFixCommand extends Command
     /** @var InputInterface */
     private $input;
 
+    /** @var ConsoleLogger $logger */
+    private $logger;
+
+    /** @var OutputInterface $output; */
+    private $output;
+
     /**
      * {@inheritdoc}
      * @return void
@@ -54,16 +60,22 @@ class ModuleFixCommand extends Command
         $this->input = $input;
         $this->output = $output;
         $this->logger = new ConsoleLogger($output);
+        
+        if (isset($_POST['shp'])) {
+            $this->executeForShop();
+            return;
+        }
+
         $shopSwitcher = new ShopSwitcher();
         foreach (ShopSwitcher as $shopId) {
-            $this->executeForShop($shopId);
+            $this->executeForShop();
         }
     }
     
     /**
      * @param string $shopId
      **/
-    public function executeForShop($shopId)
+    public function executeForShop()
     {
         $logger  = $this->logger;
         
@@ -74,6 +86,9 @@ class ModuleFixCommand extends Command
             exit(1);
         }
 
+        $config = Registry::getConfig();
+        $shopId = $config->getShopId();
+
         /** @var ModuleStateFixer $oModuleStateFixer */
         $oModuleStateFixer = Registry::get(ModuleStateFixer::class);
         $oModuleStateFixer->setOutput($this->output);
@@ -82,8 +97,8 @@ class ModuleFixCommand extends Command
         $oModule = oxNew(Module::class);
 
         $moduleCount = count($aModuleIds);
-        $logger->debug(
-            "fixing $moduleCount modules"
+        $logger->info(
+            "fixing $moduleCount modules in shop $shopId"
         );
         $oModuleStateFixer->cleanUp();
         foreach ($aModuleIds as $sModuleId) {
