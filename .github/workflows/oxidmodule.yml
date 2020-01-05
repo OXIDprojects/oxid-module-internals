@@ -71,7 +71,7 @@ jobs:
       run: |
         cd /var/www/oxideshop/
         vendor/bin/oxid
-        vendor/bin/oxid fix:states
-        vendor/bin/oxid --shopid=1 fix:states
+        vendor/bin/oxid -vvv fix:states -a
+        vendor/bin/oxid --shopid=1 fix:states -a
 
   
