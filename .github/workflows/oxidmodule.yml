@@ -67,5 +67,11 @@ jobs:
         cd /var/www/oxideshop/
         vendor/bin/runtests
         ls -al source/log
+    - name: run commands
+      run: |
+        cd /var/www/oxideshop/
+        vendor/bin/oxid
+        vendor/bin/oxid fix:states
+        vendor/bin/oxid --shopid=1 fix:states
 
   
