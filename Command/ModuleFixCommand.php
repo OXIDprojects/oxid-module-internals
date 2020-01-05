@@ -62,10 +62,11 @@ class ModuleFixCommand extends Command
         $this->logger = new ConsoleLogger($output);
         
         if (isset($_POST['shp'])) {
+            $logger->info("starting for given shop $_POST['shp']");
             $this->executeForShop();
             return;
         }
-
+        $logger->info("going to fix states in all shops");
         $shopSwitcher = new ShopSwitcher();
         foreach (ShopSwitcher as $shopId) {
             $this->executeForShop();
