@@ -61,7 +61,7 @@ class ModuleFixCommand extends Command
         $this->output = $output;
         $this->logger = new ConsoleLogger($output);
         
-        if (isset($_POST['shp'])) {
+        if (isset($_POST['shp']) || isset($_GET['shp'])) {
             $this->logger->info("starting for given shop " . $_POST['shp']);
             $this->executeForShop();
             return;
