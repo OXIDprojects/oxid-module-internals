@@ -66,7 +66,7 @@ class ModuleFixCommand extends Command
             $this->executeForShop();
             return;
         }
-        $logger->info("going to fix states in all shops");
+        $this->logger->info("going to fix states in all shops");
         $shopSwitcher = new ShopSwitcher();
         foreach (ShopSwitcher as $shopId) {
             $this->executeForShop();
