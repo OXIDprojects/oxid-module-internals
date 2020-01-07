@@ -72,8 +72,10 @@ class ModuleFixCommand extends Command
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
-            $this->logger->debug("you can run but hide");
-           
+            
+            $shopList = oxNew(\OxidEsales\Eshop\Application\Model\ShopList::class);
+            $shopList = $shopList->getAll();
+            print_r($shopList);
             $shopSwitcher = new ShopSwitcher();
             $this->logger->info("showswitcher loaded");
         
@@ -82,7 +84,7 @@ class ModuleFixCommand extends Command
             $this->logger->debug("test call on showswitcher done");
            
             foreach ($shopSwitcher as $shopId) {
-                $this->logger->debug("in loop for shoo $shopId");
+                $this->logger->debug("in loop for shop $shopId");
                 $this->executeForShop();
             }
         } catch (\Error $e) {
