@@ -69,9 +69,12 @@ jobs:
         ls -al source/log
     - name: run commands
       run: |
-        cd /var/www/oxideshop/
+        cd /var/www/oxideshop
         vendor/bin/oxid
         vendor/bin/oxid -vvv fix:states -a
         vendor/bin/oxid --shop=1 fix:states -a
-
+    - name: oxrun
+      run: |
+        cd /var/www/oxideshop
+        php oxrun.phar
   
