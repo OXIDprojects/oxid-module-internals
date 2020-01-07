@@ -85,5 +85,9 @@ jobs:
       run: |
         cd /var/www/oxideshop
         php oxrun.phar fix:states -a
+    - name: oxid console
+      run: |
+        cd /var/www/oxideshop
+        ls -al vendor/bin
   
   
