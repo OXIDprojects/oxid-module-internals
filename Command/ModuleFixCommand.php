@@ -78,7 +78,7 @@ class ModuleFixCommand extends Command
             $this->logger->info("showswitcher loaded");
         
             $this->logger->debug("test call on showswitcher");
-            $shopSwitcher->switchShopId(1);
+            $shopSwitcher->switchToShopId(1);
             $this->logger->debug("test call on showswitcher done");
            
             foreach (ShopSwitcher as $shopId) {
