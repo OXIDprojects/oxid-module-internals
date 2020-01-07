@@ -67,9 +67,16 @@ class ModuleFixCommand extends Command
             return;
         }
         $this->logger->info("going to fix states in all shops");
-        $shopSwitcher = new ShopSwitcher();
-        $this->logger->info("showswitcher loaded");
         try {
+            $this->logger->debug("inside the try block");
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
+            $this->logger->debug("you can run but hide");
+           
+            $shopSwitcher = new ShopSwitcher();
+            $this->logger->info("showswitcher loaded");
+        
             $this->logger->debug("test call on showswitcher");
             $shopSwitcher->switchShopId(1);
             $this->logger->debug("test call on showswitcher done");
