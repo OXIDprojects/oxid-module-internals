@@ -68,8 +68,20 @@ class ModuleFixCommand extends Command
         }
         $this->logger->info("going to fix states in all shops");
         $shopSwitcher = new ShopSwitcher();
-        foreach (ShopSwitcher as $shopId) {
-            $this->executeForShop();
+        $this->logger->info("showswitcher loaded");
+        try {
+            $this->logger->debug("test call on showswitcher");     
+            $shopSwitcher->switchShopId(1);
+            $this->logger->debug("test call on showswitcher done");     
+           
+            foreach (ShopSwitcher as $shopId) {
+                $this->logger->debug("in loop for shoo $shopId");     
+                $this->executeForShop();
+            }
+        } catch (\Error $e) {
+            $this->logger->info("oh oh");
+            $this->logger->info($e->getMessage());
+            throw $e;
         }
     }
     
