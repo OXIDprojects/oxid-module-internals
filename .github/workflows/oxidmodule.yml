@@ -67,14 +67,21 @@ jobs:
         cd /var/www/oxideshop/
         vendor/bin/runtests
         ls -al source/log
-    - name: run commands
+    - name: run oxid console list
       run: |
         cd /var/www/oxideshop
         vendor/bin/oxid
+    - name: run in oxid console for all shops
+      run: |
+        cd /var/www/oxideshop
         vendor/bin/oxid -vvv fix:states -a
-        vendor/bin/oxid --shop=1 fix:states -a
     - name: oxrun
       run: |
         cd /var/www/oxideshop
-        php oxrun.phar
+        php oxrun.phar list
+    - name: oxrun
+      run: |
+        cd /var/www/oxideshop
+        php oxrun.phar fix:states -a
+  
   
