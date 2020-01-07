@@ -76,10 +76,12 @@ jobs:
         cd /var/www/oxideshop
         vendor/bin/oxid -vvv fix:states -a
     - name: oxrun
+      continue-on-error: true
       run: |
         cd /var/www/oxideshop
         php oxrun.phar list
     - name: oxrun
+      continue-on-error: true
       run: |
         cd /var/www/oxideshop
         php oxrun.phar fix:states -a
