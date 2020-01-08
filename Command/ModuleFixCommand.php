@@ -68,23 +68,13 @@ class ModuleFixCommand extends Command
         }
         $this->logger->info("going to fix states in all shops");
         try {
-            $this->logger->debug("inside the try block");
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
             
-            $shopList = oxNew(\OxidEsales\Eshop\Application\Model\ShopList::class);
-            $shopList = $shopList->getAll();
-            print_r($shopList);
             $shopSwitcher = new ShopSwitcher();
-            $this->logger->info("showswitcher loaded");
         
-            $this->logger->debug("test call on showswitcher");
-            $shopSwitcher->switchToShopId(1);
-            $this->logger->debug("test call on showswitcher done");
-           
             foreach ($shopSwitcher as $shopId) {
-                $this->logger->debug("in loop for shop $shopId");
                 $this->executeForShop();
             }
         } catch (\Error $e) {
