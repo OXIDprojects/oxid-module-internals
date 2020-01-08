@@ -84,11 +84,12 @@ jobs:
       continue-on-error: ${{matrix.oxid != 6.1}}
       run: |
         cd /var/www/oxideshop
-        php oxrun.phar fix:states -a
+        php oxrun.phar -vvv fix:states -a
     - name: oxid console
       if: matrix.oxid != 6.1
       run: |
         cd /var/www/oxideshop
         vendor/bin/oe-console list
+        vendor/bin/oe-console -vvv fix:states -a
   
   
