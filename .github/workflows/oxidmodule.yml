@@ -67,5 +67,33 @@ jobs:
         cd /var/www/oxideshop/
         vendor/bin/runtests
         ls -al source/log
-
+    - name: run oxid console list
+      run: |
+        cd /var/www/oxideshop
+        vendor/bin/oxid
+    - name: run in oxid console for all shops
+      run: |
+        cd /var/www/oxideshop
+        vendor/bin/oxid -vvv fix:states -a
+    - name: oxrun list
+      continue-on-error: ${{matrix.oxid != 6.1}}
+      run: |
+        cd /var/www/oxideshop
+        php oxrun.phar list
+    - name: oxrun fix
+      continue-on-error: ${{matrix.oxid != 6.1}}
+      run: |
+        cd /var/www/oxideshop
+        php oxrun.phar -vvv fix:states -a
+    - name: oxid console list
+      if: matrix.oxid != 6.1
+      run: |
+        cd /var/www/oxideshop
+        vendor/bin/oe-console list
+    - name: oxid console fix
+      if: matrix.oxid != 6.1
+      run: |
+        cd /var/www/oxideshop
+        vendor/bin/oe-console -vvv fix:states -a
+  
   

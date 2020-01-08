@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Output\NullOutput;
 use OxidEsales\Eshop\Core\Registry;
 use OxidEsales\Eshop\Core\Config;
 use OxidEsales\Eshop\Core\Module\Module;
@@ -15,6 +14,8 @@ use OxidEsales\Eshop\Core\Module\ModuleList;
 use OxidEsales\Eshop\Core\Exception\InputException;
 use OxidCommunity\ModuleInternals\Core\ModuleStateFixer;
 use OxidProfessionalServices\OxidConsole\Core\ShopConfig;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use OxidProfessionalServices\ShopSwitcher\ShopSwitcher;
 
 /**
  * Fix States command
@@ -29,6 +30,12 @@ class ModuleFixCommand extends Command
 
     /** @var InputInterface */
     private $input;
+
+    /** @var ConsoleLogger $logger */
+    private $logger;
+
+    /** @var OutputInterface $output; */
+    private $output;
 
     /**
      * {@inheritdoc}
@@ -51,45 +58,83 @@ class ModuleFixCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
-
-        $verboseOutput = $output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE
-            ? $output
-            : new NullOutput();
-
+        $this->output = $output;
+        $this->logger = new ConsoleLogger($output);
+        
+        if (isset($_POST['shp']) || isset($_GET['shp'])) {
+            $this->logger->info("starting for given shop " . $_POST['shp']);
+            $this->executeForShop();
+            return;
+        }
+        $this->logger->info("going to fix states in all shops");
+        try {
+            $this->logger->debug("inside the try block");
+            ini_set('display_errors', 1);
+            ini_set('display_startup_errors', 1);
+            error_reporting(E_ALL);
+            
+            $shopList = oxNew(\OxidEsales\Eshop\Application\Model\ShopList::class);
+            $shopList = $shopList->getAll();
+            print_r($shopList);
+            $shopSwitcher = new ShopSwitcher();
+            $this->logger->info("showswitcher loaded");
+        
+            $this->logger->debug("test call on showswitcher");
+            $shopSwitcher->switchToShopId(1);
+            $this->logger->debug("test call on showswitcher done");
+           
+            foreach ($shopSwitcher as $shopId) {
+                $this->logger->debug("in loop for shop $shopId");
+                $this->executeForShop();
+            }
+        } catch (\Error $e) {
+            $this->logger->info("oh oh");
+            $this->logger->info($e->getMessage());
+            throw $e;
+        }
+    }
+    
+    /**
+     * @param string $shopId
+     **/
+    public function executeForShop()
+    {
+        $logger  = $this->logger;
+        
         try {
             $aModuleIds = $this->parseModuleIds();
         } catch (InputException $oEx) {
-            $output->writeln($oEx->getMessage());
+            $logger->error($oEx->getMessage());
             exit(1);
         }
 
+        $config = Registry::getConfig();
+        $shopId = $config->getShopId();
+
         /** @var ModuleStateFixer $oModuleStateFixer */
         $oModuleStateFixer = Registry::get(ModuleStateFixer::class);
-        $oModuleStateFixer->setOutput($output);
+        $oModuleStateFixer->setOutput($this->output);
 
         /** @var Module $oModule */
         $oModule = oxNew(Module::class);
 
         $moduleCount = count($aModuleIds);
-        $verboseOutput->writeln(
-            "[DEBUG] fixing $moduleCount modules"
+        $logger->info(
+            "fixing $moduleCount modules in shop $shopId"
         );
         $oModuleStateFixer->cleanUp();
         foreach ($aModuleIds as $sModuleId) {
             $oModule->setMetaDataVersion(null);
             if (!$oModule->load($sModuleId)) {
-                $verboseOutput->writeln("[DEBUG] {$sModuleId} does not exist - skipping");
+                $logger->debug("{$sModuleId} does not exist - skipping");
                 continue;
             }
 
-            $verboseOutput->writeln("[DEBUG] Fixing {$sModuleId} module");
+            $logger->debug("Fixing {$sModuleId} module");
             $oModuleStateFixer->fix($oModule);
         }
 
-        $verboseOutput->writeln('');
-        
-
-        $output->writeln('Fixed module states successfully');
+        $logger->info('Fixed module states successfully');
         return null;
     }
 
