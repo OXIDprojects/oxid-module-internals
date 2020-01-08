@@ -75,21 +75,25 @@ jobs:
       run: |
         cd /var/www/oxideshop
         vendor/bin/oxid -vvv fix:states -a
-    - name: oxrun
-      continue-on-error: true
+    - name: oxrun list
+      continue-on-error: ${{matrix.oxid != 6.1}}
       run: |
         cd /var/www/oxideshop
         php oxrun.phar list
-    - name: oxrun
+    - name: oxrun fix
       continue-on-error: ${{matrix.oxid != 6.1}}
       run: |
         cd /var/www/oxideshop
         php oxrun.phar -vvv fix:states -a
-    - name: oxid console
+    - name: oxid console list
       if: matrix.oxid != 6.1
       run: |
         cd /var/www/oxideshop
         vendor/bin/oe-console list
+    - name: oxid console fix
+      if: matrix.oxid != 6.1
+      run: |
+        cd /var/www/oxideshop
         vendor/bin/oe-console -vvv fix:states -a
   
   
