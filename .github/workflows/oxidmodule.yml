@@ -81,12 +81,12 @@ jobs:
         cd /var/www/oxideshop
         php oxrun.phar list
     - name: oxrun
-      continue-on-error: ${{$oxid != 6.1}}
+      continue-on-error: ${{matrix.oxid != 6.1}}
       run: |
         cd /var/www/oxideshop
         php oxrun.phar fix:states -a
     - name: oxid console
-      if: $oxid != 6.1
+      if: matrix.oxid != 6.1
       run: |
         cd /var/www/oxideshop
         vendor/bin/oe-console list
