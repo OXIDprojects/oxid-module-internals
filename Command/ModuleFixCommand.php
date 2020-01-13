@@ -40,7 +40,6 @@ class ModuleFixCommand extends Command
             ->setDescription('Fixes modules metadata states')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Includes all modules')
             ->addOption('base-shop', 'b', InputOption::VALUE_NONE, 'Apply changes to base shop only')
-            ->addOption('shop', 's', InputOption::VALUE_REQUIRED, 'Apply changes to given shop only')
             ->addArgument('module-id', InputArgument::IS_ARRAY, 'Module id/ids to use');
     }
 
