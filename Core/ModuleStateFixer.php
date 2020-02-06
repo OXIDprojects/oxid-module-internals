@@ -200,7 +200,7 @@ class ModuleStateFixer extends ModuleInstaller
      * @param array  $aModuleTemplates Module templates array
      * @param string $sModuleId        Module id
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
-     * @return 
+     * @return void
      */
     protected function _addTemplateFiles($aModuleTemplates, $sModuleId)
     {
