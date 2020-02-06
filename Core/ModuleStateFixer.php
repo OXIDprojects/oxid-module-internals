@@ -138,8 +138,9 @@ class ModuleStateFixer extends ModuleInstaller
 
     /**
      * After fixing all modules call this method to clean up trash that is not related to any installed module
+     * @return void
      */
-    public function cleanUp(): void
+    public function cleanUp()
     {
         if ($this->init()) {
             $this->cleanUpControllers();
@@ -149,8 +150,9 @@ class ModuleStateFixer extends ModuleInstaller
 
     /**
      * remove extensions that are not registered by any module
+     * @return void
      */
-    public function cleanUpExtensions(): void
+    public function cleanUpExtensions()
     {
 
         //get all extions from all metadata
@@ -198,8 +200,9 @@ class ModuleStateFixer extends ModuleInstaller
      * @param array  $aModuleTemplates Module templates array
      * @param string $sModuleId        Module id
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     * @return 
      */
-    protected function _addTemplateFiles($aModuleTemplates, $sModuleId): void
+    protected function _addTemplateFiles($aModuleTemplates, $sModuleId)
     {
         $aTemplates = (array) Registry::getConfig()->getConfigParam('aModuleTemplates');
         $old = isset($aTemplates[$sModuleId]) ? $aTemplates[$sModuleId] : null;
@@ -229,8 +232,9 @@ class ModuleStateFixer extends ModuleInstaller
      * @param array  $aModuleFiles Module files array
      * @param string $sModuleId    Module id
      * @phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
+     * @return void
      */
-    protected function _addModuleFiles($aModuleFiles, $sModuleId): void
+    protected function _addModuleFiles($aModuleFiles, $sModuleId)
     {
         $aFiles = (array) Registry::getConfig()->getConfigParam('aModuleFiles');
 
