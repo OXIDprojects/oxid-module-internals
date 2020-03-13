@@ -298,26 +298,31 @@ class InternalModule extends InternalModule_parent
             }
         }
 
-        foreach ($aMetadataExtend as $sClassName => $sModuleName) {
+        $moduleClassSeenBefore = [];
+        foreach ($aMetadataExtend as $oxidClass => $moduleClass) {
             $key_state = $iState = self::OK;
+            if (isset($moduleClassSeenBefore[$moduleClass])) {
+                $key_state = $iState = self::NEED_MANUAL_FIXED;
+            }
+            $moduleClassSeenBefore[$moduleClass] = 1;
 
             if (
-                strpos($sClassName, 'OxidEsales\\EshopCommunity\\') === 0 ||
-                strpos($sClassName, 'OxidEsales\\EshopEnterprise\\') === 0 ||
-                strpos($sClassName, 'OxidEsales\\EshopProfessional\\') === 0 ||
-                !class_exists($sClassName)
+                strpos($oxidClass, 'OxidEsales\\EshopCommunity\\') === 0 ||
+                strpos($oxidClass, 'OxidEsales\\EshopEnterprise\\') === 0 ||
+                strpos($oxidClass, 'OxidEsales\\EshopProfessional\\') === 0 ||
+                !class_exists($oxidClass)
             ) {
-                if (strpos($sClassName, 'oxerp') === 0) {
+                if (strpos($oxidClass, 'oxerp') === 0) {
                     //AS ERP module does still use a own autoloader
                     //classes of oxerp will not be found with class_exists
                     $erp_dir = Registry::getConfig()->getModulesDir() . 'erp/';
-                    if (strpos($sClassName, 'oxerptype_') === 0) {
+                    if (strpos($oxidClass, 'oxerptype_') === 0) {
                         $dir = $erp_dir . 'objects/';
                     } else {
                         $dir = $erp_dir;
                     }
 
-                    $sFullPath  = $dir . $sClassName . '.php';
+                    $sFullPath  = $dir . $oxidClass . '.php';
 
                     if (!file_exists($sFullPath)) {
                         $key_state = self::SHOP_FILE_NOT_FOUND;
@@ -329,15 +334,15 @@ class InternalModule extends InternalModule_parent
                 }
             }
 
-            $aResult[ $sClassName ]['key_state'] = $key_state;
+            $aResult[ $oxidClass ]['key_state'] = $key_state;
 
-            if (!$this->checkPhpFileExists($sModuleName)) {
+            if (!$this->checkPhpFileExists($moduleClass)) {
                 $iState = self::MODULE_FILE_NOT_FOUND;
                 $this->state |= self::NEED_MANUAL_FIXED;
             }
 
-            $aResult[ $sClassName ][ 'data' ] = $sModuleName;
-            $aResult[ $sClassName ][ 'state' ] = $iState;
+            $aResult[ $oxidClass ][ 'data' ] = $moduleClass;
+            $aResult[ $oxidClass ][ 'state' ] = $iState;
         }
 
         return $aResult;
