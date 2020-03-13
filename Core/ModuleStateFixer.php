@@ -161,8 +161,8 @@ class ModuleStateFixer extends ModuleInstaller
         $moduleClassesMf = [];
         foreach ($aModules as $module) {
             $extensions = $module->getExtensions();
-            foreach ($extensions as $moduleClass) {
-                $moduleClassesMf[$moduleClass] = 1;
+            foreach ($extensions as $oxidClass => $moduleClass) {
+                $moduleClassesMf[$moduleClass.'<>'.$oxidClass] = 1;
             }
         }
 
@@ -173,7 +173,7 @@ class ModuleStateFixer extends ModuleInstaller
         //calculate trash as extensions that are only in db
         foreach ($extensionChainDb as $oxidClass => &$arrayOfExtendingClasses) {
             foreach ($arrayOfExtendingClasses as $key => $extendingClass) {
-                if (!isset($moduleClassesMf[$extendingClass])) {
+                if (!isset($moduleClassesMf[$extendingClass . '<>' . $oxidClass])) {
                     $this->output->warning(
                         "module extension trash found: '$extendingClass'' (registered for $oxidClass)"
                     );
