@@ -164,8 +164,9 @@ class ModuleStateFixer extends ModuleInstaller
             $extensions = $module->getExtensions();
             foreach ($extensions as $oxidClass => $moduleClass) {
                 if( isset($moduleClassSeenBefore[$moduleClass]) ) {
-                    $this->output->critical("Duplicate registration of '$moduleClass' within module " . $module->getTitle() .
-                        ". This is blocked by Module Internals because it is known to cause broken class chains");
+                    $this->output->critical("Duplicate registration of '$moduleClass' within module "
+                        . $module->getTitle()
+                        . ". This is blocked by Module Internals because it is known to cause broken class chains");
                     continue;
                 }
                 $moduleClassSeenBefore[$moduleClass] = 1;
