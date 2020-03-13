@@ -302,7 +302,8 @@ class InternalModule extends InternalModule_parent
         foreach ($aMetadataExtend as $oxidClass => $moduleClass) {
             $key_state = $iState = self::OK;
             if (isset($moduleClassSeenBefore[$moduleClass])) {
-                $key_state = $iState = self::NEED_MANUAL_FIXED;
+                $iState = self::MODULE_FILE_NOT_FOUND;
+                $key_state =  self::OK;
             }
             $moduleClassSeenBefore[$moduleClass] = 1;
 
