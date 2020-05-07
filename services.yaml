@@ -2,4 +2,4 @@ services:
   oxid_community.moduleinternals.module.fix.command:
     class: OxidCommunity\ModuleInternals\Command\ModuleFixCommand
     tags:
-    - { name: 'console.command' }
+      - { name: 'console.command', command: 'module:fix', description: 'Fixes modules metadata states'}
