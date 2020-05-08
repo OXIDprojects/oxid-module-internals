@@ -20,6 +20,10 @@ use OxidProfessionalServices\OxidConsole\Core\ShopConfig;
  */
 class ModuleFixCommand extends Command
 {
+    /**
+     * @var string|null The default command name
+     */
+    protected static $defaultName;
 
     /**
      * @var array|null Available module ids
@@ -186,8 +190,20 @@ class ModuleFixCommand extends Command
     {
         $app = $this->getApplication();
         if (method_exists($app, 'bootstrapOxid')) {
-                return $app->bootstrapOxid(true);
+            return $app->bootstrapOxid(true);
         }
         return true;
     }
+
+    /**
+     * @return string|null The default command name or null when no default name is set
+     */
+    public static function getDefaultName()
+    {
+        $class = static::class;
+        $r = new \ReflectionProperty($class, 'defaultName');
+
+        return $class === $r->class ? static::$defaultName : null;
+    }
+
 }
