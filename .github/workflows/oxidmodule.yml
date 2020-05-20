@@ -36,8 +36,6 @@ jobs:
     - uses: actions/checkout@v1
     - name: route db from socket to port
       run: bash /var/www/oxideshop/scripts/routeDbfromSocketToPort.sh
-    - name: Start MySQL service
-      run: sudo /etc/init.d/mysql start
     - name: setup oxid
       run: bash /var/www/oxideshop/scripts/setup.sh
     - name: try to install phpstan-phpunit
