@@ -222,7 +222,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         } else {
-            if ($old) {
+            if ($old && method_exists($this, '_deleteTemplateFiles')) {
                 $this->output->warning("$sModuleId unregister templates:");
                 $this->_deleteTemplateFiles($sModuleId);
                 $this->needCacheClear = true;
@@ -258,7 +258,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         } else {
-            if ($old) {
+            if ($old && method_exists($this, '_deleteModuleFiles')) {
                 $this->output->warning("$sModuleId unregister files");
                 $this->_deleteModuleFiles($sModuleId);
                 $this->needCacheClear = true;
@@ -289,7 +289,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         } else {
-            if ($old) {
+            if ($old && method_exists($this, '_deleteModuleEvents')) {
                 $this->output->info("$sModuleId unregister events");
                 $this->_deleteModuleEvents($sModuleId);
                 $this->needCacheClear = true;
@@ -351,7 +351,7 @@ class ModuleStateFixer extends ModuleInstaller
                 $this->needCacheClear = true;
             }
         } else {
-            if ($old) {
+            if ($old && method_exists($this, '_deleteModuleVersions')) {
                 $this->output->info("$sModuleId unregister module version");
                 $this->_deleteModuleVersions($sModuleId);
                 $this->needCacheClear = true;
@@ -587,7 +587,7 @@ class ModuleStateFixer extends ModuleInstaller
             $onlyInBeforeFix = array_diff($aModulesDefault, $aModules);
             $this->output->info("fixing " . $module->getId());
             foreach ($onlyInAfterFix as $core => $ext) {
-                if ($oldChain = $onlyInBeforeFix[$core]) {
+                if (isset($onlyInBeforeFix[$core]) && $oldChain = $onlyInBeforeFix[$core]) {
                     $newExt = substr($ext, strlen($oldChain));
                     if (!$newExt) {
                         //$newExt = substr($ext, strlen($oldChain));
