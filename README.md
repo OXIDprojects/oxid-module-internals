@@ -45,8 +45,9 @@ composer require oxid-community/moduleinternals
 
 
 ## Changelog
+* 2020-06-16  3.0.0 better error output, using shopswitcher lib, improve compatibility for oxid console
 * 2020-01-09  3.0.0-alpha3 compatible with oe console and oxrun
-* 2019-12-19  3.0.0-alpha compatible with oxid 6.2
+* 2019-12-19  3.0.0-alpha better compatibility with oxid 6.2
 * 2019-01-21  2.0.0 Option to disable blocks,autodiscover module version number from composer,automatic module state fix (when opening admin module list) with feedback, overview page with accordion, admin homepage warnings, improved logging, improved fixing, remove state from disabled modules, support for different console versions
 * 2018-12-12  1.5.2 avoid php warning if module namespace can not be found
 * 2018-11-23  1.5.1 avoid error when fixing deactive module that has controllers
