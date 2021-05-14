@@ -45,6 +45,7 @@ composer require oxid-community/moduleinternals
 
 
 ## Changelog
+* 2021-05-14  3.1.0 remove frontend translation files
 * 2020-06-16  3.0.0 better error output, using shopswitcher lib, improve compatibility for oxid console
 * 2020-01-09  3.0.0-alpha3 compatible with oe console and oxrun
 * 2019-12-19  3.0.0-alpha better compatibility with oxid 6.2
