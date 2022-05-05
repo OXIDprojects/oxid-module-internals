@@ -1,3 +1,14 @@
+# Warning
+
+There is no active maintainance anymore.
+
+Since OXID 6.2 it's recommend to use
+https://github.com/vanilla-thunder/oxid-module-devutils
+instead of module internals.
+
+
+
+
 # Oxid Module Internals
 Internal OXID eShop 6 module system information and troubleshooting tools.
 
