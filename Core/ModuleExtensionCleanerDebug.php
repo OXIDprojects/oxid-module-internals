@@ -106,7 +106,8 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 
         foreach ($moduleInstalledExtensions as $coreClassName => $listOfExtensions) {
             foreach ($listOfExtensions as $extensions) {
-                if (!(isset($moduleMetaDataExtensions[$coreClassName])
+                if (
+                    !(isset($moduleMetaDataExtensions[$coreClassName])
                     && $moduleMetaDataExtensions[$coreClassName] == $extensions
                     )
                 ) {

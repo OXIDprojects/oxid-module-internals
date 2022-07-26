@@ -300,7 +300,8 @@ class InternalModule extends InternalModule_parent
             }
             $moduleClassSeenBefore[$moduleClass] = 1;
 
-            if (strpos($oxidClass, 'OxidEsales\\EshopCommunity\\') === 0 ||
+            if (
+                strpos($oxidClass, 'OxidEsales\\EshopCommunity\\') === 0 ||
                 strpos($oxidClass, 'OxidEsales\\EshopEnterprise\\') === 0 ||
                 strpos($oxidClass, 'OxidEsales\\EshopProfessional\\') === 0 ||
                 !class_exists($oxidClass)
@@ -376,7 +377,8 @@ class InternalModule extends InternalModule_parent
 
 
             $file = $aBlock['file'];
-            if (!$this->checkFileExists($sModulePath . '/' . $file) &&
+            if (
+                !$this->checkFileExists($sModulePath . '/' . $file) &&
                 !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file)) &&
                 !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file) . '.tpl')
             ) {
@@ -399,11 +401,13 @@ class InternalModule extends InternalModule_parent
             }
 
             // Get template from module ..
-            if (!$sTemplate && isset($aMetadataTemplates[$template]) && $this->checkFileExists(
+            if (
+                !$sTemplate && isset($aMetadataTemplates[$template]) && $this->checkFileExists(
                     $aMetadataTemplates[$template]
-                )) {
+                )
+            ) {
                     $sTemplate = $sModulesDir . '/' . $aMetadataTemplates[$template];
-                }
+            }
 
             if (empty($sTemplate)) {
                 $aBlock['t_state'] = self::SHOP_FILE_NOT_FOUND;
@@ -489,7 +493,8 @@ class InternalModule extends InternalModule_parent
         foreach ($files as $key => $file) {
             $result[$key]['data'] = $file;
             $s = self::OK;
-            if (($php && !$this->checkPhpFileExists($file))
+            if (
+                ($php && !$this->checkPhpFileExists($file))
                 || ((!$php) && !$this->checkFileExists($file))
             ) {
                 $s = self::MODULE_FILE_NOT_FOUND;
