@@ -24,7 +24,6 @@ use OxidEsales\TestingLibrary\UnitTestCase;
  */
 class FixHelperTest extends UnitTestCase
 {
-
     public function testFixTemplate()
     {
         $this->setConfigParam('aModuleTemplates', ['a' => 'b']);

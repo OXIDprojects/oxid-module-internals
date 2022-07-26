@@ -7,7 +7,6 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 
 class NavigationControllerTest extends UnitTestCase
 {
-
     public function testNavigationController(): void
     {
         $controller = oxNew(NavigationController::class);

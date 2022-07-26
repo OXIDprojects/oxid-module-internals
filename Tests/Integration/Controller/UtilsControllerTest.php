@@ -20,7 +20,6 @@ use OxidEsales\TestingLibrary\UnitTestCase;
 
 class UtilsControllerTest extends UnitTestCase
 {
-
     /**
      * Test module getter.
      */

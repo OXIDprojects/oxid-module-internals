@@ -16,7 +16,6 @@ use OxidEsales\Eshop\Core\Registry;
 
 class CheckConsistencyTest extends UnitTestCase
 {
-
     public function testRender()
     {
         $controller = oxNew(CheckConsistency::class);
