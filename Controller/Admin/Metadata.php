@@ -26,7 +26,6 @@ use OxidEsales\Eshop\Core\Module\Module as Module;
  */
 class Metadata extends AdminController
 {
-
     /**
      * @var string
      */

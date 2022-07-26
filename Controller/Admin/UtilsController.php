@@ -28,7 +28,6 @@ use OxidEsales\Eshop\Core\Module\ModuleInstaller;
  */
 class UtilsController extends AdminController
 {
-
     /** @var Module */
     protected $module;
 

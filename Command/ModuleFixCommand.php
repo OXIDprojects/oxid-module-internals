@@ -22,7 +22,6 @@ use OxidProfessionalServices\ShopSwitcher\ShopSwitcher;
  */
 class ModuleFixCommand extends Command
 {
-
     /**
      * @var array<string>|null Available module ids
      */
@@ -60,7 +59,7 @@ class ModuleFixCommand extends Command
         $this->input = $input;
         $this->output = $output;
         $this->logger = new ConsoleLogger($output);
-        
+
         if (isset($_POST['shp']) || isset($_GET['shp'])) {
             $this->logger->info("starting for given shop " . $_POST['shp']);
             $this->executeForShop();
@@ -71,9 +70,9 @@ class ModuleFixCommand extends Command
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
             error_reporting(E_ALL);
-            
+
             $shopSwitcher = new ShopSwitcher();
-        
+
             foreach ($shopSwitcher as $shopId) {
                 $this->executeForShop();
             }
@@ -83,7 +82,7 @@ class ModuleFixCommand extends Command
             throw $e;
         }
     }
-    
+
     /**
      * @param string $shopId
      **/

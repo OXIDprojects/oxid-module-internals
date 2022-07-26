@@ -34,7 +34,6 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 class State extends AdminController
 {
-
     /**
      * @var string
      */
