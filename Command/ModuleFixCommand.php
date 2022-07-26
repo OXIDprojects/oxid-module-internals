@@ -89,7 +89,7 @@ class ModuleFixCommand extends Command
     public function executeForShop()
     {
         $logger  = $this->logger;
-        
+
         try {
             $aModuleIds = $this->parseModuleIds();
         } catch (InputException $oEx) {
@@ -175,7 +175,7 @@ class ModuleFixCommand extends Command
         }
         return true;
     }
-    
+
      /**
      * Get all available module ids
      *
