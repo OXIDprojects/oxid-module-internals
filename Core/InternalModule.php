@@ -46,8 +46,7 @@ class InternalModule extends InternalModule_parent
         $this->checked = false;
         $this->state = self::FINE;
         $this->metaDataVersion = null;
-        $res = parent::load($id);
-        return $res;
+        return parent::load($id);
     }
 
     /**
@@ -72,7 +71,6 @@ class InternalModule extends InternalModule_parent
     {
         if ($this->moduleFixHelper === null) {
             $this->moduleFixHelper = Registry::get(ModuleStateFixer::class);
-        //$this->_oModuleFixHelper->disableInitialCacheClear();
         }
 
         return $this->moduleFixHelper;
@@ -90,7 +88,7 @@ class InternalModule extends InternalModule_parent
         $activeThemeIds = oxNew(Theme::class)->getActiveThemesList();
         $activeThemeIds[] = '';
 
-        $themeIdsSql = join(', ', DatabaseProvider::getDb()->quoteArray($activeThemeIds));
+        $themeIdsSql = implode(', ', DatabaseProvider::getDb()->quoteArray($activeThemeIds));
 
         $aResults = DatabaseProvider::getDb(DatabaseProvider::FETCH_MODE_ASSOC)->select(
             "SELECT OXID as id,
@@ -211,14 +209,11 @@ class InternalModule extends InternalModule_parent
     public function checkPhpFileExists($className)
     {
         if ($this->isMetadataVersionGreaterEqual('2.0')) {
-            $composerClassLoader = $this->getModuleHelper()->getAutoloader();
-
-            return $composerClassLoader->findFile($className);
-        } else {
-            $sExtensionPath = $className . '.php';
-            $res = $this->checkFileExists($sExtensionPath);
-            return $res;
+            return $this->getModuleHelper()->getAutoloader()->findFile($className);
         }
+
+        $sExtensionPath = $className . '.php';
+        return $this->checkFileExists($sExtensionPath);
     }
 
 
@@ -233,10 +228,8 @@ class InternalModule extends InternalModule_parent
     {
         $iLang = Registry::getLang()->getTplLanguage();
         $databaseVersion = $this->getInfo("version", $iLang);
-        
-        $aResult = $this->toResult(['version' => $databaseVersion]);
 
-        return $aResult;
+        return $this->toResult(['version' => $databaseVersion]);
     }
 
     public function getTitle()
@@ -248,7 +241,7 @@ class InternalModule extends InternalModule_parent
         $request = Registry::getRequest();
         $controller = $request->getRequestParameter('cl');
 
-        if ($controller == 'module_list' || $controller == 'checkconsistency') {
+        if ($controller === 'module_list' || $controller === 'checkconsistency') {
             $fixed = $this->getModuleStateFixer()->fix($this);
             if ($fixed) {
                 $title .= ' <strong style="color: #00e200">State fixed</strong>';
@@ -307,8 +300,7 @@ class InternalModule extends InternalModule_parent
             }
             $moduleClassSeenBefore[$moduleClass] = 1;
 
-            if (
-                strpos($oxidClass, 'OxidEsales\\EshopCommunity\\') === 0 ||
+            if (strpos($oxidClass, 'OxidEsales\\EshopCommunity\\') === 0 ||
                 strpos($oxidClass, 'OxidEsales\\EshopEnterprise\\') === 0 ||
                 strpos($oxidClass, 'OxidEsales\\EshopProfessional\\') === 0 ||
                 !class_exists($oxidClass)
@@ -384,8 +376,7 @@ class InternalModule extends InternalModule_parent
 
 
             $file = $aBlock['file'];
-            if (
-                !$this->checkFileExists($sModulePath . '/' . $file) &&
+            if (!$this->checkFileExists($sModulePath . '/' . $file) &&
                 !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file)) &&
                 !$this->checkFileExists($sModulePath . '/out/blocks/' . basename($file) . '.tpl')
             ) {
@@ -408,11 +399,11 @@ class InternalModule extends InternalModule_parent
             }
 
             // Get template from module ..
-            if (!$sTemplate && isset($aMetadataTemplates[$template])) {
-                if ($this->checkFileExists($aMetadataTemplates[$template])) {
+            if (!$sTemplate && isset($aMetadataTemplates[$template]) && $this->checkFileExists(
+                    $aMetadataTemplates[$template]
+                )) {
                     $sTemplate = $sModulesDir . '/' . $aMetadataTemplates[$template];
                 }
-            }
 
             if (empty($sTemplate)) {
                 $aBlock['t_state'] = self::SHOP_FILE_NOT_FOUND;
@@ -445,8 +436,7 @@ class InternalModule extends InternalModule_parent
             $list[$v['OXVARNAME']] = $v['OXVARTYPE'];
         }
 
-        $aResult = $this->toResult($list);
-        return $aResult;
+        return $this->toResult($list);
     }
 
     /**
@@ -457,9 +447,7 @@ class InternalModule extends InternalModule_parent
     public function checkModuleTemplates()
     {
         $aDatabaseTemplates = $this->getModuleEntries(ModuleList::MODULE_KEY_TEMPLATES);
-        $aResult = $this->checkFiles($aDatabaseTemplates, false);
-
-        return $aResult;
+        return $this->checkFiles($aDatabaseTemplates, false);
     }
 
     /**
@@ -501,8 +489,7 @@ class InternalModule extends InternalModule_parent
         foreach ($files as $key => $file) {
             $result[$key]['data'] = $file;
             $s = self::OK;
-            if (
-                ($php && !$this->checkPhpFileExists($file))
+            if (($php && !$this->checkPhpFileExists($file))
                 || ((!$php) && !$this->checkFileExists($file))
             ) {
                 $s = self::MODULE_FILE_NOT_FOUND;
@@ -528,7 +515,7 @@ class InternalModule extends InternalModule_parent
         }, $aDatabaseEvents);
         $aResult = $this->toResult($aDatabaseEvents);
         foreach ($aResult as $eventName => &$data) {
-            $data['key_state'] = ($eventName == 'onActivate' || $eventName == 'onDeactivate')
+            $data['key_state'] = ($eventName === 'onActivate' || $eventName === 'onDeactivate')
                 ? self::OK
                 : self::SHOP_FILE_NOT_FOUND;
         }
@@ -547,7 +534,7 @@ class InternalModule extends InternalModule_parent
         }
         $oModule = $this;
         $aModule = array();
-        $aModule['oxid'] = $sId = $oModule->getId();
+        $aModule['oxid'] = $oModule->getId();
         $aModule['title'] = $aModule['oxid'] . " - " . $title;
 
         $aModule['aExtended'] = $oModule->checkExtendedClasses();
@@ -621,7 +608,6 @@ class InternalModule extends InternalModule_parent
          * @var OxidComposerModulesService $packageService
          */
         $packageService = Registry::get(OxidComposerModulesService::class);
-        $package = $packageService->getPackage($moduleId);
-        return $package;
+        return $packageService->getPackage($moduleId);
     }
 }

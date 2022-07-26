@@ -86,7 +86,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
     protected function removeGarbage($aInstalledExtensions, $aarGarbage)
     {
         foreach ($aarGarbage as $moduleId => $aExt) {
-            $this->logger->info("removing garbage for module $moduleId: " . join(',', $aExt));
+            $this->logger->info("removing garbage for module $moduleId: " . implode(',', $aExt));
         }
         return parent::removeGarbage($aInstalledExtensions, $aarGarbage);
     }
@@ -106,8 +106,7 @@ class ModuleExtensionCleanerDebug extends ModuleExtensionsCleaner
 
         foreach ($moduleInstalledExtensions as $coreClassName => $listOfExtensions) {
             foreach ($listOfExtensions as $extensions) {
-                if (
-                    !(isset($moduleMetaDataExtensions[$coreClassName])
+                if (!(isset($moduleMetaDataExtensions[$coreClassName])
                     && $moduleMetaDataExtensions[$coreClassName] == $extensions
                     )
                 ) {
