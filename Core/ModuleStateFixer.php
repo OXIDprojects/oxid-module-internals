@@ -368,14 +368,14 @@ class ModuleStateFixer extends ModuleInstaller
      */
     protected function diff($array1, $array2)
     {
-        if ($array1 === null) {
-            if ($array2 === null) {
+        if ($array1 === null || empty($array1)) {
+            if ($array2 === null || empty($array1)) {
                 return false; //indicate no diff
             }
             return $array2; //full array2 is new
         }
         if ($array2 === null) {
-            //indicate that diff is there  (so return a true value) but everthing should be droped
+            //indicate that diff is there  (so return a true value) but everything should be dropped
             return 'null';
         }
         $array_diff_assoc1 = @array_diff_assoc($array1, $array2);
